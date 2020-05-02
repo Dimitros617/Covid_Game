@@ -1,0 +1,93 @@
+<html>
+
+<head lang="cs">
+
+    <meta http-equiv="Content-language" content="cs" charset="UTF-8">
+    <meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Arvo&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="img/favicon.ico" type="favicon/ico" />
+
+</head>
+
+<title> GAME | COVID-19</title>
+
+<body id="body" onload="this.game = new Game('scoreTable', 'news', 'map')">
+    <!--         Tato stránka slouží pouze jako zlepšení přehledu informací z několik stránek nemá za cíl nihoko poškodit  | Autor: Dominik Frolík -->
+
+
+    <noscript>
+        Pro plné fungování obsahu stránky je nezbytné, aby byl v prohlížeči povolen JavaScript. Pod následujícím <a
+            href=https://www.enable-javascript.com/ target="_blank"> odkazem </a> naleznete instrukce k povolení
+        JavaScriptu v prohlížeči.
+    </noscript>
+
+    <div id="leftPanel">
+        <div id="scoreTable">
+            <div id="divOne">
+                <div id="divScore">
+                    <label id="score">100</label>
+                    <label id="scoreLabel">BODY</label>
+                </div>
+                <div id="divInfecticity">
+                    <label id="Infecticity">50%</label>
+                    <label id="InfecticityLabel">Úmrtnost</label>
+                </div>
+                <div id="divHealing">
+                    <label id="Healing">50%</label>
+                    <label id="HealingLabel">Léčení</label>
+                </div>
+            </div>
+            <div id="divTree">
+                <label class="value" id="infected">0</label>
+                <label class="label" id="infectedLabel">Nakažení</label>
+            </div>
+            <div id="divTree">
+                <label class="value" id="dead">0</label>
+                <label class="label" id="deadLabel">Mrtví</label>
+            </div>
+            <div id="divTree">
+                <label class="value" id="Heal">0</label>
+                <label class="label" id="HealLabel">Uzdravení</label>
+            </div>
+        </div>
+
+        <div id="info">
+            <select id="selectBox" onchange="infoChange(this)">
+                <option value="0">Pravidla</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="game">
+        <div id="map">              
+                
+        </div>
+    </div>
+
+    <div id="news">
+        <div id="live" class="blob">&bull; ŽIVĚ</div>
+        <div id="text"> Web je aktuálně ve vývoji. to co vidíte je prozaím Alfa verze. pokuste se zbavit všech šedivých čtverečků v mapě.</div>
+        <div id="round">KOLO - 00</div>
+    </div>
+
+    
+<!--     <div id="Credits">
+        <p>V 1.0 - © <a href="https://www.facebook.com/domino.frol" id="odkaz"> Dominik Frolík</a> 2020 </p>
+    </div>  -->
+
+    <script src="Const.js" charset="utf-8"></script>
+    <script src="Game.js" charset="utf-8"></script>
+    <script src="Map.js" charset="utf-8"></script>
+    <script src="Point.js" charset="utf-8"></script>
+    <script src="Player.js" charset="utf-8"></script>
+    <script src="Item.js" charset="utf-8"></script>
+    <script src="Action.js" charset="utf-8"></script>
+
+</body>
+
+</html>

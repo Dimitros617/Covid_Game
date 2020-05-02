@@ -1,0 +1,465 @@
+﻿@charset "UTF-8";
+body {
+  margin: 0;
+  overflow: hidden;
+  background-image: url(pozadi.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#h1 {
+  font-family: 'Comfortaa';
+  font-size: 25px;
+  font-weight: 700;
+  color: #3c3c3c;
+  text-align: center;
+  padding-bottom: 10px;
+  margin-bottom: 45px;
+  margin-top: 228px;
+  border-bottom: 2px solid #d6d6d6;
+  display: block;
+}
+
+h2 {
+  font-family: 'Comfortaa';
+  color: #333333;
+  padding-bottom: -21px;
+  border-bottom: 2px solid #bbbbbb;
+  padding: 42px 0px 11px 0;
+  width: 103%;
+  margin: -16px 31px 21px 10px;
+}
+
+hr {
+  display: block;
+  margin-block-start: 0.5em;
+  margin-block-end: 0.5em;
+  margin-inline-start: auto;
+  margin-inline-end: auto;
+  overflow: hidden;
+  border-style: dotted;
+  border-width: 1px;
+  color: black;
+}
+
+li {
+  font-family: 'Comfortaa';
+  padding: 1px 0px 10px 10px;
+}
+
+a#odkaz {
+  color: darkred;
+}
+
+img {
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  margin-top: 15px;
+}
+
+/*-------------------------- animation --------------------------*/
+
+
+.blob {
+	border-radius: 50%;
+
+
+	box-shadow: 0 0 0 0 rgba(0, 0, 0, 1);
+	transform: scale(1);
+	animation: pulse 4s infinite;
+}
+
+@keyframes pulse {
+	0% {
+		transform: scale(1);
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+	}
+
+	70% {
+		transform: scale(1.1);
+		box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+	}
+
+	100% {
+		transform: scale(1);
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+	}
+}
+
+div#divScore {
+  width: 60%;
+  float: left;
+  text-align: center;
+}
+
+div#scoreTable {
+  background: #0000008a;
+  width: 75%;
+  margin-left: auto;
+  margin-right: auto;
+  height: 40%;
+  border-radius: 0px 0px 14px 14px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 1px 5px 20px 0 rgba(0, 0, 0, 0.54);
+}
+
+div#info {
+  background-image: url(box.jpg);
+  background-position: top;
+  width: 75%;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 14px 14px 14px 14px;
+  margin-top: 5%;
+  height: 50%;
+  overflow: hidden;
+}
+
+div#game {
+  float: right;
+  width: 60%;
+  height: 90%;
+}
+
+div#news {
+  float: left;
+  width: 100%;
+  height: 45px;
+  margin-top: 12px;
+}
+
+div#leftPanel {
+  float: left;
+  width: 40%;
+  height: 90%;
+}
+
+div#live {
+  float: left;
+  background-color: red;
+  width: 7%;
+  height: -webkit-fill-available;
+  font-family: 'Comfortaa';
+  font-weight: bolder;
+  color: white;
+  padding-left: auto;
+  text-align: center;
+  padding-top: 12px;
+  font-size: 22px;
+  border-radius: 0px 14px 14px 0px;
+  position: relative;
+}
+
+div#text {
+  float: left;
+  width: 75%;
+  height: -webkit-fill-available;
+  background: #000000a3;
+  color: white;
+  font-family: 'Comfortaa';
+  color: white;
+  padding-left: 25px;
+  border-radius: 0px 14px 14px 0px;
+  padding-top: 14px;
+  margin-left: -15px;
+}
+
+div#round {
+  float: left;
+  width: 15%;
+  height: -webkit-fill-available;
+  font-family: 'Comfortaa';
+  font-size: 30px;
+  color: white;
+  padding-left: auto;
+  padding-left: 30px;
+  padding-top: 6px;
+}
+
+select#selectBox {
+  text-align-last: center;
+  align-content: center;
+  text-align: center;
+  width: 100%;
+  height: 54px;
+  font-size: 23px;
+  background: none;
+  border: none;
+  font-family: 'Comfortaa';
+  background: linear-gradient(#3e3e3e, #1d1d1d);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 1px 5px 20px 0 rgba(0, 0, 0, 0.54);
+  color: #ffffff;
+
+}
+
+div#divOne {
+ 
+  padding-top: 10px;
+  background-color: #00000030;
+  margin-bottom: 10px;
+  height: 55%;
+  border-bottom: 5px solid red;
+}
+
+div#divTwo {
+  text-align: center;
+  padding-top: 10px;
+  width: 50%;
+  float: left;
+}
+
+label#score {
+  font-size: 5.5vw;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  font-family: 'Arvo', serif;
+  color: #ff0000;
+  text-align: center;
+  font-weight: bolder;
+  text-shadow: 3px 5px 31px black;
+  letter-spacing: 3px;
+}
+
+
+
+label#scoreLabel, label#InfecticityLabel, label#HealingLabel {
+  font-size: 19px;
+  font-family: 'Comfortaa';
+  color: #aaaead;
+  margin-left: auto;
+  margin-right: auto;
+  /* display: block; */
+  text-align: center;
+  border: none;
+  background: none;
+  height: 36px;
+}
+
+label#Infecticity, label#Healing {
+  font-size: 1.3vw;
+  margin-left: auto;
+  margin-right: auto;
+  /* display: block; */
+  font-family: 'Arvo', serif;
+  color: #ffffff;
+  text-align: center;
+  /* font-weight: bolder; */
+  text-shadow: 3px 5px 31px black;
+  letter-spacing: 3px;
+}
+
+div#divInfecticity, div#divHealing {
+  margin-top: 30px;
+}
+
+div#divTree {
+  width: 33.3%;
+  float: left;
+  text-align: center;
+}
+
+label.value {
+  font-size: 2.5vw;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  font-family: 'Arvo', serif;
+  color: #ff0000;
+  text-align: center;
+  font-weight: bolder;
+  text-shadow: 3px 5px 31px black;
+  letter-spacing: 3px;
+  margin-top: 8px;
+}
+
+label.label {
+  font-size: 15px;
+  font-family: 'Comfortaa';
+  color: #aaaead;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  text-align: center;
+  border: none;
+  background: none;
+  height: 36px;
+}
+
+div#map {
+
+    height: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1.5%;
+    width: 70%;
+
+}
+
+#centerCell{
+  background: rgb(172, 172, 172) !important;
+}
+
+table#mapTable {
+  float: left;
+  table-layout: fixed;
+  border-collapse: collapse;
+  background: #efefef;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 1px 5px 20px 0 rgba(0, 0, 0, 0.54), inset 0 0 79px -45px #000000;
+}
+
+ td {
+  /*background-color: transparent !important; /*DEBUG*/
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border: 1px solid #dcdcdc6b;
+  margin: 0;
+  padding: 0;
+  transition-delay: 0.6s; 
+
+} 
+
+td.cel, td.valid, td.validLast{
+  /*transition-delay: 0.8s;*/
+  transition-duration: 0.6s;
+}
+
+div#player {
+  width: 28px;
+  height: 28px;
+  position: absolute;
+  background-image: url(img/player.png);
+  background-size: cover;
+  z-index: 1;
+  transition-duration: 1s;
+
+}
+
+div#player:hover {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+div#player:active {
+  transition-duration: 0.3s;
+  transform: scale(0.8);
+  cursor: pointer;
+}
+
+.mainButton {
+  text-align: center;
+  width: 200%;
+  height: 200%;
+  transform: scale(1.1);
+  background: rgb(180,0,0);
+  border: none;
+  font-family: 'Comfortaa';
+  color: white;
+  font-weight: 700;
+  letter-spacing: 3px;
+  box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.5), 1px 9px 20px 0 rgba(0, 0, 0, 0.54);
+  transition:  0.3s;
+
+  
+}
+
+.mainButton:after, .mainButton:hover {
+  background: rgb(209, 0, 0);
+  box-shadow: inset 0 0 0px 6px #ffffff38;
+  transform: scale(1.2);
+  cursor: pointer;
+  transition:  0.3s;
+
+}
+
+
+.mainButton:active {
+  background: rgb(255, 47, 47);
+  transform: scale(0.9);
+  cursor: pointer;
+  transition:  0.3s;
+}
+
+
+
+/* ----------------- Itemy ---------------------------- */
+
+div.item, div.human, div.group, div.infecticity {
+  background-color: transparent;
+  background-size: cover;
+  transition:  0.3s;
+  /*transition-delay: 0.7s; */
+}
+
+div.item:hover, div.human:hover, div.group:hover, div.infecticity:hover {
+  transform: scale(2);
+  cursor: pointer;
+}
+
+
+/* ----------------- Validní pozice na mapě ---------------------------- */
+
+td.path {
+  background-image: url(img/pathPoint.png)!important;
+}
+
+td.cell, td.valid.cell {
+  background-size: cover;
+  background-image: url(img/cell.png) !important;
+  transition:  0.3s;
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+td.cell:hover, td.valid.cell:hover {
+  transform: scale(1.2);
+}
+
+td.cell:active, td.valid.cell:active {
+  opacity: 0.2;
+  transform: scale(0.7);
+}  
+
+
+
+td.valid, td.valid.validLast {
+  background-image: url(img/cellPossible.png)!important;
+}
+
+td.validLast {
+  background-image: url(img/cellPossibleLast.png)!important;
+}
+
+
+[data-title]:hover:after {
+  opacity: 1;
+  transition: all 0.1s ease 0.5s;
+  visibility: visible;
+  transition-delay: 1.3s;
+}
+[data-title]:after {
+  content: attr(data-title);
+  font-family: 'Comfortaa';
+  background-color: #ff0000b5;
+  color: #fff;
+  font-size: 150%;
+  position: absolute;
+  padding: 10px;
+  padding-right: 20px;
+  margin-right: -80px;
+  right: 100%;
+  white-space: nowrap;
+  box-shadow: 1px 1px 3px #000000c7;
+  opacity: 0;
+  border-right: 20px solid #650000;
+  border-radius: 5px 20px 20px 5px;
+  z-index: 99999;
+  visibility: hidden;
+  letter-spacing: 2px;
+  transform: scale(0.5);
+}
+[data-title] {
+  position: relative;
+}
