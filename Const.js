@@ -13,6 +13,15 @@ const HEAL = x => document.getElementById("Heal").innerHTML = x;
 const NEWS = x => document.getElementById("text").innerHTML = x;
 const ROUND = x => document.getElementById("round").innerHTML = "KOLO - " + x;
 
+/**
+ * 
+ * @param {Boolean} x = true, pokud cheme zobrazi loadin, nebo false pokud ho chcem ukončit
+ * @param {String} y = Co má být jako zpráva loadingu
+ */
+const LOADING = (x,y) => {  document.getElementById("loadingText").innerHTML = y;
+                            document.getElementById("loading").style.zIndex = x == true ? "9" : "-9";
+                            document.getElementById("loading").style.opacity = x == true ? "1" : "0";}
+
 const MAP_TABLE = document.getElementById("map");
 
 

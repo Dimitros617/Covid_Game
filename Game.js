@@ -23,7 +23,6 @@ class Game {
         this.createScenary();
         this.map.drawAllValid();
 
-
         //let result = this.map.shortestWay(new Point(0,0), new Point(0,15),RETURN.PATH);
 
        //this.map.drawPath(result);

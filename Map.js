@@ -516,19 +516,31 @@ class Map {
         if (ret == RETURN.COUNT)
             return limit;
 
-        console.log("limit: " + this.count);
-        var t0 = performance.now();
-        this.shortestWayPath(startPoint, endPoint, solution, 0, limit);
-        var t1 = performance.now()
-        console.log("Prošlých možností: " + this.count + " Celkový čas: " + (t1 - t0)/1000 + "s ");
-        this.shortestWaySolution.push(endPoint);
-        if (ret == RETURN.PATH) {
-            return this.shortestWaySolution;
-        }
+        //Zobrazím loading
+        LOADING(true, "Hledám nejkratší cestu ...");
+        //spustím asynchroní prohledávání mapou pro nejkratší vzdálenost, kvuly načítání loadingu se spožděním 100 ms
+        setTimeout((startPoint, endPoint, solution, limit, ret) => {
 
-        if (ret == RETURN.DRAW) {
-            this.drawPath(this.shortestWaySolution);
-        }
+            var t0 = performance.now();
+            this.shortestWayPath(startPoint, endPoint, solution, 0, limit);
+            var t1 = performance.now()
+            console.log("Prošlých možností: " + this.count + " Celkový čas: " + (t1 - t0)/1000 + "s ");
+            this.shortestWaySolution.push(endPoint);
+            LOADING(false);
+
+            if (ret == RETURN.PATH) {
+                return this.shortestWaySolution;
+            }
+    
+            if (ret == RETURN.DRAW) {
+                this.drawPath(this.shortestWaySolution);
+            }
+
+            
+        }, 50, startPoint, endPoint, solution, limit, ret);
+
+        
+
 
 
     }
@@ -571,6 +583,7 @@ class Map {
         this.count++;
         solution.push(startPoint); //H = startpoint přidám do solutionu        
 
+        console.log(this.count);
         for (let k = 0; k < 4; k++) {
             let np = this.nextInDirection(startPoint, k);
             if (np != null) {
