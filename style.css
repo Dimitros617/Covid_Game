@@ -224,7 +224,7 @@ label#score {
 
 
 
-label#scoreLabel, label#InfecticityLabel, label#HealingLabel {
+label#scoreLabel, label#mortalityLabel, label#infecticityLabel {
   font-size: 19px;
   font-family: 'Comfortaa';
   color: #aaaead;
@@ -237,7 +237,7 @@ label#scoreLabel, label#InfecticityLabel, label#HealingLabel {
   height: 36px;
 }
 
-label#Infecticity, label#Healing {
+label#mortality, label#infecticity {
   font-size: 1.3vw;
   margin-left: auto;
   margin-right: auto;
@@ -250,7 +250,7 @@ label#Infecticity, label#Healing {
   letter-spacing: 3px;
 }
 
-div#divInfecticity, div#divHealing {
+div#divMortality, div#divInfecticity {
   margin-top: 30px;
 }
 
@@ -386,14 +386,14 @@ div#player:active {
 
 /* ----------------- Itemy ---------------------------- */
 
-div.item, div.human, div.group, div.infecticity {
+div.item, div.human, div.group, div.infecticity, div.mortality {
   background-color: transparent;
   background-size: cover;
   transition:  0.3s;
   /*transition-delay: 0.7s; */
 }
 
-div.item:hover, div.human:hover, div.group:hover, div.infecticity:hover {
+div.item:hover, div.human:hover, div.group:hover, div.infecticity:hover, div.mortality:hover {
   transform: scale(2);
   cursor: pointer;
 }
@@ -403,10 +403,13 @@ div.item:hover, div.human:hover, div.group:hover, div.infecticity:hover {
 
 td.path {
   background-image: url(img/pathPoint.png)!important;
+  transition-duration: 0.5s;
+  transition-delay: 0.5s;
 }
 
 td.path.cell, td.cell.path {
   background-image: url(img/pathPoint.png), url(img/cell.png)!important;
+  cursor: pointer;
 }
 
 

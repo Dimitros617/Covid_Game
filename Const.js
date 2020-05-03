@@ -2,13 +2,15 @@ const TITLE = "GAME | COVID-19";
 const PEOPLE_INFECTED_DAY = 4; // Počet dní před tím než zemřou
 const START_SCORE = 100;
 
+const SPREAD_MULTIPLIER = 2;
 
-const SCORE = x => document.getElementById("score").innerHTML = x;
-const INFECTICITY = x => document.getElementById("Infecticity").innerHTML = x + "%";
-const HEALING = x => document.getElementById("Healing").innerHTML = x + "%";
-const INFECTED = x => document.getElementById("infected").innerHTML = x;
-const DEAD = x => document.getElementById("dead").innerHTML = x;
-const HEAL = x => document.getElementById("Heal").innerHTML = x;
+
+const SCORE = x => document.getElementById("score").innerHTML = x > 1000000 ? (x/1000000).toFixed(2) + "M": x > 1000 ? parseInt(x/1000) + "K": x;
+const MORTALITY = x => document.getElementById("mortality").innerHTML = x + "%";
+const INFECTICITY = x => document.getElementById("infecticity").innerHTML = x + "%";
+const INFECTED = x => document.getElementById("infected").innerHTML = x > 1000 ? parseInt(x/1000) + "K": x;
+const DEAD = x => document.getElementById("dead").innerHTML = x > 1000 ? parseInt(x/1000) + "K": x;
+const HEAL = x => document.getElementById("Heal").innerHTML = x > 1000 ? parseInt(x/1000) + "K": x;
 
 const NEWS = x => document.getElementById("text").innerHTML = x;
 const ROUND = x => document.getElementById("round").innerHTML = "KOLO - " + x;
@@ -18,55 +20,87 @@ const ROUND = x => document.getElementById("round").innerHTML = "KOLO - " + x;
  * @param {Boolean} x = true, pokud cheme zobrazi loadin, nebo false pokud ho chcem ukončit
  * @param {String} y = Co má být jako zpráva loadingu
  */
-const LOADING = (x,y) => {  document.getElementById("loadingText").innerHTML = y;
-                            document.getElementById("loading").style.opacity = x == true ? "1" : "0";}
+const LOADING = (x, y) => {
+    if (y != undefined) document.getElementById("loadingText").innerHTML = y;
+    document.getElementById("loading").style.opacity = x == true ? "1" : "0";
+}
 
 const MAP_TABLE = document.getElementById("map");
 
 
+
+const SCORE_DATA = {
+
+    SCORE: START_SCORE,
+    INFECTED: new Array(),
+    DEAD: 0,
+    HEAL: 0,
+    MORTALITY: 50,
+    INFECTICITY: 10,
+
+};
+
+
 const MAP_SIZE = {
+
     EASY: 12,
     MEDIUM: 16,
     HARD: 20,
+
 };
 
 const SHOW_TOOLTIP = {
+
     EVERY_STEP: 0,
     EVERY_CATCH: 1,
     NEVER: 2,
+
 };
 
 const MULTIPLAYER = {
+
     FALSE: 0,
     TRUE: 1,
+
 };
 
 const DIFICULTY = {
+
     MAP_SIZE: MAP_SIZE.MEDIUM,
     MULTIPLAYER: MULTIPLAYER.FALSE,
     SHOW_TOOLTIP: SHOW_TOOLTIP.EVERY_STEP,
+
 };
 
 const RETURN = {
+
     BOOLEAN: 0,
     OBJECT: 1,
     COUNT: 2,
     DRAW: 3,
     PATH: 4,
+
 };
 
 const TYPE = {
+
     ALL: 0,
     LAST: 1,
     RAND: 2,
+
 };
 
 const ITEMTYPE = {
+
     HUMAN: "human",
     GROUP: "group",
+    GROUP_SIZE: 5,
     INFECTICITY: "infecticity",
+    INFECTICITY_VALUE: 10,
+    MORTALITY: "mortality",
+    MORTALITY_VALUE: 10, // O kolik procen vzroste umrtnost když hráč item sebere
 
-    length: 3,
+    length: 4,
 
     onIndex(x) {
         switch (x) {
@@ -76,11 +110,16 @@ const ITEMTYPE = {
                 return this.GROUP;
             case 2:
                 return this.INFECTICITY;
+            case 3:
+                return this.MORTALITY;
             default:
-               return null;
+                return null;
         }
     }
+
 };
+
+const RANDOM_NUMBER = (minimum, maximum) => Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
 
 
 

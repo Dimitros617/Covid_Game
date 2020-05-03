@@ -44,11 +44,19 @@ class Map {
                 let cell = document.createElement("td");
 
                 cell.onclick = function (e) {
+                    //Point na který se kliknulo
                     let point = new Point(parseInt(e.target.id.split(":")[0]), parseInt(e.target.id.split(":")[1]));
+                    //Pokud je to validní pozice na kterou hráč může (max 3 pointy z jeho pozice)
                     if (window.game.map.indexOfPoint(game.map.validPosition, point) != null) {
+                        //Smaže označní cesty mezi aktuální a novou právě kliknutou pozicí (point)
+                        //window.game.map.drawPointToPoint(window.game.map.player.position, point,"path",false);
+                        //Posunu hráče na danou pozici, a znovu vykreslím kam může z nové pozice
                         window.game.map.player.moveTo(point);
+                        //Předám hře nové kolo
                         window.game.nextRound();
+                        //Z dané pozice kde hráč byl vymažu class valid (Aktuální jen před zahájením hry, šedivé pozice)
                         e.target.parentNode.classList.remove("valid");
+                        e.target.parentNode.classList.remove("validLast");
                     }
                 }
 
@@ -142,7 +150,7 @@ class Map {
             for (let j = 2; j < seed[i].length; j++) {
 
                 //-- Vygenerování náhodného směru zdi v poli mapy / pouze vnitřní L-wall
-                let int = this.randomNumber(0, 3);
+                let int = RANDOM_NUMBER(0, 3);
                 this.setWall(this.map.rows[seed[i][j].x + addX].cells[seed[i][j].y + addY], int)
                 this.setWall(this.map.rows[seed[i][j].x + addX].cells[seed[i][j].y + addY], int + 1)
 
@@ -235,7 +243,7 @@ class Map {
 
         for (let i = 0; i < 4; i++) {
 
-            let qadrant = [this.randomNumber(2, this.size / 2 - 2), this.randomNumber(2, this.size / 2 - 2)]
+            let qadrant = [RANDOM_NUMBER(2, this.size / 2 - 2), RANDOM_NUMBER(2, this.size / 2 - 2)]
             let tempX = this.shuffleArray(i % 2 == 0 ? true : false);
             let tempY = this.shuffleArray(i % 2 == 0 ? true : false);
             for (let j = 0; j < tempX.length; j++)
@@ -518,17 +526,11 @@ class Map {
         setTimeout((startPoint, endPoint, solution, limit, ret) => {
 
             var t0 = performance.now();
-            debugger;
             this.shortestWayPath(startPoint, endPoint, solution, 0, limit);
             var t1 = performance.now()
             console.log("Prošlých možností: " + this.count + " Celkový čas: " + (t1 - t0)/1000 + "s ");
             this.shortestWaySolution.push(endPoint);
-            LOADING(false);
-
-            if (ret == RETURN.PATH) {
-                return this.shortestWaySolution;
-            }
-    
+            LOADING(false);    
             if (ret == RETURN.DRAW) {
                 this.drawPath(this.shortestWaySolution);
             }
@@ -619,14 +621,42 @@ class Map {
         for (let i = 0; i < path.length - 1; i++) {
             let sp = path[i];
             let ep = path[i + 1];
-            let xMove = (ep.x - sp.x) == 0 ? 0 : (ep.x - sp.x) > 0 ? 1 : -1;
-            let yMove = (ep.y - sp.y) == 0 ? 0 : (ep.y - sp.y) > 0 ? 1 : -1;
-            let length = Math.abs((ep.x - sp.x)) > Math.abs((ep.y - sp.y)) ? Math.abs((ep.x - sp.x)) : Math.abs((ep.y - sp.y));
-            this.map.rows[sp.y].cells[sp.x].classList.add("path");
-            for (let j = 0; j < length; j++) {
-                this.map.rows[sp.y += yMove].cells[sp.x += xMove].classList.add("path");
+            this.drawPointToPoint(sp, ep, "path", true)
+        }
+    }
 
+    /**
+     * Metoda označí všehny místa na mapě mezi dvěma definovanými body definovanou classou či ji z dané cesty odstraní
+     * @param {Point} sp = point odkud chceme vykreslovat
+     * @param {Point} ep = point kam chceme vykrelovat
+     * @param {String} className = s jakým class namem budeme pracovat
+     * @param {Boolean} add == true v případě, že chci přidat, false v případě že odbrat
+     */
+    drawPointToPoint(sp, ep, className, add){
+
+        //Výpočet směru posunu v ose X
+        let xMove = (ep.x - sp.x) == 0 ? 0 : (ep.x - sp.x) > 0 ? 1 : -1;
+        //Výpočet směru posunu v ose Y
+        let yMove = (ep.y - sp.y) == 0 ? 0 : (ep.y - sp.y) > 0 ? 1 : -1;
+        // Celková délka mezi body
+        let length = Math.abs((ep.x - sp.x)) > Math.abs((ep.y - sp.y)) ? Math.abs((ep.x - sp.x)) : Math.abs((ep.y - sp.y));
+
+        if(add){
+            this.map.rows[sp.y].cells[sp.x].classList.add(className);
+        }
+        else{
+            this.map.rows[sp.y].cells[sp.x].classList.remove(className);    
+        }
+        //Pro celou vzdálenost mezi body 
+        for (let j = 0; j < length; j++) {
+
+            if(add){
+                this.map.rows[sp.y += yMove].cells[sp.x += xMove].classList.add(className);
             }
+            else{
+                this.map.rows[sp.y += yMove].cells[sp.x += xMove].classList.remove(className);
+            }    
+
         }
     }
 
@@ -649,8 +679,9 @@ class Map {
 
         //do pole validAction se uloží aktuální
         for (let i = 0; i < actions.length; i++)
-            if (actions[i].round == round || actions[i].infected == infected)
+            if ((actions[i].round <= round && actions[i].round != null) || (actions[i].infected <= infected && actions[i].infected != null))
                 validAction.push(actions[i]);
+
 
         //předvyplníme pole existingItem 0 //pokud jsou k dyspozici nové informace o stavu generování itemů změní se globální pole lastItemCount
         for (let i = 0; i < ITEMTYPE.length; i++)
@@ -666,7 +697,7 @@ class Map {
                 }
             }
 
-        //debugger;
+
         //naplníme pole aktuálním počtem typů všech itemů, abychom věděli které musíme dogenerovat nebo kolik
         for (let j = 0; j < this.item.length; j++)
             existingItems[this.item[j].type + this.item[j].dificulty]++;
@@ -694,7 +725,7 @@ class Map {
                             break;
                         }
 
-                        rand = this.randomNumber(2, 10); // Nastavení vzdálenosti SET
+                        rand = RANDOM_NUMBER(2, 10); // Nastavení vzdálenosti SET
                         point = this.validIndex(this.player.position, rand, 0, TYPE.LAST);
                         if (point == null)
                             continue;
@@ -726,6 +757,8 @@ class Map {
                 }
             }
         }
+
+        this.drawItems();
     }
 
     drawItems() {
@@ -754,11 +787,13 @@ class Map {
                 //vybereme adresu obrázku pro daný typ a dificulty itemu
                 let path = "";
                 if (this.item[i].type == ITEMTYPE.HUMAN)
-                    path = "url('img/" + this.item[i].dificulty + "." + this.randomNumber(1, 7) + ".png')";
+                    path = "url('img/" + this.item[i].dificulty + "." + RANDOM_NUMBER(1, 7) + ".png')";
                 else if (this.item[i].type == ITEMTYPE.INFECTICITY)
                     path = "url('img/infecticity.png')";
                 else if (this.item[i].type == ITEMTYPE.GROUP)
                     path = "url('img/0.0.png')";
+                else if (this.item[i].type == ITEMTYPE.MORTALITY)
+                    path = "url('img/mortality.png')";
 
                 //Danou adresu obrázku přidělíme místu v mapě (Css-ka se opět postarají o grafické vykreslení)
                 this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].style.backgroundImage = path;
@@ -812,6 +847,13 @@ class Map {
                         //Vymažu z mapy ozačená pole
                         this.clear();
                     }
+
+                    //Pro všechny itemy 
+                    for (let j = 0; j < this.item.length; j++){
+                        //přepočítám vzdálenost jak je item daleko od hráče, (pro přičtení bodů)
+                        this.item[j].distance = this.shortestWay(this.player.position,this.item[j].position,RETURN.COUNT);
+                    }
+
                     //Vymažu z daného pole grafiku itemu
                     this.map.rows[this.player.position.y].cells[this.player.position.x].children[0].style.backgroundImage = "";
 
@@ -861,16 +903,6 @@ class Map {
         return null;
     }
 
-    /**
-     * 
-     * @param {*} minimum = minimální hranice intervalu generování náhodného čísla
-     * @param {*} maximum = maximální hranice intervalu generování náhodného čísla
-     * 
-     * @param return vrací náhodné číslo z daného inervalu
-     */
-    randomNumber(minimum, maximum) {
-        return Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
-    }
 
     /**
      * 

@@ -27,10 +27,10 @@ class Player {
     }
 
     resetPosition() {
-        let randValidPoint = this.map.allValidPosition[this.map.randomNumber(0, this.map.allValidPosition.length - 1)];
+        let randValidPoint = this.map.allValidPosition[RANDOM_NUMBER(0, this.map.allValidPosition.length - 1)];
         if (this.map.item.length != 0) {
             do {
-                randValidPoint = this.map.allValidPosition[this.map.randomNumber(0, this.map.allValidPosition.length - 1)];
+                randValidPoint = this.map.allValidPosition[RANDOM_NUMBER(0, this.map.allValidPosition.length - 1)];
                 console.log("Nalezen random point validní, hledám nové místo pro hráče");
             } while (this.map.isItemOnPoint(randValidPoint))
         }
