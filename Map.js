@@ -52,18 +52,24 @@ class Map {
                     }
                 }
 
-                cell.ondblclick = function(e){
+                cell.ondblclick = function (e) {
                     let point = new Point(parseInt(e.target.id.split(":")[0]), parseInt(e.target.id.split(":")[1]));
                     let itemsPoints = [];
-                    for(let x of game.map.item)
+                    for (let x of game.map.item)
                         itemsPoints.push(x.position);
                     let indexOfItem = window.game.map.indexOfPoint(itemsPoints, point);
-                    if ( indexOfItem != null) {
-                        game.map.item[indexOfItem].drawPath = true;
-                        window.game.map.shortestWay(window.game.map.player.position,point,RETURN.DRAW);
+                    if (game.map.isItemOnPoint(point)) {
+                        if (game.map.item[indexOfItem].drawPath) {
+                            game.map.item[indexOfItem].drawPath = false;
+                            game.map.clear();
+                        }
+                        else {
+                            game.map.item[indexOfItem].drawPath = true;
+                            window.game.map.shortestWay(window.game.map.player.position, point, RETURN.DRAW);
+                        }
                     }
 
-                } 
+                }
 
                 var cont = document.createElement("div");
                 cont.setAttribute("id", y + ":" + x);
@@ -495,28 +501,29 @@ class Map {
         }
     }
 
-    shortestWay(startPoint, endPoint, ret){
+    shortestWay(startPoint, endPoint, ret) {
 
         let solution = [];
         this.shortestWaySolution = null;
         this.count = 0;
+        debugger;
         let limit = this.shortestWayCount(startPoint, endPoint);
-        if(ret == RETURN.COUNT)
+        if (ret == RETURN.COUNT)
             return limit;
 
         console.log("limit: " + this.count);
-        this.shortestWayPath(startPoint, endPoint, solution, 0, limit+1);
+        this.shortestWayPath(startPoint, endPoint, solution, 0, limit);
         console.log("Prošlých možností: " + this.count);
         this.shortestWaySolution.push(endPoint);
-        if(ret == RETURN.PATH){
+        if (ret == RETURN.PATH) {
             return this.shortestWaySolution;
         }
 
-        if(ret == RETURN.DRAW){
-             this.drawPath(this.shortestWaySolution);
+        if (ret == RETURN.DRAW) {
+            this.drawPath(this.shortestWaySolution);
         }
-        
-        
+
+
     }
 
     shortestWayCount(startPoint, endPoint) {
@@ -550,7 +557,7 @@ class Map {
     }
 
     shortestWayPath(startPoint, endPoint, solution, index, limit) {
-        if(index > limit){
+        if (index > limit) {
             return;
         }
 
@@ -559,40 +566,48 @@ class Map {
 
         for (let k = 0; k < 4; k++) {
             let np = this.nextInDirection(startPoint, k);
-                if(np != null) {
-                        if(this.indexOfPoint(solution,np) == null){
-                            if((np.x == endPoint.x) && (np.y == endPoint.y)) { 
-                                if(this.shortestWaySolution == null){
-                                    this.shortestWaySolution = [];
-                                    for(let i = 0; i < solution.length; i++){
-                                        this.shortestWaySolution.push(solution[i]);
-                                    }
-                                }else if(this.shortestWaySolution.length > solution.length){
-                                    this.shortestWaySolution = [];
-                                    for(let i = 0; i < solution.length; i++){
-                                        this.shortestWaySolution.push(solution[i]);
-                                    }
-                                }
+            if (np != null) {
+                if (this.indexOfPoint(solution, np) == null) {
+                    if ((np.x == endPoint.x) && (np.y == endPoint.y)) {
+                        if (this.shortestWaySolution == null) {
+                            this.shortestWaySolution = [];
+                            for (let i = 0; i < solution.length; i++) {
+                                this.shortestWaySolution.push(solution[i]);
                             }
-                            else{
-                                this.shortestWayPath(np, endPoint, solution, index++);
-                            }                        
+                        } else if (this.shortestWaySolution.length > solution.length) {
+                            this.shortestWaySolution = [];
+                            for (let i = 0; i < solution.length; i++) {
+                                this.shortestWaySolution.push(solution[i]);
+                            }
                         }
+                        if (this.shortestWaySolution.length == limit) {
+                            return;
+                        }
+                    }
+                    else {
+                        this.shortestWayPath(np, endPoint, solution, index++, limit);
+                    }
                 }
+                if (this.shortestWaySolution != null) {
+                    if (this.shortestWaySolution.length == limit) {
+                        return;
+                    }
+                }
+            }
         }
         solution.pop();
     }
 
-    drawPath(path){
+    drawPath(path) {
 
-        for(let i = 0; i < path.length-1; i++){
+        for (let i = 0; i < path.length - 1; i++) {
             let sp = path[i];
-            let ep = path[i+1];
+            let ep = path[i + 1];
             let xMove = (ep.x - sp.x) == 0 ? 0 : (ep.x - sp.x) > 0 ? 1 : -1;
             let yMove = (ep.y - sp.y) == 0 ? 0 : (ep.y - sp.y) > 0 ? 1 : -1;
             let length = Math.abs((ep.x - sp.x)) > Math.abs((ep.y - sp.y)) ? Math.abs((ep.x - sp.x)) : Math.abs((ep.y - sp.y));
             this.map.rows[sp.y].cells[sp.x].classList.add("path");
-            for(let j = 0; j < length; j++){
+            for (let j = 0; j < length; j++) {
                 this.map.rows[sp.y += yMove].cells[sp.x += xMove].classList.add("path");
 
             }
@@ -633,13 +648,13 @@ class Map {
                     if ((validAction[k].type + validAction[k].dificulty) == (ITEMTYPE.onIndex(i) + j))
                         actualItems[ITEMTYPE.onIndex(i) + j] = actualItems[ITEMTYPE.onIndex(i) + j] == null ? validAction[k].itemCount : actualItems[ITEMTYPE.onIndex(i) + j] += validAction[k].itemCount;
                 }
-                if (actualItems[ITEMTYPE.onIndex(i) + j] != null){
+                if (actualItems[ITEMTYPE.onIndex(i) + j] != null) {
                     this.lastItemCount[ITEMTYPE.onIndex(i) + j] = actualItems[ITEMTYPE.onIndex(i) + j];
                     console.log(ITEMTYPE.onIndex(i) + j + ": " + actualItems[ITEMTYPE.onIndex(i) + j]);
                 }
             }
-        
-            //debugger;
+
+        //debugger;
         //naplníme pole aktuálním počtem typů všech itemů, abychom věděli které musíme dogenerovat nebo kolik
         for (let j = 0; j < this.item.length; j++)
             existingItems[this.item[j].type + this.item[j].dificulty]++;
@@ -675,8 +690,8 @@ class Map {
                             same = false;
                             point = point[0];
                         }
-                        if(this.indexOfPoint(point,this.player.position) != null){
-                            point.splice(this.indexOfPoint(point,this.player.position),1);
+                        if (this.indexOfPoint(point, this.player.position) != null) {
+                            point.splice(this.indexOfPoint(point, this.player.position), 1);
                         }
                         //kotrola zda alesponň jeden bod z validních je volný a není obsazen jiným itemem
                         for (let l = 0; l < point.length; l++) {
@@ -705,7 +720,7 @@ class Map {
     drawItems() {
 
         //Pokud je pole s itemama prázdné vyhodím chybu
-        if (this.item.length == 0){
+        if (this.item.length == 0) {
             throw "Not enought items";
         }
 
@@ -715,7 +730,7 @@ class Map {
         for (let i = 0; i < this.item.length; i++) {
 
             // pokud chceme definovat toolTip a zároveň tam již žádný není
-            if (toolTip || (DIFICULTY.SHOW_TOOLTIP != SHOW_TOOLTIP.NEVER && this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].getAttribute("data-title") == null)){
+            if (toolTip || (DIFICULTY.SHOW_TOOLTIP != SHOW_TOOLTIP.NEVER && this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].getAttribute("data-title") == null)) {
                 //Danému poli v mapě, na kterém se nachází item se nastaví title obsahující vzdálenost itemu odhráče
                 this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].setAttribute("data-title", "Nejkratší vzdálenost: " + this.shortestWay(this.player.position, this.item[i].position, RETURN.COUNT))
             }
@@ -768,15 +783,22 @@ class Map {
      */
     checkPlayerPosition() {
 
+        debugger;
         //Pro všechny itemy
         for (let i = 0; i < this.item.length; i++)
             //Pokud hráč stojí na itemu
-            if (this.item[i].position.x == this.player.position.x && this.item[i].position.y == this.player.position.y) {  
+            if (this.item[i].position.x == this.player.position.x && this.item[i].position.y == this.player.position.y) {
 
-                //Pokud je dificulty itemu pod 1 a zároveň ji dekrementuji o jedna
-                if (this.item[i].dificulty-- < 1) {
+                //Načtu si grafiku itemu na pozci kde stojí hráč
+                let img = this.map.rows[this.player.position.y].cells[this.player.position.x].children[0].style.backgroundImage.split("/")[1].split('"')[0];
+
+                //Nastavím novou změněnou grafiku na pozici kde je hráč, jelikož obr má první číslici v názvu stejnou jako immunity změním tak grafiku itemu jako by byl o immunitu menší
+                this.map.rows[this.player.position.y].cells[this.player.position.x].children[0].style.backgroundImage = "url('img/" + ((parseInt(img.charAt(0))) - 1) + img.substr(1) + "')";
+
+                //Pokud je immunity itemu pod 1 a zároveň ji dekrementuji o jedna
+                if (this.item[i].immunity-- < 1) {
                     //Pokud měl vykreslenou cestu
-                    if(this.item[i].drawPath){
+                    if (this.item[i].drawPath) {
                         //Vymažu z mapy ozačená pole
                         this.clear();
                     }
@@ -788,7 +810,7 @@ class Map {
                     //Smažu item z gobálního pole itemů
                     this.item.splice(i, 1);
                     //Vracím item který na kterém jsem stál, a který jsem z pole předtím smazal
-                    return  returnItem;
+                    return returnItem;
                 }
 
             }
@@ -803,11 +825,11 @@ class Map {
      * 
      * @param return = vrací true,  v případě, že se na pozici nachází item v opačném případě false
      */
-    isItemOnPoint(point){
-        if(this.item.length == 0)
+    isItemOnPoint(point) {
+        if (this.item.length == 0)
             return false;
-        for(let item of this.item){
-            if(item.position.x == point.x && item.position.y == point.y){
+        for (let item of this.item) {
+            if (item.position.x == point.x && item.position.y == point.y) {
                 return true;
             }
         }

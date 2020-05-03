@@ -405,6 +405,11 @@ td.path {
   background-image: url(img/pathPoint.png)!important;
 }
 
+td.path.cell, td.cell.path {
+  background-image: url(img/pathPoint.png), url(img/cell.png)!important;
+}
+
+
 td.cell, td.valid.cell {
   background-size: cover;
   background-image: url(img/cell.png) !important;
@@ -415,11 +420,13 @@ td.cell, td.valid.cell {
 
 td.cell:hover, td.valid.cell:hover {
   transform: scale(1.2);
+  cursor: pointer;
 }
 
 td.cell:active, td.valid.cell:active {
   opacity: 0.2;
   transform: scale(0.7);
+  cursor: pointer;
 }  
 
 

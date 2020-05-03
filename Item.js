@@ -5,6 +5,7 @@ class Item {
 
         this.position = position;
         this.dificulty = dificulty;
+        this.immunity = this.dificulty;
         this.distance = distance;
         this.newDistance = 0;
         this.type = type;
