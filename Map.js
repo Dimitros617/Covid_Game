@@ -44,15 +44,19 @@ class Map {
                 let cell = document.createElement("td");
 
                 cell.onclick = function (e) {
+                    console.log("Start CLC: " + game.map.player.position.x + ":" + game.map.player.position.y);
                     let point = new Point(parseInt(e.target.id.split(":")[0]), parseInt(e.target.id.split(":")[1]));
                     if (window.game.map.indexOfPoint(game.map.validPosition, point) != null) {
                         window.game.map.player.moveTo(point);
                         window.game.nextRound();
                         e.target.parentNode.classList.remove("valid");
                     }
+                    console.log("End CLC: " + game.map.player.position.x + ":" + game.map.player.position.y);
                 }
 
+                //Funkce volána při double kliknu na jakoukoliv pozici na mapě, vykreslí cestu, nebo ji smaže od pozice hráče k danému místu na mapě, pokud je na něm libovolný item
                 cell.ondblclick = function (e) {
+                    console.log("Start DBL: " + game.map.player.position.x + ":" + game.map.player.position.y);
                     let point = new Point(parseInt(e.target.id.split(":")[0]), parseInt(e.target.id.split(":")[1]));
                     let itemsPoints = [];
                     for (let x of game.map.item)
@@ -65,10 +69,12 @@ class Map {
                         }
                         else {
                             game.map.item[indexOfItem].drawPath = true;
-                            window.game.map.shortestWay(window.game.map.player.position, point, RETURN.DRAW);
+                            //Vytvoření nového pointu z pozice hráče, aby nedošlo k předání poiteru na instanci Pointu, který by se jinak změnil
+                            let position = new Point(window.game.map.player.position.x, window.game.map.player.position.y);
+                            window.game.map.shortestWay(position, point, RETURN.DRAW);
                         }
                     }
-
+                    console.log("End DBL: " + game.map.player.position.x + ":" + game.map.player.position.y);
                 }
 
                 var cont = document.createElement("div");
@@ -313,7 +319,7 @@ class Map {
             if (newPoint == null)
                 continue;
             let cell = this.map.rows[newPoint.y].cells[newPoint.x];
-            cell.style.background = "";
+            //cell.style.background = "";
             cell.classList.add("cell");
 
             this.validPosition.push(newPoint);
@@ -506,14 +512,15 @@ class Map {
         let solution = [];
         this.shortestWaySolution = null;
         this.count = 0;
-        debugger;
         let limit = this.shortestWayCount(startPoint, endPoint);
         if (ret == RETURN.COUNT)
             return limit;
 
         console.log("limit: " + this.count);
+        var t0 = performance.now();
         this.shortestWayPath(startPoint, endPoint, solution, 0, limit);
-        console.log("Prošlých možností: " + this.count);
+        var t1 = performance.now()
+        console.log("Prošlých možností: " + this.count + " Celkový čas: " + (t1 - t0)/1000 + "s ");
         this.shortestWaySolution.push(endPoint);
         if (ret == RETURN.PATH) {
             return this.shortestWaySolution;
@@ -783,7 +790,6 @@ class Map {
      */
     checkPlayerPosition() {
 
-        debugger;
         //Pro všechny itemy
         for (let i = 0; i < this.item.length; i++)
             //Pokud hráč stojí na itemu
