@@ -40,6 +40,7 @@ class Game {
         this.newRule(0, null, null, 1, 0, ITEMTYPE.INFECTICITY);
         this.newRule(null, 1, "Testovací zpráva2", 3, 100, ITEMTYPE.HUMAN);
         this.newRule(null, 1, null, 0, 0, ITEMTYPE.HUMAN);
+        this.newRule(null, 3, "Hustý", 4, 0, ITEMTYPE.GROUP);
 
     }
 
@@ -49,13 +50,6 @@ class Game {
         this.checkActions();
         this.map.player.resetPosition();
         this.started = true;
-
-    }
-
-    wait() {
-
-        this.map.checkPlayerPosition();
-        this.checkActions();
 
     }
 

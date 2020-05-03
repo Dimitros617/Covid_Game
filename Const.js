@@ -19,7 +19,6 @@ const ROUND = x => document.getElementById("round").innerHTML = "KOLO - " + x;
  * @param {String} y = Co má být jako zpráva loadingu
  */
 const LOADING = (x,y) => {  document.getElementById("loadingText").innerHTML = y;
-                            document.getElementById("loading").style.zIndex = x == true ? "9" : "-9";
                             document.getElementById("loading").style.opacity = x == true ? "1" : "0";}
 
 const MAP_TABLE = document.getElementById("map");

@@ -445,8 +445,8 @@ div#loading {
   height: 100%;
   position: absolute;
   background-color: #ffffff7e;
-  z-index: -1;
-  /*display: none;*/
+  z-index: 2;
+  pointer-events: none;
   opacity: 0;
   transition-duration: 0.5s;
   transition-delay: 0.5s;

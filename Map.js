@@ -44,19 +44,16 @@ class Map {
                 let cell = document.createElement("td");
 
                 cell.onclick = function (e) {
-                    console.log("Start CLC: " + game.map.player.position.x + ":" + game.map.player.position.y);
                     let point = new Point(parseInt(e.target.id.split(":")[0]), parseInt(e.target.id.split(":")[1]));
                     if (window.game.map.indexOfPoint(game.map.validPosition, point) != null) {
                         window.game.map.player.moveTo(point);
                         window.game.nextRound();
                         e.target.parentNode.classList.remove("valid");
                     }
-                    console.log("End CLC: " + game.map.player.position.x + ":" + game.map.player.position.y);
                 }
 
                 //Funkce volána při double kliknu na jakoukoliv pozici na mapě, vykreslí cestu, nebo ji smaže od pozice hráče k danému místu na mapě, pokud je na něm libovolný item
                 cell.ondblclick = function (e) {
-                    console.log("Start DBL: " + game.map.player.position.x + ":" + game.map.player.position.y);
                     let point = new Point(parseInt(e.target.id.split(":")[0]), parseInt(e.target.id.split(":")[1]));
                     let itemsPoints = [];
                     for (let x of game.map.item)
@@ -74,7 +71,6 @@ class Map {
                             window.game.map.shortestWay(position, point, RETURN.DRAW);
                         }
                     }
-                    console.log("End DBL: " + game.map.player.position.x + ":" + game.map.player.position.y);
                 }
 
                 var cont = document.createElement("div");
@@ -106,7 +102,7 @@ class Map {
                 //x.target.children[0].style.width = (x.target.children[0].getBoundingClientRect().width / 2) * -1
             }
             else
-                game.wait();
+                game.nextRound();
         }
         this.map.rows[this.size / 2 - 1].cells[this.size / 2 - 1].children[0].appendChild(button);
 
@@ -522,6 +518,7 @@ class Map {
         setTimeout((startPoint, endPoint, solution, limit, ret) => {
 
             var t0 = performance.now();
+            debugger;
             this.shortestWayPath(startPoint, endPoint, solution, 0, limit);
             var t1 = performance.now()
             console.log("Prošlých možností: " + this.count + " Celkový čas: " + (t1 - t0)/1000 + "s ");
@@ -583,7 +580,6 @@ class Map {
         this.count++;
         solution.push(startPoint); //H = startpoint přidám do solutionu        
 
-        console.log(this.count);
         for (let k = 0; k < 4; k++) {
             let np = this.nextInDirection(startPoint, k);
             if (np != null) {
@@ -656,9 +652,6 @@ class Map {
             if (actions[i].round == round || actions[i].infected == infected)
                 validAction.push(actions[i]);
 
-        console.log("Valid actions: " + validAction.length);
-        console.log("All actions: " + actions.length);
-
         //předvyplníme pole existingItem 0 //pokud jsou k dyspozici nové informace o stavu generování itemů změní se globální pole lastItemCount
         for (let i = 0; i < ITEMTYPE.length; i++)
             for (let j = 0; j < 2; j++) {
@@ -670,7 +663,6 @@ class Map {
                 }
                 if (actualItems[ITEMTYPE.onIndex(i) + j] != null) {
                     this.lastItemCount[ITEMTYPE.onIndex(i) + j] = actualItems[ITEMTYPE.onIndex(i) + j];
-                    console.log(ITEMTYPE.onIndex(i) + j + ": " + actualItems[ITEMTYPE.onIndex(i) + j]);
                 }
             }
 
@@ -734,7 +726,6 @@ class Map {
                 }
             }
         }
-        console.log("velikost itemů na konci vytváření: " + this.item.length);
     }
 
     drawItems() {
