@@ -59,6 +59,12 @@ img {
   margin-top: 15px;
 }
 
+p {
+  font-family: 'Comfortaa';
+  color: #333333;
+  text-align: center;
+}
+
 /*-------------------------- animation --------------------------*/
 
 
@@ -114,25 +120,72 @@ div#info {
   margin-top: 5%;
   height: 50%;
   overflow: hidden;
+  transition-duration: 1s;
 }
 
 div#info.expand{
-
-    background-image: url(box.jpg);
-    background-position: top;
     width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-    border-radius: 14px 14px 14px 14px;
     height: 90%;
-    overflow: hidden;
     position: absolute;
     display: block;
     z-index: 10;
     margin-top: -15%;
     margin-left: 10%;
-
 }
+
+div#resizer {
+  font-family: 'Comfortaa';
+  text-align: center;
+  background: red;
+  font-size: 5px;
+  color: white;
+  padding: 5px 0px;
+  transition-duration: 1s;
+}
+
+div#resizer:hover {
+  font-family: 'Comfortaa';
+  text-align: center;
+  background: red;
+  font-size: 20px;
+  color: white;
+  padding: 10px 0px;
+  cursor: pointer;
+}
+
+div#content {
+  overflow-y: scroll;
+  padding-left: 20px;
+  padding-right: 20px;
+  height: 80%;
+}
+
+
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #afafaf;
+    height: 50%;
+    padding-right: -37px;
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #424242;
+  height: 50%;
+  margin-top: 16px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
 
 div#game {
   float: right;
@@ -472,6 +525,19 @@ div#loading {
   transition-duration: 0.5s;
   transition-delay: 0.5s;
   
+}
+
+div#imgPreview, div#imgPreviewLong {
+  height: 50px;
+  max-width: 100%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin-top: 60px;
+}
+
+div#imgPreviewLong {
+  height: 100px;
 }
 
 

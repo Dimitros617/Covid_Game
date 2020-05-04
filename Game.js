@@ -228,7 +228,6 @@ class Game {
                     
                 }
                 else if (e.keyCode == '40') {
-                    debugger;
                     let point = game.map.nextInDirection(game.map.player.position, DIRECTION.BOTTOM);
                     document.getElementById(point.x + ":" + point.y).click();
                     document.getElementById(point.x + ":" + point.y).focus();

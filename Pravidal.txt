@@ -1,4 +1,4 @@
-Covid-Game vlastně vůbec není hra, ale optimalizační úloha, ve které máte za úkol pomoci viru najít cestu k cíli. Pohybující se virus se může zastavit pouze o zeď nebo některého kamaráda (jiný virus). Dostat je rychle tam, kam potřebujeme, není proto vůbec jednoduché. Do celkového skore se započítává počet tahů (každý krok ubere 1 bod) a počet nakažených lidí. Každý nakažený přidá tolik bodů, jaká byla jeho vzdálenost od posledního sebraného itemu, poté trvá 4 kola, než dojde k tomu, že s danou pravděpodobností (ÚMRTNOST) zemře, v tom případě znovu přidá score o 1/2 jeho vzdalenosti, nebo se vyléčí v tom případě se ubere 2/3 jeho vzdalenosti. Po celou dobu, co je nakažený má každé kolo danou pravděpodobností (NAKAŽLIVOST) nakazí dalšího člověka, který bude mít stejnou hodnotu score, jako ten co ho nakazil. (Např. nakazím člověka který byl vzdálen 10 kroků, score se zvětší o 10, každé kolo mám šanci že přibyde další nakažený, který mi přidá dalších 10 bodů score. Po 4 dnech, buďto zemře, (přidá 5 bodů) nebo se uzdraví (Odebere 7 bodů).
+Covid-Game vlastně vůbec není hra, ale optimalizační úloha, ve které máte za úkol pomoci viru najít cestu k cíli. Pohybující se virus se může zastavit pouze o zeď nebo některého kamaráda (jiný virus). Dostat je rychle tam, kam potřebujeme, není proto vůbec jednoduché. Do celkového skore se započítává počet tahů (každý krok ubere 1 bod) a počet nakažených lidí. Každý nakažený přidá tolik bodů, jaká byla jeho vzdálenost od posledního sebraného itemu, poté trvá 4 kola, než dojde k tomu, že s danou pravděpodobností (ÚMRTNOST) zemře, v tom případě znovu přidá score o 1/2 jeho vzdalenosti, nebo se vyléčí v tom případě se ubere 2/3 jeho vzdalenosti. Po celou dobu, co je nakažený má každé kolo danou pravděpodobností (NAKAŽLIVOST) nakazí dalšího člověka, který bude mít stejnou hodnotu score, jako ten co ho nakazil.<br><br> (Např. nakazím člověka který byl vzdálen 10 kroků, score se zvětší o 10, každé kolo mám šanci že přibyde další nakažený, který mi přidá dalších 10 bodů score. Po 4 dnech, buďto zemře, (přidá 5 bodů) nebo se uzdraví (Odebere 7 bodů).
 
 
 
@@ -6,7 +6,7 @@ Covid-Game vlastně vůbec není hra, ale optimalizační úloha, ve které mát
 
 Člověk s rouškou si ji po stoupnutí na jeho pozici sundá, a je nutné buďto počkat jedno kolo na místě, nebo se na pole vrátit jindy.
 
-Skupinka, přidá se počítá jako 5* člověk bez roušky,
+Skupinkase počítá jako 5* člověk bez roušky.
 
 Šíření přidá 10% pravděpodobnosti NAKAŽLIVOSTI
 

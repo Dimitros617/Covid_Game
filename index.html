@@ -16,7 +16,7 @@
 
 <title> GAME | COVID-19</title>
 
-<body id="body" onload="this.game = new Game('scoreTable', 'news', 'map')">
+<body id="body" onload="this.game = new Game('scoreTable', 'news', 'map'), this.UI = new UI()">
     <!--         Tato stránka slouží pouze jako zlepšení přehledu informací z několik stránek nemá za cíl nihoko poškodit  | Autor: Dominik Frolík -->
 
 
@@ -68,7 +68,7 @@
         </div>
 
         <div id="info">
-            <select id="selectBox" onchange="UI.infoChange(this)">
+            <select id="selectBox" onchange="window.UI.infoChange(this)">
             </select>
         </div>
     </div>

@@ -44,7 +44,7 @@ const SCORE_DATA = {
 const MAP_SIZE = {
 
     EASY: 12,
-    MEDIUM: 16,
+    MEDIUM: 24,
     HARD: 20,
 
 };
