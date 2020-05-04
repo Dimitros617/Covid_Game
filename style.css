@@ -116,6 +116,24 @@ div#info {
   overflow: hidden;
 }
 
+div#info.expand{
+
+    background-image: url(box.jpg);
+    background-position: top;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 14px 14px 14px 14px;
+    height: 90%;
+    overflow: hidden;
+    position: absolute;
+    display: block;
+    z-index: 10;
+    margin-top: -15%;
+    margin-left: 10%;
+
+}
+
 div#game {
   float: right;
   width: 60%;
@@ -342,7 +360,7 @@ div#player:hover {
   cursor: pointer;
 }
 
-div#player:active {
+div#player:active, div#player:focus {
   transition-duration: 0.3s;
   transform: scale(0.8);
   cursor: pointer;
@@ -375,7 +393,7 @@ div#player:active {
 }
 
 
-.mainButton:active {
+.mainButton:active, .mainButton:focus {
   background: rgb(255, 47, 47);
   transform: scale(0.9);
   cursor: pointer;
@@ -426,7 +444,7 @@ td.cell:hover, td.valid.cell:hover {
   cursor: pointer;
 }
 
-td.cell:active, td.valid.cell:active {
+td.cell:active, td.valid.cell:active, td.cell:focus, td.valid.cell:focus  {
   opacity: 0.2;
   transform: scale(0.7);
   cursor: pointer;

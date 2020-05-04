@@ -14,6 +14,8 @@ class Map {
     err;
     cellColor;
 
+    mainButton;
+
     constructor(size) {
 
         this.size = size;
@@ -44,41 +46,44 @@ class Map {
                 let cell = document.createElement("td");
 
                 cell.onclick = function (e) {
-                    //Point na který se kliknulo
-                    let point = new Point(parseInt(e.target.id.split(":")[0]), parseInt(e.target.id.split(":")[1]));
-                    //Pokud je to validní pozice na kterou hráč může (max 3 pointy z jeho pozice)
-                    if (window.game.map.indexOfPoint(game.map.validPosition, point) != null) {
-                        //Smaže označní cesty mezi aktuální a novou právě kliknutou pozicí (point)
-                        //window.game.map.drawPointToPoint(window.game.map.player.position, point,"path",false);
-                        //Posunu hráče na danou pozici, a znovu vykreslím kam může z nové pozice
-                        window.game.map.player.moveTo(point);
-                        //Předám hře nové kolo
-                        window.game.nextRound();
-                        //Z dané pozice kde hráč byl vymažu class valid (Aktuální jen před zahájením hry, šedivé pozice)
-                        e.target.parentNode.classList.remove("valid");
-                        e.target.parentNode.classList.remove("validLast");
+                    //pokud stav hry není null (tedy game Over)
+                    if (game.started != null) {
+                        //Point na který se kliknulo
+                        let point = new Point(parseInt(e.target.id.split(":")[0]), parseInt(e.target.id.split(":")[1]));
+                        //Pokud je to validní pozice na kterou hráč může (max 3 pointy z jeho pozice)
+                        if (window.game.map.indexOfPoint(game.map.validPosition, point) != null) {
+                            //Smaže označní cesty mezi aktuální a novou právě kliknutou pozicí (point)
+                            //window.game.map.drawPointToPoint(window.game.map.player.position, point,"path",false);
+                            //Posunu hráče na danou pozici, a znovu vykreslím kam může z nové pozice
+                            window.game.map.player.moveTo(point);
+                            //Předám hře nové kolo
+                            window.game.nextRound();
+                            //Z dané pozice kde hráč byl vymažu class valid (Aktuální jen před zahájením hry, šedivé pozice)
+                            e.target.parentNode.classList.remove("valid");
+                            e.target.parentNode.classList.remove("validLast");
+                        }
                     }
                 }
 
                 //Funkce volána při double kliknu na jakoukoliv pozici na mapě, vykreslí cestu, nebo ji smaže od pozice hráče k danému místu na mapě, pokud je na něm libovolný item
                 cell.ondblclick = function (e) {
-                    let point = new Point(parseInt(e.target.id.split(":")[0]), parseInt(e.target.id.split(":")[1]));
-                    let itemsPoints = [];
-                    for (let x of game.map.item)
-                        itemsPoints.push(x.position);
-                    let indexOfItem = window.game.map.indexOfPoint(itemsPoints, point);
-                    if (game.map.isItemOnPoint(point)) {
-                        if (game.map.item[indexOfItem].drawPath) {
-                            game.map.item[indexOfItem].drawPath = false;
-                            game.map.clear();
+                        let point = new Point(parseInt(e.target.id.split(":")[0]), parseInt(e.target.id.split(":")[1]));
+                        let itemsPoints = [];
+                        for (let x of game.map.item)
+                            itemsPoints.push(x.position);
+                        let indexOfItem = window.game.map.indexOfPoint(itemsPoints, point);
+                        if (game.map.isItemOnPoint(point)) {
+                            if (game.map.item[indexOfItem].drawPath) {
+                                game.map.item[indexOfItem].drawPath = false;
+                                game.map.clear();
+                            }
+                            else {
+                                game.map.item[indexOfItem].drawPath = true;
+                                //Vytvoření nového pointu z pozice hráče, aby nedošlo k předání poiteru na instanci Pointu, který by se jinak změnil
+                                let position = new Point(window.game.map.player.position.x, window.game.map.player.position.y);
+                                window.game.map.shortestWay(position, point, RETURN.DRAW);
+                            }
                         }
-                        else {
-                            game.map.item[indexOfItem].drawPath = true;
-                            //Vytvoření nového pointu z pozice hráče, aby nedošlo k předání poiteru na instanci Pointu, který by se jinak změnil
-                            let position = new Point(window.game.map.player.position.x, window.game.map.player.position.y);
-                            window.game.map.shortestWay(position, point, RETURN.DRAW);
-                        }
-                    }
                 }
 
                 var cont = document.createElement("div");
@@ -103,15 +108,20 @@ class Map {
 
         //button.appendChild(buttonText);
         button.onclick = function (x) {
-            if (!window.game.started) {
+            if (window.game.started == false && window.game.started != null) {
                 game.start();
                 x.target.innerHTML = "POČKAT";
                 x.target.style.fontSize = "x-small";
                 //x.target.children[0].style.width = (x.target.children[0].getBoundingClientRect().width / 2) * -1
             }
-            else
+            else {
                 game.nextRound();
+                game.map.player.me.focus();
+                setTimeout(() => { game.map.player.me.blur() }, 250);
+            }
+            x.target.blur();
         }
+        this.mainButton = button;
         this.map.rows[this.size / 2 - 1].cells[this.size / 2 - 1].children[0].appendChild(button);
 
         //-- nastavení vnějšího ohraničení okolo startu
@@ -528,17 +538,17 @@ class Map {
             var t0 = performance.now();
             this.shortestWayPath(startPoint, endPoint, solution, 0, limit);
             var t1 = performance.now()
-            console.log("Prošlých možností: " + this.count + " Celkový čas: " + (t1 - t0)/1000 + "s ");
+            console.log("Prošlých možností: " + this.count + " Celkový čas: " + (t1 - t0) / 1000 + "s ");
             this.shortestWaySolution.push(endPoint);
-            LOADING(false);    
+            LOADING(false);
             if (ret == RETURN.DRAW) {
                 this.drawPath(this.shortestWaySolution);
             }
 
-            
+
         }, 50, startPoint, endPoint, solution, limit, ret);
 
-        
+
 
 
 
@@ -632,7 +642,7 @@ class Map {
      * @param {String} className = s jakým class namem budeme pracovat
      * @param {Boolean} add == true v případě, že chci přidat, false v případě že odbrat
      */
-    drawPointToPoint(sp, ep, className, add){
+    drawPointToPoint(sp, ep, className, add) {
 
         //Výpočet směru posunu v ose X
         let xMove = (ep.x - sp.x) == 0 ? 0 : (ep.x - sp.x) > 0 ? 1 : -1;
@@ -641,21 +651,21 @@ class Map {
         // Celková délka mezi body
         let length = Math.abs((ep.x - sp.x)) > Math.abs((ep.y - sp.y)) ? Math.abs((ep.x - sp.x)) : Math.abs((ep.y - sp.y));
 
-        if(add){
+        if (add) {
             this.map.rows[sp.y].cells[sp.x].classList.add(className);
         }
-        else{
-            this.map.rows[sp.y].cells[sp.x].classList.remove(className);    
+        else {
+            this.map.rows[sp.y].cells[sp.x].classList.remove(className);
         }
         //Pro celou vzdálenost mezi body 
         for (let j = 0; j < length; j++) {
 
-            if(add){
+            if (add) {
                 this.map.rows[sp.y += yMove].cells[sp.x += xMove].classList.add(className);
             }
-            else{
+            else {
                 this.map.rows[sp.y += yMove].cells[sp.x += xMove].classList.remove(className);
-            }    
+            }
 
         }
     }
@@ -758,6 +768,18 @@ class Map {
             }
         }
 
+
+
+        //Vymažeme z pole this.lastItemCount akce které se mají provést pouze jednou
+        for (let k = 0; k < validAction.length; k++) {
+            if (validAction[k].repeat == false) {
+                this.lastItemCount[validAction[k].type + validAction[k].dificulty] -= validAction[k].itemCount;
+                if (this.lastItemCount[validAction[k].type + validAction[k].dificulty] == 0) {
+                    delete this.lastItemCount[validAction[k].type + validAction[k].dificulty];
+                }
+            }
+        }
+
         this.drawItems();
     }
 
@@ -849,9 +871,9 @@ class Map {
                     }
 
                     //Pro všechny itemy 
-                    for (let j = 0; j < this.item.length; j++){
+                    for (let j = 0; j < this.item.length; j++) {
                         //přepočítám vzdálenost jak je item daleko od hráče, (pro přičtení bodů)
-                        this.item[j].distance = this.shortestWay(this.player.position,this.item[j].position,RETURN.COUNT);
+                        this.item[j].distance = this.shortestWay(this.player.position, this.item[j].position, RETURN.COUNT);
                     }
 
                     //Vymažu z daného pole grafiku itemu

@@ -19,19 +19,29 @@ class Game {
         //vykreslím do mapy všechny validní a dosažitelné pozice
         this.map.drawAllValid();
 
+        this.setArrows();
+
+
+        SCORE(SCORE_DATA.SCORE);
+        MORTALITY(SCORE_DATA.MORTALITY);
+        INFECTICITY(SCORE_DATA.INFECTICITY);
+        INFECTED(SCORE_DATA.INFECTED.length);
+        DEAD(SCORE_DATA.DEAD);
+        HEAL(SCORE_DATA.HEAL);
+
     }
 
     createScenary() {
 
         // kolo, nakažení, zpráva, počet, obtížnost, type
-        this.newRule(0, null, "Testovací zpráva1", 5, 0, ITEMTYPE.HUMAN);
-        this.newRule(0, null, null, 1, 0, ITEMTYPE.GROUP);
-        this.newRule(0, null, null, 1, 0, ITEMTYPE.MORTALITY);
-        this.newRule(0, null, null, 1, 0, ITEMTYPE.INFECTICITY);
+        this.newRule(0, null, "Testovací zpráva1", 5, 0, ITEMTYPE.HUMAN, true);
+        this.newRule(0, null, null, 1, 0, ITEMTYPE.GROUP, true);
+        this.newRule(0, null, null, 1, 0, ITEMTYPE.MORTALITY, false);
+        this.newRule(0, null, null, 1, 0, ITEMTYPE.INFECTICITY, false);
 
-        this.newRule(null, 1, "Testovací zpráva2", 3, 100, ITEMTYPE.HUMAN);
-        this.newRule(null, 1, null, 0, 0, ITEMTYPE.HUMAN);
-        this.newRule(null, 2, "Testovací zpráva3", 0, 100, ITEMTYPE.HUMAN);
+        this.newRule(null, 1, "Testovací zpráva2", 3, 100, ITEMTYPE.HUMAN, true);
+        this.newRule(null, 1, null, 0, 0, ITEMTYPE.HUMAN, true);
+        this.newRule(null, 2, "Testovací zpráva3", 0, 100, ITEMTYPE.HUMAN, true);
         //this.newRule(null, 3, "Hustý", 4, 0, ITEMTYPE.GROUP);
 
     }
@@ -45,8 +55,21 @@ class Game {
 
     }
 
+    gameOver() {
+
+        this.started = null;
+        this.map.mainButton.innerHTML = "ZNOVU";
+        NEWS("Hra skončila");
+
+    }
+
 
     nextRound() {
+
+        if(SCORE_DATA.SCORE <= 0){
+            this.gameOver();
+            return;
+        }
 
 
         let cell = this.map.checkPlayerPosition();
@@ -101,6 +124,10 @@ class Game {
             ROUND(++this.round);
             this.checkActions();
         }
+
+
+
+
     }
 
 
@@ -130,60 +157,103 @@ class Game {
 
     checkInfected() {
 
-        LOADING(true,"Počítám šíření, a nakazuji nové lidi...");
+        LOADING(true, "Počítám šíření, a nakazuji nové lidi...");
 
         setTimeout(() => {
 
             //let length = SCORE_DATA.INFECTED.length;
-        for (let i = 0; i < SCORE_DATA.INFECTED.length; i++) {
-            if (RANDOM_NUMBER(0, 100) < SCORE_DATA.INFECTICITY) {
-                SCORE_DATA.INFECTED.push({ liveSpan: PEOPLE_INFECTED_DAY, value: SCORE_DATA.INFECTED[i].value });
-                SCORE(SCORE_DATA.SCORE += SCORE_DATA.INFECTED[i].value);
-            }
-            if (--SCORE_DATA.INFECTED[i].liveSpan < 0) {
-                
-                if (RANDOM_NUMBER(0, 100) < SCORE_DATA.MORTALITY) {
-                    DEAD(++SCORE_DATA.DEAD);
-                    SCORE(SCORE_DATA.SCORE += SCORE_DATA.INFECTED[i].value / 2)
+            for (let i = 0; i < SCORE_DATA.INFECTED.length; i++) {
+                if (RANDOM_NUMBER(0, 100) < SCORE_DATA.INFECTICITY) {
+                    SCORE_DATA.INFECTED.push({ liveSpan: PEOPLE_INFECTED_DAY, value: SCORE_DATA.INFECTED[i].value });
+                    SCORE(SCORE_DATA.SCORE += SCORE_DATA.INFECTED[i].value);
                 }
-                else {
-                    HEAL(++SCORE_DATA.HEAL)
+                if (--SCORE_DATA.INFECTED[i].liveSpan < 0) {
+
+                    if (RANDOM_NUMBER(0, 100) < SCORE_DATA.MORTALITY) {
+                        DEAD(++SCORE_DATA.DEAD);
+                        SCORE(SCORE_DATA.SCORE += SCORE_DATA.INFECTED[i].value / 2)
+                    }
+                    else {
+                        HEAL(++SCORE_DATA.HEAL);
+                        SCORE(SCORE_DATA.SCORE -= parseInt(SCORE_DATA.INFECTED[i].value / 1.5));
+                    }
+                    SCORE_DATA.INFECTED.splice(i, 1);
+                    i--;
                 }
-                SCORE_DATA.INFECTED.splice(i, 1);
-                i--;
+                INFECTED(SCORE_DATA.INFECTED.length);
             }
-            INFECTED(SCORE_DATA.INFECTED.length);
-        }
-        LOADING(false,"Počítám šíření a nakazuji nové lidi...");
+            LOADING(false, "Počítám šíření a nakazuji nové lidi...");
         }, 100);
-        
+
     }
 
 
-    getAverageInfecticity(){
+    getAverageInfecticity() {
 
-        if(SCORE_DATA.INFECTED.length == 0){
-            if(SCORE_DATA.INFECTICITY > 10){
+        if (SCORE_DATA.INFECTED.length == 0) {
+            if (SCORE_DATA.INFECTICITY > 10) {
                 return --SCORE_DATA.INFECTICITY;
             }
-            else{
+            else {
                 return SCORE_DATA.INFECTICITY;
             }
-            
+
         }
         let result = 0;
-        for(let i = 0; i < SCORE_DATA.INFECTED.length; i++){
+        for (let i = 0; i < SCORE_DATA.INFECTED.length; i++) {
             result += SCORE_DATA.INFECTED[i].value;
         }
         console.log("Raw součet: " + result);
-        result = (result/SCORE_DATA.INFECTED.length) * 5;
+        result = (result / SCORE_DATA.INFECTED.length) * 5;
         console.log("Prumer vzdalenosti *4: " + result);
-        return (result < SCORE_DATA.INFECTICITY ? --SCORE_DATA.INFECTICITY : result );
+        return (result < SCORE_DATA.INFECTICITY ? --SCORE_DATA.INFECTICITY : result);
     }
 
 
-    newRule(round, infected, news, itemCount, chance, type) {
-        this.actions.push(new Action(round, infected, news, itemCount, chance, type));
+    newRule(round, infected, news, itemCount, chance, type, repeat) {
+        this.actions.push(new Action(round, infected, news, itemCount, chance, type, repeat));
+    }
+
+    setArrows() {
+
+        document.onkeydown = function (e) {
+
+            if (game.started != null) {
+                e = e || window.event;
+                if (e.keyCode == '38') {
+                    let point = game.map.nextInDirection(game.map.player.position, DIRECTION.TOP);
+                    document.getElementById(point.x + ":" + point.y).click();
+                    document.getElementById(point.x + ":" + point.y).focus();
+                    setTimeout(() => {document.getElementById(point.x + ":" + point.y).blur()}, 250);
+                    
+                }
+                else if (e.keyCode == '40') {
+                    debugger;
+                    let point = game.map.nextInDirection(game.map.player.position, DIRECTION.BOTTOM);
+                    document.getElementById(point.x + ":" + point.y).click();
+                    document.getElementById(point.x + ":" + point.y).focus();
+                    setTimeout(() => {document.getElementById(point.x + ":" + point.y).blur()}, 250);
+                }
+                else if (e.keyCode == '37') {
+                    let point = game.map.nextInDirection(game.map.player.position, DIRECTION.LEFT);
+                    document.getElementById(point.x + ":" + point.y).click();
+                    document.getElementById(point.x + ":" + point.y).focus();
+                    setTimeout(() => {document.getElementById(point.x + ":" + point.y).blur()}, 250);
+                }
+                else if (e.keyCode == '39') {
+                    let point = game.map.nextInDirection(game.map.player.position, DIRECTION.RIGHT);
+                    document.getElementById(point.x + ":" + point.y).click();
+                    document.getElementById(point.x + ":" + point.y).focus();
+                    setTimeout(() => {document.getElementById(point.x + ":" + point.y).blur()}, 250);
+                }
+                else if(e.keyCode == '32'){
+                    game.map.mainButton.click();
+                    game.map.mainButton.focus();
+                    setTimeout(() => {game.map.mainButton.blur()}, 150);
+                }
+            }
+        }
+
     }
 }
 

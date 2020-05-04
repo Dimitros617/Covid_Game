@@ -1,6 +1,6 @@
 const TITLE = "GAME | COVID-19";
 const PEOPLE_INFECTED_DAY = 4; // Počet dní před tím než zemřou
-const START_SCORE = 100;
+const START_SCORE = 10;
 
 const SPREAD_MULTIPLIER = 2;
 
@@ -26,7 +26,7 @@ const LOADING = (x, y) => {
 }
 
 const MAP_TABLE = document.getElementById("map");
-
+const DIV_INFO = document.getElementById("info");
 
 
 const SCORE_DATA = {
@@ -88,6 +88,13 @@ const TYPE = {
     LAST: 1,
     RAND: 2,
 
+};
+
+const DIRECTION = {
+    TOP: 0,
+    RIGHT: 1,
+    BOTTOM: 2,
+    LEFT: 3,
 };
 
 const ITEMTYPE = {
