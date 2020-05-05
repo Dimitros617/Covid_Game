@@ -25,6 +25,7 @@ class Map {
         this.item = [];
         this.lastItemCount = [];
         this.cellColor = "#efefef";
+        this.itemWasOnPosition = false;
 
         this.player = new Player(this);
         this.createMap();
@@ -78,10 +79,16 @@ class Map {
                                 game.map.clear();
                             }
                             else {
-                                game.map.item[indexOfItem].drawPath = true;
-                                //Vytvoření nového pointu z pozice hráče, aby nedošlo k předání poiteru na instanci Pointu, který by se jinak změnil
-                                let position = new Point(window.game.map.player.position.x, window.game.map.player.position.y);
-                                window.game.map.shortestWay(position, point, RETURN.DRAW);
+                                if(SCORE_DATA.SCORE-20 > 0){
+                                    game.map.item[indexOfItem].drawPath = true;
+                                    //Vytvoření nového pointu z pozice hráče, aby nedošlo k předání poiteru na instanci Pointu, který by se jinak změnil
+                                    let position = new Point(window.game.map.player.position.x, window.game.map.player.position.y);
+                                    window.game.map.shortestWay(position, point, RETURN.DRAW);
+                                    SCORE(SCORE_DATA.SCORE -= 20);
+                                }
+                                else{
+                                    ACHIEVEMENT("Na to bohužel nemáš dostatek bodů, ukázka cesty stojí 20 bodů.","img/exclamation.png");
+                                }
                             }
                         }
                 }
@@ -114,10 +121,13 @@ class Map {
                 x.target.style.fontSize = "x-small";
                 //x.target.children[0].style.width = (x.target.children[0].getBoundingClientRect().width / 2) * -1
             }
-            else {
+            else if(window.game.started == true && window.game.started != null){
                 game.nextRound();
                 game.map.player.me.focus();
                 setTimeout(() => { game.map.player.me.blur() }, 250);
+            }
+            else{
+                game.reStart();
             }
             x.target.blur();
         }
@@ -325,21 +335,16 @@ class Map {
         for (let i = 0; i < this.validPosition.length; i++)
             this.map.rows[this.validPosition[i].y].cells[this.validPosition[i].x].classList.remove("cell");
 
-        //this.map.rows[this.validPosition[i].y].cells[this.validPosition[i].x].style.background = this.cellColor;
-
         this.validPosition = [];
         for (let i = 0; i < 4; i++) {
             let newPoint = this.nextInDirection(point, i);
             if (newPoint == null)
                 continue;
             let cell = this.map.rows[newPoint.y].cells[newPoint.x];
-            //cell.style.background = "";
             cell.classList.add("cell");
 
             this.validPosition.push(newPoint);
         }
-
-
     }
 
 
@@ -687,7 +692,6 @@ class Map {
         let actualItems = [];
 
         //do pole validAction se uloží aktuální akce
-        debugger;
         for (let i = 0; i < actions.length; i++){
             if (SCORE_DATA.onIndex(actions[i].typeOfScore) >= Math.abs(actions[i].value) && actions[i].value >= 0){
                 validAction.push(actions[i]);
@@ -736,7 +740,7 @@ class Map {
                     //Vygeneruju náhodné validní body v random vzdálenosti od hráče, a zkontroluji zda se na něm náhodou již nějáký item nenachází, pokud ano generuji znovu.
                     do {
                         if (safetyCycle++ > 5000) {
-                            alert("Ups... Prošel jsem 1000 náhodných možností, a nepovedlo se mi najít místo pro další Item.");
+                            ACHIEVEMENT("Ups... Prošel jsem 1000 náhodných možností, a nepovedlo se mi najít místo pro další Item.","img/exclamation.png");
                             break;
                         }
 
@@ -790,13 +794,15 @@ class Map {
 
     drawItems() {
 
-        //Pokud je pole s itemama prázdné vyhodím chybu
+        //Pokud je pole s itemama prázdné končím s vykrelsováním
         if (this.item.length == 0) {
-            throw "Not enought items";
+            return;
         }
 
         //prom toolTip obsahuje booleanovskou hodnotu zda se má itemům přidat hover Title s nápovědou o vzdálenosti hráče od daného itemu podle definované DIFICULTY
-        let toolTip = (((this.isItemOnPoint(this.player.position) && DIFICULTY.SHOW_TOOLTIP == SHOW_TOOLTIP.EVERY_CATCH)) || (DIFICULTY.SHOW_TOOLTIP == SHOW_TOOLTIP.EVERY_STEP));
+        let b = this.itemWasOnPosition;
+        let a = (this.itemWasOnPosition && DIFICULTY.SHOW_TOOLTIP == SHOW_TOOLTIP.EVERY_CATCH);
+        let toolTip = ((this.itemWasOnPosition && DIFICULTY.SHOW_TOOLTIP == SHOW_TOOLTIP.EVERY_CATCH)) || (DIFICULTY.SHOW_TOOLTIP == SHOW_TOOLTIP.EVERY_STEP);
         //Pro všechny itemy 
         for (let i = 0; i < this.item.length; i++) {
 
@@ -804,6 +810,9 @@ class Map {
             if (toolTip || (DIFICULTY.SHOW_TOOLTIP != SHOW_TOOLTIP.NEVER && this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].getAttribute("data-title") == null)) {
                 //Danému poli v mapě, na kterém se nachází item se nastaví title obsahující vzdálenost itemu odhráče
                 this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].setAttribute("data-title", "Nejkratší vzdálenost: " + this.shortestWay(this.player.position, this.item[i].position, RETURN.COUNT))
+            }
+            else if(!toolTip && DIFICULTY.SHOW_TOOLTIP == SHOW_TOOLTIP.NEVER){
+                this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].removeAttribute("data-title");
             }
 
             //Pokud již daný item na pozici v mapě nemá vykreslený obrázek 
@@ -888,10 +897,15 @@ class Map {
                     let returnItem = this.item[i];
                     //Smažu item z gobálního pole itemů
                     this.item.splice(i, 1);
+                    //Nastavím globální proměnou že na této pozici byl item na true
+                    this.itemWasOnPosition = true;
                     //Vracím item který na kterém jsem stál, a který jsem z pole předtím smazal
                     return returnItem;
                 }
 
+            }
+            else{
+                this.itemWasOnPosition = false;
             }
 
         //Jinak vracím list class danného pole, na kterém stojí hráč

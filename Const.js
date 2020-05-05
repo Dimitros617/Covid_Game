@@ -5,16 +5,17 @@ const START_SCORE = 10;
 const SPREAD_MULTIPLIER = 2;
 
 
-const SCORE = x => document.getElementById("score").innerHTML = x > 1000000 ? (x / 1000000).toFixed(2) + "M" : x > 1000 ? parseInt(x / 1000) + "K" : x;
-const MORTALITY = x => document.getElementById("mortality").innerHTML = x > 100 ? 100 : x + "%";
-const INFECTICITY = x => document.getElementById("infecticity").innerHTML = x > 100 ? 100 : x + "%";
+const SCORE = x => document.getElementById("score").innerHTML = x > 1000000 ? (x / 1000000).toFixed(2) + "M" : x > 1000 ? (x / 1000).toFixed(2) + "K" : x;
+const MORTALITY = x => document.getElementById("mortality").innerHTML =  x > 100 ? 100 + "%": x + "%";
+const INFECTICITY = x => document.getElementById("infecticity").innerHTML = x > 100 ? 100 + "%": x + "%";
 const INFECTED = x => document.getElementById("infected").innerHTML = x > 1000 ? (x / 1000).toFixed(2) + "K" : x;
-const DEAD = x => document.getElementById("dead").innerHTML = x > 1000 ? parseInt(x / 1000) + "K" : x;
-const HEAL = x => document.getElementById("Heal").innerHTML = x > 1000 ? parseInt(x / 1000) + "K" : x;
+const DEAD = x => document.getElementById("dead").innerHTML = x > 1000 ? (x / 1000).toFixed(2) + "K" : x;
+const HEAL = x => document.getElementById("Heal").innerHTML = x > 1000 ? (x / 1000).toFixed(2) + "K" : x;
 
 const NEWS = x => document.getElementById("text").innerHTML = x;
 const ROUND = x => document.getElementById("round").innerHTML = "KOLO - " + x;
 
+const ACHIEVEMENT = (text, img) => window.UI.showAchievement(text, img);
 /**
  * 
  * @param {Boolean} x = true, pokud cheme zobrazi loadin, nebo false pokud ho chcem ukončit
@@ -25,8 +26,11 @@ const LOADING = (x, y) => {
     document.getElementById("loading").style.opacity = x == true ? "1" : "0";
 }
 
+
 const MAP_TABLE = document.getElementById("map");
 const DIV_INFO = document.getElementById("info");
+const ADD_MORTALITY = document.getElementById("addMortality");
+const ADD_INFECTICITY = document.getElementById("addInfecticity");
 
 
 const SCORE_DATA = {
@@ -56,7 +60,6 @@ const SCORE_DATA = {
                 return null;
         }
     }
-
 };
 
 
@@ -66,6 +69,32 @@ const MAP_SIZE = {
     MEDIUM: 16,
     HARD: 20,
 
+    onIndex(x) {
+        switch (x) {
+            case 0:
+                return this.EASY;
+            case 1:
+                return this.MEDIUM;
+            case 2:
+                return this.HARD;
+
+            default:
+                break;
+        }
+    },
+
+    toString(x) {
+        switch (x) {
+            case 0:
+                return "Malá 12x12";
+            case 1:
+                return "Střední 16x16";
+            case 2:
+                return "Velká 20x20";
+            default:
+                break;
+        }
+    }
 };
 
 const SHOW_TOOLTIP = {
@@ -74,6 +103,19 @@ const SHOW_TOOLTIP = {
     EVERY_CATCH: 1,
     NEVER: 2,
 
+    onIndex(x) {
+        switch (x) {
+            case 0:
+                return this.EVERY_STEP;
+            case 1:
+                return this.EVERY_CATCH;
+            case 2:
+                return this.NEVER;
+
+            default:
+                break;
+        }
+    },
 };
 
 const MULTIPLAYER = {
@@ -151,6 +193,11 @@ const ITEMTYPE = {
     }
 
 };
+
+const POSITON = {
+    VERTICAL: 0,
+    HORIZONTAL: 1,
+}
 
 const RANDOM_NUMBER = (minimum, maximum) => Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
 

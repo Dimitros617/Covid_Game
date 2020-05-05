@@ -16,7 +16,7 @@
 
 <title> GAME | COVID-19</title>
 
-<body id="body" onload="this.game = new Game('scoreTable', 'news', 'map'), this.UI = new UI()">
+<body id="body" onload="this.game = new Game(), this.UI = new UI()">
     <!--         Tato stránka slouží pouze jako zlepšení přehledu informací z několik stránek nemá za cíl nihoko poškodit  | Autor: Dominik Frolík -->
 
 
@@ -45,10 +45,12 @@
                     <label id="scoreLabel">BODY</label>
                 </div>
                 <div id="divMortality">
+                    <label id="addMortality">&#10010;</label>
                     <label id="mortality">50%</label>
                     <label id="mortalityLabel">Úmrtnost</label>
                 </div>
                 <div id="divInfecticity">
+                    <label id="addInfecticity">&#10010;</label>
                     <label id="infecticity">10%</label>
                     <label id="infecticityLabel">Nakažlivost</label>
                 </div>
@@ -80,8 +82,8 @@
     </div>
 
     <div id="news">
-        <div id="live" class="blob">&bull; ŽIVĚ</div>
-        <div id="text"> Web je aktuálně ve vývoji. to co vidíte je prozaím Alfa verze. pokuste se zbavit všech šedivých čtverečků v mapě.</div>
+    <div id="live" class="blob" onclick="{window.UI.showAchievement('<a href\'http:\/\/dominikfrolik.cz/\'> Děkuji za hraní </a>','img/copyright.png')}">&bull; ŽIVĚ</div>
+        <div id="text"> Užijte si hru...</div>
         <div id="round">KOLO - 00</div>
     </div>
 
