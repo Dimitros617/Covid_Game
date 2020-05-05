@@ -160,6 +160,14 @@ div#content {
   height: 80%;
 }
 
+div#content.expand {
+  padding-left: 150px;
+  padding-right: 150px;
+  height: 82%;
+  font-size: 25px;
+  margin-top: 20px;
+}
+
 
 ::-webkit-scrollbar {
   width: 7px;

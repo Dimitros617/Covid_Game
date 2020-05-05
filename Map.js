@@ -679,18 +679,23 @@ class Map {
         this.setAvailableDirection(this.player.position);
     }
 
-    createItems(round, infected, actions) {
+    createItems(actions) {
 
         // Do pole se uloží jen akce které jsou aktuální podle počtu nakažených nebo podle čísla kola
         let validAction = [];
         let existingItems = [];
         let actualItems = [];
 
-
-        //do pole validAction se uloží aktuální
-        for (let i = 0; i < actions.length; i++)
-            if ((actions[i].round <= round && actions[i].round != null) || (actions[i].infected <= infected && actions[i].infected != null))
+        //do pole validAction se uloží aktuální akce
+        debugger;
+        for (let i = 0; i < actions.length; i++){
+            if (SCORE_DATA.onIndex(actions[i].typeOfScore) >= Math.abs(actions[i].value) && actions[i].value >= 0){
                 validAction.push(actions[i]);
+            }
+            if (SCORE_DATA.onIndex(actions[i].typeOfScore) <= Math.abs(actions[i].value) && actions[i].value < 0){
+                validAction.push(actions[i]);
+            }
+        }
 
 
         //předvyplníme pole existingItem 0 //pokud jsou k dyspozici nové informace o stavu generování itemů změní se globální pole lastItemCount

@@ -31,10 +31,12 @@ class UI {
 
             if(list.length == 0){
                 DIV_INFO.classList.add("expand");
+                DIV_INFO.children[2].classList.add("expand");
                 e.target.innerHTML = "Zmenšit";
             }
             else{
                 DIV_INFO.classList.remove("expand");
+                DIV_INFO.children[2].classList.remove("expand");
                 e.target.innerHTML = "Zvětšit";
             }
 

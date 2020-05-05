@@ -5,12 +5,12 @@ const START_SCORE = 10;
 const SPREAD_MULTIPLIER = 2;
 
 
-const SCORE = x => document.getElementById("score").innerHTML = x > 1000000 ? (x/1000000).toFixed(2) + "M": x > 1000 ? parseInt(x/1000) + "K": x;
-const MORTALITY = x => document.getElementById("mortality").innerHTML = x + "%";
-const INFECTICITY = x => document.getElementById("infecticity").innerHTML = x + "%";
-const INFECTED = x => document.getElementById("infected").innerHTML = x > 1000 ? parseInt(x/1000) + "K": x;
-const DEAD = x => document.getElementById("dead").innerHTML = x > 1000 ? parseInt(x/1000) + "K": x;
-const HEAL = x => document.getElementById("Heal").innerHTML = x > 1000 ? parseInt(x/1000) + "K": x;
+const SCORE = x => document.getElementById("score").innerHTML = x > 1000000 ? (x / 1000000).toFixed(2) + "M" : x > 1000 ? parseInt(x / 1000) + "K" : x;
+const MORTALITY = x => document.getElementById("mortality").innerHTML = x > 100 ? 100 : x + "%";
+const INFECTICITY = x => document.getElementById("infecticity").innerHTML = x > 100 ? 100 : x + "%";
+const INFECTED = x => document.getElementById("infected").innerHTML = x > 1000 ? (x / 1000).toFixed(2) + "K" : x;
+const DEAD = x => document.getElementById("dead").innerHTML = x > 1000 ? parseInt(x / 1000) + "K" : x;
+const HEAL = x => document.getElementById("Heal").innerHTML = x > 1000 ? parseInt(x / 1000) + "K" : x;
 
 const NEWS = x => document.getElementById("text").innerHTML = x;
 const ROUND = x => document.getElementById("round").innerHTML = "KOLO - " + x;
@@ -38,13 +38,32 @@ const SCORE_DATA = {
     MORTALITY: 50,
     INFECTICITY: 10,
 
+    onIndex(x) {
+        switch (x) {
+            case 3:
+                return this.SCORE;
+            case 4:
+                return this.INFECTED.length;
+            case 5:
+                return this.DEAD;
+            case 6:
+                return this.HEAL;
+            case 7:
+                return this.MORTALITY;
+            case 8:
+                return this.INFECTICITY;
+            default:
+                return null;
+        }
+    }
+
 };
 
 
 const MAP_SIZE = {
 
     EASY: 12,
-    MEDIUM: 24,
+    MEDIUM: 16,
     HARD: 20,
 
 };
@@ -87,6 +106,13 @@ const TYPE = {
     ALL: 0,
     LAST: 1,
     RAND: 2,
+
+    SCORE: 3,
+    INFECTED: 4,
+    DEAD: 5,
+    HEAL: 6,
+    MORTALITY: 7,
+    INFECTICITY: 8,
 
 };
 

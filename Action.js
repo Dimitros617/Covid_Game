@@ -1,8 +1,8 @@
 class Action {
 
-    constructor(round, infected, news, itemCount, chance, type, repeat) {
-        this.round = round;
-        this.infected = infected;
+    constructor(typeOfScore, value, news, itemCount, chance, type, repeat) {
+        this.typeOfScore = typeOfScore;
+        this.value = value;
         this.news = news;
         this.itemCount = itemCount;
         this.dificulty = type == ITEMTYPE.HUMAN ? chance <= RANDOM_NUMBER(0,100) ? 0 : 1 : 0; 

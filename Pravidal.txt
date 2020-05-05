@@ -8,6 +8,6 @@ Covid-Game vlastně vůbec není hra, ale optimalizační úloha, ve které mát
 
 Skupinkase počítá jako 5* člověk bez roušky.
 
-Šíření přidá 10% pravděpodobnosti NAKAŽLIVOSTI
+Šíření přidá 10% pravděpodobnosti NAKAŽLIVOSTI.
 
-Hrobeček přidá 10% pravděpodobnosti ÚMRTNOSTI
+Hrobeček přidá 10% pravděpodobnosti ÚMRTNOSTI.

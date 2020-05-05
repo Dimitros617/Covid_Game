@@ -33,16 +33,21 @@ class Game {
 
     createScenary() {
 
-        // kolo, nakažení, zpráva, počet, obtížnost, type
-        this.newRule(0, null, "Testovací zpráva1", 5, 0, ITEMTYPE.HUMAN, true);
-        this.newRule(0, null, null, 1, 0, ITEMTYPE.GROUP, true);
-        this.newRule(0, null, null, 1, 0, ITEMTYPE.MORTALITY, false);
-        this.newRule(0, null, null, 1, 0, ITEMTYPE.INFECTICITY, false);
+        // typeOfScore, value, zpráva, počet, obtížnost, type, opakování
+        /*         this.newRule(0, null, "Testovací zpráva1", 5, 0, ITEMTYPE.HUMAN, true);
+                this.newRule(0, null, null, 1, 0, ITEMTYPE.GROUP, true);
+                this.newRule(0, null, null, 1, 0, ITEMTYPE.MORTALITY, false);
+                this.newRule(0, null, null, 1, 0, ITEMTYPE.INFECTICITY, false);
+        
+                this.newRule(null, 1, "Testovací zpráva2", 3, 100, ITEMTYPE.HUMAN, true);
+                this.newRule(null, 1, null, 0, 0, ITEMTYPE.HUMAN, true);
+                this.newRule(null, 2, "Testovací zpráva3", 0, 100, ITEMTYPE.HUMAN, true); */
 
-        this.newRule(null, 1, "Testovací zpráva2", 3, 100, ITEMTYPE.HUMAN, true);
-        this.newRule(null, 1, null, 0, 0, ITEMTYPE.HUMAN, true);
-        this.newRule(null, 2, "Testovací zpráva3", 0, 100, ITEMTYPE.HUMAN, true);
-        //this.newRule(null, 3, "Hustý", 4, 0, ITEMTYPE.GROUP);
+
+        this.newRule(TYPE.DEAD, 0, "Pocet mrtvych", 5, 0, ITEMTYPE.HUMAN, true);
+        //this.newRule(TYPE.HEAL, 2, "Pocet uzdravenych", 1, 0, ITEMTYPE.GROUP, true);
+        this.newRule(TYPE.MORTALITY, -40, "Umrtnost", 1, 0, ITEMTYPE.MORTALITY, true);
+        //this.newRule(TYPE.INFECTICITY, 15, "Nakazlivost", 1, 0, ITEMTYPE.INFECTICITY, true);
 
     }
 
@@ -66,7 +71,7 @@ class Game {
 
     nextRound() {
 
-        if(SCORE_DATA.SCORE <= 0){
+        if (SCORE_DATA.SCORE <= 0) {
             this.gameOver();
             return;
         }
@@ -124,33 +129,25 @@ class Game {
             ROUND(++this.round);
             this.checkActions();
         }
-
-
-
-
     }
 
 
     checkActions() {
 
-        this.map.createItems(this.round, SCORE_DATA.INFECTED.length, this.actions);
+        this.map.createItems(this.actions);
 
         let forDelete = [];
         for (let i = 0; i < this.actions.length; i++) {
-            if (((this.actions[i].round <= this.round && this.actions[i].round != null) ||
-                (this.actions[i].infected <= SCORE_DATA.INFECTED.length && this.actions[i].infected != null)) &&
-                this.actions[i].news != null) {
-
-                NEWS(this.actions[i].news);
-            }
-            if (((this.actions[i].round <= this.round && this.actions[i].round != null) ||
-                (this.actions[i].infected <= SCORE_DATA.INFECTED.length && this.actions[i].infected != null))) {
+            if ((SCORE_DATA.onIndex(this.actions[i].typeOfScore) >= Math.abs(this.actions[i].value) && this.actions[i].value >= 0) || (SCORE_DATA.onIndex(this.actions[i].typeOfScore) <= Math.abs(this.actions[i].value) && this.actions[i].value < 0)) {
+                if (this.actions[i].news != null) {
+                    NEWS(this.actions[i].news);
+                }
                 forDelete.push(i);
             }
         }
 
         for (let i = 0; i < forDelete.length; i++) {
-            this.actions.splice(forDelete[i] - i, 1);
+            //this.actions.splice(forDelete[i] - i, 1);
         }
     }
 
@@ -210,49 +207,52 @@ class Game {
     }
 
 
-    newRule(round, infected, news, itemCount, chance, type, repeat) {
-        this.actions.push(new Action(round, infected, news, itemCount, chance, type, repeat));
+    newRule(typeOfScore, value, news, itemCount, chance, type, repeat) {
+        this.actions.push(new Action(typeOfScore, value, news, itemCount, chance, type, repeat));
     }
 
     setArrows() {
 
         document.onkeydown = function (e) {
 
-            if (game.started != null) {
-                e = e || window.event;
-                if (e.keyCode == '38') {
-                    let point = game.map.nextInDirection(game.map.player.position, DIRECTION.TOP);
-                    document.getElementById(point.x + ":" + point.y).click();
-                    document.getElementById(point.x + ":" + point.y).focus();
-                    setTimeout(() => {document.getElementById(point.x + ":" + point.y).blur()}, 250);
-                    
+            try {
+                if (game.started != null) {
+                    e = e || window.event;
+                    if (e.keyCode == '38') {
+                        let point = game.map.nextInDirection(game.map.player.position, DIRECTION.TOP);
+                        document.getElementById(point.x + ":" + point.y).click();
+                        document.getElementById(point.x + ":" + point.y).focus();
+                        setTimeout(() => { document.getElementById(point.x + ":" + point.y).blur() }, 250);
+
+                    }
+                    else if (e.keyCode == '40') {
+                        let point = game.map.nextInDirection(game.map.player.position, DIRECTION.BOTTOM);
+                        document.getElementById(point.x + ":" + point.y).click();
+                        document.getElementById(point.x + ":" + point.y).focus();
+                        setTimeout(() => { document.getElementById(point.x + ":" + point.y).blur() }, 250);
+                    }
+                    else if (e.keyCode == '37') {
+                        let point = game.map.nextInDirection(game.map.player.position, DIRECTION.LEFT);
+                        document.getElementById(point.x + ":" + point.y).click();
+                        document.getElementById(point.x + ":" + point.y).focus();
+                        setTimeout(() => { document.getElementById(point.x + ":" + point.y).blur() }, 250);
+                    }
+                    else if (e.keyCode == '39') {
+                        let point = game.map.nextInDirection(game.map.player.position, DIRECTION.RIGHT);
+                        document.getElementById(point.x + ":" + point.y).click();
+                        document.getElementById(point.x + ":" + point.y).focus();
+                        setTimeout(() => { document.getElementById(point.x + ":" + point.y).blur() }, 250);
+                    }
+                    else if (e.keyCode == '32') {
+                        game.map.mainButton.click();
+                        game.map.mainButton.focus();
+                        setTimeout(() => { game.map.mainButton.blur() }, 150);
+                    }
                 }
-                else if (e.keyCode == '40') {
-                    let point = game.map.nextInDirection(game.map.player.position, DIRECTION.BOTTOM);
-                    document.getElementById(point.x + ":" + point.y).click();
-                    document.getElementById(point.x + ":" + point.y).focus();
-                    setTimeout(() => {document.getElementById(point.x + ":" + point.y).blur()}, 250);
-                }
-                else if (e.keyCode == '37') {
-                    let point = game.map.nextInDirection(game.map.player.position, DIRECTION.LEFT);
-                    document.getElementById(point.x + ":" + point.y).click();
-                    document.getElementById(point.x + ":" + point.y).focus();
-                    setTimeout(() => {document.getElementById(point.x + ":" + point.y).blur()}, 250);
-                }
-                else if (e.keyCode == '39') {
-                    let point = game.map.nextInDirection(game.map.player.position, DIRECTION.RIGHT);
-                    document.getElementById(point.x + ":" + point.y).click();
-                    document.getElementById(point.x + ":" + point.y).focus();
-                    setTimeout(() => {document.getElementById(point.x + ":" + point.y).blur()}, 250);
-                }
-                else if(e.keyCode == '32'){
-                    game.map.mainButton.click();
-                    game.map.mainButton.focus();
-                    setTimeout(() => {game.map.mainButton.blur()}, 150);
-                }
+            } catch (error) {
+
             }
         }
-
     }
 }
 
