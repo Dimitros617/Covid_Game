@@ -28,9 +28,9 @@ class Map {
         this.itemWasOnPosition = false;
 
         this.player = new Player(this);
+        
         this.createMap();
         this.player.resetPosition();
-
         this.setAvailableDirection(this.player.position);
 
     }
@@ -709,7 +709,7 @@ class Map {
                 actualItems[ITEMTYPE.onIndex(i) + j] = null;
                 for (let k = 0; k < validAction.length; k++) {
                     if ((validAction[k].type + validAction[k].dificulty) == (ITEMTYPE.onIndex(i) + j))
-                        actualItems[ITEMTYPE.onIndex(i) + j] = actualItems[ITEMTYPE.onIndex(i) + j] == null ? validAction[k].itemCount : actualItems[ITEMTYPE.onIndex(i) + j] += validAction[k].itemCount;
+                        actualItems[ITEMTYPE.onIndex(i) + j] = actualItems[ITEMTYPE.onIndex(i) + j] == null ? validAction[k].itemCount : actualItems[ITEMTYPE.onIndex(i) + j] = validAction[k].itemCount;// posledni = melo +
                 }
                 if (actualItems[ITEMTYPE.onIndex(i) + j] != null) {
                     this.lastItemCount[ITEMTYPE.onIndex(i) + j] = actualItems[ITEMTYPE.onIndex(i) + j];
@@ -892,7 +892,8 @@ class Map {
 
                     //Vymažu z daného pole grafiku itemu
                     this.map.rows[this.player.position.y].cells[this.player.position.x].children[0].style.backgroundImage = "";
-
+                    //Vymažu z dané pozice nápovědu
+                    this.map.rows[this.player.position.y].cells[this.player.position.x].children[0].removeAttribute("data-title");
                     //Uložím si item na kterém stojí hráč
                     let returnItem = this.item[i];
                     //Smažu item z gobálního pole itemů

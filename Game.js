@@ -9,43 +9,57 @@ class Game {
 
     constructor() {
 
-        document.title = TITLE;
-        this.map = new Map(DIFICULTY.MAP_SIZE);
-        this.started = false;
+        LOADING(true, "Vytvářím mapu...");
 
-        this.round = 0;
-        this.actions = [];
-        this.goals = [];
-        this.createScenary();
-        this.createGoals();
-        //vykreslím do mapy všechny validní a dosažitelné pozice
-        this.map.drawAllValid();
+        setTimeout(() => {
 
-        this.setArrows();
-        this.setShop();
-
-
-        SCORE(SCORE_DATA.SCORE);
-        MORTALITY(SCORE_DATA.MORTALITY);
-        INFECTICITY(SCORE_DATA.INFECTICITY);
-        INFECTED(SCORE_DATA.INFECTED.length);
-        DEAD(SCORE_DATA.DEAD);
-        HEAL(SCORE_DATA.HEAL);
-
-        this.map.mainButton.innerHTML = "START";
-
-
-
-
+            document.title = TITLE;
+            this.map = new Map(DIFICULTY.MAP_SIZE);
+            this.started = false;
+    
+            this.round = 0;
+            this.actions = [];
+            this.goals = [];
+            this.createScenary();
+            this.createGoals();
+            //vykreslím do mapy všechny validní a dosažitelné pozice
+            this.map.drawAllValid();
+    
+            this.setArrows();
+            this.setShop();
+    
+    
+            SCORE(SCORE_DATA.SCORE);
+            MORTALITY(SCORE_DATA.MORTALITY);
+            INFECTICITY(SCORE_DATA.INFECTICITY);
+            INFECTED(SCORE_DATA.INFECTED.length);
+            DEAD(SCORE_DATA.DEAD);
+            HEAL(SCORE_DATA.HEAL);
+    
+            this.map.mainButton.innerHTML = "START";
+            LOADING(false);
+        });
     }
 
     createScenary() {
 
         // typeOfScore, value, zpráva, počet, obtížnost, type, opakování
-        this.newRule(TYPE.DEAD, 0, "Pocet mrtvych", 5, 0, ITEMTYPE.HUMAN, true);
-        this.newRule(TYPE.HEAL, 2, "Pocet uzdravenych", 3, 0, ITEMTYPE.GROUP, true);
-        this.newRule(TYPE.MORTALITY, -40, "Umrtnost", 1, 0, ITEMTYPE.MORTALITY, true);
-        this.newRule(TYPE.MORTALITY, 60, "Umrtnost nic", 0, 0, ITEMTYPE.MORTALITY, true);
+
+        this.newRule(TYPE.MORTALITY, -10, null, 3, 0, ITEMTYPE.MORTALITY, true);
+        this.newRule(TYPE.MORTALITY, -40, null, 1, 0, ITEMTYPE.MORTALITY, true);
+        this.newRule(TYPE.MORTALITY, 50, null, 0, 0, ITEMTYPE.MORTALITY, true);
+
+        this.newRule(TYPE.DEAD, 0, "Vláda prohlašuje, že Virus se v ČR zatím nevyskytuje", 4, 0, ITEMTYPE.HUMAN, true);
+        this.newRule(TYPE.DEAD, 0, null, 2, 0, ITEMTYPE.GROUP, true);
+        this.newRule(TYPE.INFECTED, 1, "V Česku se objevil první případ viru, lidé vykupují obchody, všude jsou teď skupinky lidí", 4, 0, ITEMTYPE.GROUP, true);
+        this.newRule(TYPE.DEAD, 1, "První mrtvý lidé stále vykupují obchody", 4, 0, ITEMTYPE.GROUP, true);
+        this.newRule(TYPE.DEAD, 16, "Mrtvý přibývají vláda se schází a chce vyhlásit stav nouze", 3, 0, ITEMTYPE.GROUP, true);
+        this.newRule(TYPE.DEAD, 24, "Vláda se shodla, nařídila, že lidé se nesmí shlukovat do skupinek", 0, 0, ITEMTYPE.GROUP, true);
+        this.newRule(TYPE.HEAL, 1, "První uzdravený se dostávají zpět domu", 1, 0, ITEMTYPE.INFECTICITY, false);
+        this.newRule(TYPE.HEAL, 10, "Již se z nemocnice vrátilo 10 lidí", 1, 0, ITEMTYPE.INFECTICITY, false);
+        this.newRule(TYPE.DEAD, 43, "Vláda nařizuje zákaz vycházení, lidé by měli omezit chození ven", 2, 0, ITEMTYPE.HUMAN, true);
+        this.newRule(TYPE.DEAD, 50, "Vláda nařídila si povině chránít ústa rouškamy", 2, 100, ITEMTYPE.HUMAN, true);
+        this.newRule(TYPE.DEAD, 50,  null, 0, 0, ITEMTYPE.HUMAN, true);
         //this.newRule(TYPE.INFECTICITY, 15, "Nakazlivost", 1, 0, ITEMTYPE.INFECTICITY, true);
     }
 
@@ -190,11 +204,15 @@ class Game {
     checkInfected() {
 
         LOADING(true, "Počítám šíření, a nakazuji nové lidi...");
-
+        console.log("Zacatek");
         setTimeout(() => {
 
             let length = SCORE_DATA.INFECTED.length;
-            for (let i = 0; i < length; i++) {
+            for (let i = 0; i < SCORE_DATA.INFECTED.length ; i++) {
+                if(i > length){
+                    break;
+                }
+                console.log("pocet cyklu: " + i);
                 if (RANDOM_NUMBER(0, 100) < SCORE_DATA.INFECTICITY) {
                     SCORE_DATA.INFECTED.push({ liveSpan: PEOPLE_INFECTED_DAY, value: SCORE_DATA.INFECTED[i].value });
                     SCORE(SCORE_DATA.SCORE += SCORE_DATA.INFECTED[i].value);
@@ -216,7 +234,7 @@ class Game {
                     }
                     else {
                         HEAL(++SCORE_DATA.HEAL);
-                        SCORE(SCORE_DATA.SCORE -= parseInt(SCORE_DATA.INFECTED[i].value * 2));
+                        SCORE(SCORE_DATA.SCORE -= parseInt(SCORE_DATA.INFECTED[i].value));
                     }
                     SCORE_DATA.INFECTED.splice(i, 1);
                     i--;
