@@ -1,4 +1,5 @@
 class Point {
+
     constructor(x, y, px, py) {
         this.x = x;
         this.y = y;
@@ -11,7 +12,4 @@ class Point {
         this.validNeighbour = new Point(x,y);
     }
 
-/*     setVisited(value){
-        this.visited = value;
-    } */
 }

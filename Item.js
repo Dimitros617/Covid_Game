@@ -1,7 +1,7 @@
 
 class Item {
 
-    constructor(position, dificulty, distance, type){
+    constructor(position, dificulty, distance, type, validNeighbour){
 
         this.position = position;
         this.dificulty = dificulty;
@@ -10,6 +10,7 @@ class Item {
         this.type = type;
         this.liveSpan = PEOPLE_INFECTED_DAY;
         this.drawPath = false;
+        this.validNeighbour = validNeighbour;
     }
 
 }

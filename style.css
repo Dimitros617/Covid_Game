@@ -459,6 +459,13 @@ div#player:active, div#player:focus {
   cursor: pointer;
 }
 
+
+.blackAndWhite{
+  filter: grayscale(100%);
+  opacity: 0.9;
+}
+
+
 .mainButton {
   text-align: center;
   width: 200%;
@@ -524,7 +531,7 @@ td.path.cell, td.cell.path {
 }
 
 
-td.cell, td.valid.cell {
+td.cell, td.valid.cell, td.validLast.cell, td.valid.validLast.cell{
   background-size: cover;
   background-image: url(img/cell.png) !important;
   transition:  0.3s;

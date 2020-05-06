@@ -147,16 +147,14 @@ class UI {
         let div = document.createElement("div");
         div.setAttribute("id", "content");
 
-        div.appendChild(this.getGraphic(POSITON.VERTICAL,"1 Hráč: ","input/radio/multiplayer/true",2,"disabled/"));
-        div.appendChild(this.getGraphic(POSITON.VERTICAL,"2 Hráči: ","input/radio/multiplayer",2,"disabled/"));
+        div.appendChild(this.getGraphic(POSITON.VERTICAL,"1 Hráč: ","input/radio/multiplayer/true",2,));
+        div.appendChild(this.getGraphic(POSITON.VERTICAL,"2 Hráči: ","input/radio/multiplayer",2,));
         div.appendChild(this.getGraphic(POSITON.VERTICAL,"Velikost mapy: Střední 16x16","input/range/map_size/1", 1,"min/0/max/2"));
         div.appendChild(this.getGraphic(POSITON.HORIZONTAL,"Nápovědy: ","input/checkbox/help/true",0,"title/Při najetí na item se zobazí jak je daleko"));
         div.appendChild(this.getGraphic(POSITON.HORIZONTAL,"Přepočítat: ","select/Každý krok/Jen při chycení/helpType/",0,"title/Při najetí na item se zobazí jak je daleko, tímto nastavením určíte kdy se má vzdálenost přepočítat."))
         //div.appendChild(this.getGraphic(POSITON.HORIZONTAL,"Inkubační doba: ","input/number/incubation/4",0,"min/1/title/Jak dlouho trvá než se z akažené stane mrví nebo vyléčený."));
 
-
         return div;
-
     }
 
 
@@ -175,7 +173,6 @@ class UI {
      *                           select/ následovaný textovým popisem obsahu výběrového seznamu odděleného lomítkem a nakonec / index položky která se nastaví jako vybraná (nepovinné)
      *                           input/text, input/number, input/range, input/password atd. + /name +  /value která se má nastavit např. input/text/value
      *                           
-     * 
      *                           button "mezera" href odkaz podporováno i s lomítky
      * 
      * @param return vrátí div obsahující label a příslučný element s nastavenými hodnotami
@@ -307,9 +304,20 @@ class UI {
 
         
         if(e.target.parentNode.children[0].innerHTML.toLowerCase().includes("přepočítat")){
-            debugger;
             DIFICULTY.SHOW_TOOLTIP = SHOW_TOOLTIP.onIndex(e.target.value == "Každý krok" ? 0: 1);
             window.game.map.drawItems();
+        }
+
+        if(e.target.parentNode.children[0].innerHTML == "1 Hráč: "){
+            DIFICULTY.MULTIPLAYER = MULTIPLAYER.FALSE;
+            window.UI.clearMap();
+            window.game = new Game();
+        }
+
+        if(e.target.parentNode.children[0].innerHTML == "2 Hráči: "){
+            DIFICULTY.MULTIPLAYER = MULTIPLAYER.TRUE;
+            window.UI.clearMap();
+            window.game = new Game();
         }
 
     }

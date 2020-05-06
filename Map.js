@@ -27,11 +27,11 @@ class Map {
         this.cellColor = "#efefef";
         this.itemWasOnPosition = false;
 
-        this.player = new Player(this);
+        this.player = new Player(this, "player1");
         
         this.createMap();
-        this.player.resetPosition();
-        this.setAvailableDirection(this.player.position);
+        /* this.player.resetPosition();
+        this.setAvailableDirection(this.player.position); */
 
     }
 
@@ -56,8 +56,10 @@ class Map {
                             //Smaže označní cesty mezi aktuální a novou právě kliknutou pozicí (point)
                             //window.game.map.drawPointToPoint(window.game.map.player.position, point,"path",false);
                             //Posunu hráče na danou pozici, a znovu vykreslím kam může z nové pozice
+                            console.log("kliknul prřed move");
                             window.game.map.player.moveTo(point);
                             //Předám hře nové kolo
+                            console.log("kliknul prřed next Round");
                             window.game.nextRound();
                             //Z dané pozice kde hráč byl vymažu class valid (Aktuální jen před zahájením hry, šedivé pozice)
                             e.target.parentNode.classList.remove("valid");
@@ -277,15 +279,23 @@ class Map {
         return seed;
     }
 
-    nextInDirection(point, direction) {
+    /**
+     * 
+     * @param {*} point 
+     * @param {*} direction 
+     * @param {Boolean} player if true chci zahrnout i hráče jako zarážku
+     */
+    nextInDirection(point, direction, player) {
 
         var cell;
         let addX = 0;
         let addY = 0;
         let free = true;
 
+
         do {
             cell = this.map.rows[point.y + addY].cells[point.x + addX];
+            this.map.rows[point.y + addY].cells[point.x + addX].style.background = "green";
             if (cell == undefined) {
 
                 let a = this.map;
@@ -294,25 +304,33 @@ class Map {
                 cell = c;
 
             }
-
+            this.map.rows[point.y + addY].cells[point.x + addX].style.background = "";
             switch (direction % 4) {
                 case 0:
                     free = cell.style.borderTop == "" ? true : false;
+                    if(player == true)
+                    free = window.game.secondPlayer != undefined ? window.game.secondPlayer.position.x == point.x + addX && window.game.secondPlayer.position.y == point.y + (addY -1) ? false : free : free;
                     free = point.y + addY - 1 == -1 ? free ? false : true : free;
                     addY--;
                     break;
                 case 1:
                     free = cell.style.borderRight == "" ? true : false;
+                    if(player == true)
+                    free = window.game.secondPlayer != undefined ? window.game.secondPlayer.position.x == point.x + (addX+1) && window.game.secondPlayer.position.y == point.y + addY ? false : free : free;
                     free = point.x + addX + 1 == this.size ? free ? false : true : free;
                     addX++;
                     break;
                 case 2:
                     free = cell.style.borderBottom == "" ? true : false;
+                    if(player == true)
+                    free = window.game.secondPlayer != undefined ? window.game.secondPlayer.position.x == point.x + addX && window.game.secondPlayer.position.y == point.y + (addY+1) ? false : free : free;
                     free = point.y + addY + 1 == this.size ? free ? false : true : free;
                     addY++;
                     break;
                 case 3:
                     free = cell.style.borderLeft == "" ? true : false;
+                    if(player == true)
+                    free = window.game.secondPlayer != undefined ? window.game.secondPlayer.position.x == point.x + (addX-1) && window.game.secondPlayer.position.y == point.y + addY ? false : free : free;
                     free = point.x + addX - 1 == -1 ? free ? false : true : free;
                     addX--;
                     break;
@@ -321,6 +339,7 @@ class Map {
                     cell.style.border = "1px solid black";
                     break;
             }
+            
             //this.player.moveTo(new Point(point.x + addX, point.y + addY));
         } while (free);
 
@@ -337,7 +356,7 @@ class Map {
 
         this.validPosition = [];
         for (let i = 0; i < 4; i++) {
-            let newPoint = this.nextInDirection(point, i);
+            let newPoint = this.nextInDirection(point, i, DIFICULTY.MULTIPLAYER == MULTIPLAYER.TRUE ? true : false);
             if (newPoint == null)
                 continue;
             let cell = this.map.rows[newPoint.y].cells[newPoint.x];
@@ -520,7 +539,8 @@ class Map {
                                 } */
                 return result;
             case TYPE.RAND:
-                return result.pop();
+                let point = result.pop();
+                return RANDOM_NUMBER(0,1) == 0 && point.validNeighbour != undefined ? point.validNeighbour : point;
             default:
                 return null;
         }
@@ -737,6 +757,7 @@ class Map {
                     let point;
                     let same = false;
                     let safetyCycle = 0;
+                    let multiplayer = false;
                     //Vygeneruju náhodné validní body v random vzdálenosti od hráče, a zkontroluji zda se na něm náhodou již nějáký item nenachází, pokud ano generuji znovu.
                     do {
                         if (safetyCycle++ > 5000) {
@@ -744,7 +765,7 @@ class Map {
                             break;
                         }
 
-                        rand = RANDOM_NUMBER(2, 10); // Nastavení vzdálenosti SET
+                        rand = RANDOM_NUMBER(2, 15); // Nastavení vzdálenosti SET
                         point = this.validIndex(this.player.position, rand, 0, TYPE.LAST);
                         if (point == null)
                             continue;
@@ -758,20 +779,32 @@ class Map {
                         //kotrola zda alesponň jeden bod z validních je volný a není obsazen jiným itemem
                         for (let l = 0; l < point.length; l++) {
                             same = false;
-                            for (let i = 0; i < this.item.length && point != null && !same; i++)
-                                if (this.item[i].position.x == point[l].x && this.item[i].position.y == point[l].y) {
-                                    same = true;
+
+                            for (let i = 0; i < this.item.length && point != null && !same; i++){
+
+                                if(DIFICULTY.MULTIPLAYER == MULTIPLAYER.TRUE && RANDOM_NUMBER(0,1) == 0 && point[l].validNeighbour != undefined){
+                                    multiplayer = true;
+                                    if (this.item[i].position.x == point[l].validNeighbour.x && this.item[i].position.y == point[l].validNeighbour.y) {
+                                        same = true;
+                                    }
                                 }
+                                else{
+                                    multiplayer = false;
+                                    if (this.item[i].position.x == point[l].x && this.item[i].position.y == point[l].y) {
+                                        same = true;
+                                    }
+                                }
+                            }
 
                             if (!same) {
-                                point = point[l];
-                                break;
+                                    point = point[l];
+                                    break;
                             }
                         }
                     } while (point == null || same);
 
                     //Uložím item do pole aktuálních itemů a existujících
-                    this.item.push(new Item(point, dificulty, rand, type));
+                    this.item.push(new Item(multiplayer ? point.validNeighbour : point , dificulty, rand, type, multiplayer ? point : undefined));
                     existingItems[type + dificulty]++;
                 }
             }
@@ -808,8 +841,17 @@ class Map {
 
             // pokud chceme definovat toolTip a zároveň tam již žádný není
             if (toolTip || (DIFICULTY.SHOW_TOOLTIP != SHOW_TOOLTIP.NEVER && this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].getAttribute("data-title") == null)) {
+                let lenght = 0;
+                if(this.item[i].validNeighbour != undefined){
+                    lenght = this.shortestWay(this.player.position, this.item[i].validNeighbour, RETURN.COUNT);
+                    lenght += this.shortestWay(window.game.secondPlayer.position, this.item[i].validNeighbour, RETURN.COUNT) ;
+                    lenght += " Nejsem si jistý, možná najdeš i kratší."
+                }
+                else{
+                    lenght = this.shortestWay(this.player.position, this.item[i].position, RETURN.COUNT);
+                }
                 //Danému poli v mapě, na kterém se nachází item se nastaví title obsahující vzdálenost itemu odhráče
-                this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].setAttribute("data-title", "Nejkratší vzdálenost: " + this.shortestWay(this.player.position, this.item[i].position, RETURN.COUNT))
+                this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].setAttribute("data-title", "Nejkratší vzdálenost: " + lenght)
             }
             else if(!toolTip && DIFICULTY.SHOW_TOOLTIP == SHOW_TOOLTIP.NEVER){
                 this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].removeAttribute("data-title");

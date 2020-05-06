@@ -13,9 +13,12 @@ class Game {
 
         setTimeout(() => {
 
+
             document.title = TITLE;
             this.map = new Map(DIFICULTY.MAP_SIZE);
             this.started = false;
+
+
     
             this.round = 0;
             this.actions = [];
@@ -27,6 +30,19 @@ class Game {
     
             this.setArrows();
             this.setShop();
+            
+            this.player = this.map.player;
+            if(DIFICULTY.MULTIPLAYER == MULTIPLAYER.TRUE){
+                this.secondPlayer = new Player(this.map, "player2");
+                this.player.resetPosition();
+                this.flipPlayers();
+                this.player.resetPosition();
+                this.flipPlayers();
+                this.player.me.click(this.player.me);
+            }
+            else{
+                this.player.resetPosition();
+            }
     
     
             SCORE(SCORE_DATA.SCORE = SCORE_DATA_DEFAULT.SCORE);
@@ -37,6 +53,9 @@ class Game {
             HEAL(SCORE_DATA.HEAL = SCORE_DATA_DEFAULT.HEAL);
     
             this.map.mainButton.innerHTML = "START";
+
+
+
             LOADING(false);
         });
     }
@@ -65,9 +84,6 @@ class Game {
 
     createGoals(){
 
-        this.newGoal(TYPE.DEAD, 0, "Jů. Lék už je skoro hotový.", "img/medicine.png");
-        this.newGoal(TYPE.INFECTED, 1, "Úmrtnost se vyšplhala tak vysoko, že umírá každý druhý člověk", "img/award.png");
-/*
         this.newGoal(TYPE.SCORE, 100, "Gratuluji dosáhli jste 100 bodů", "img/award.png");
         this.newGoal(TYPE.SCORE, 1000, "WOW dosáhli jste už 1000 bodů", "img/award.png");
         this.newGoal(TYPE.SCORE, 10000, "Jsi nezastavitelný už máš 10 000 bodů", "img/award.png");
@@ -83,10 +99,12 @@ class Game {
 
         this.newGoal(TYPE.CURE, 100, "Infekčnost je teď na maximu, každé kolo se zdvojnásobují nakažení", "img/medicine.png");
         this.newGoal(TYPE.MORTALITY, 100, "Úmrtnost je neúprosná, neexistuje lék, každý kdo je nakažený 100% umře", "img/award.png");
-*/
+
     }
 
     start() {
+
+
 
         this.map.clear();
         this.checkActions();
@@ -250,7 +268,6 @@ class Game {
     }
 
     checkGoals(){
-        debugger;
         let showOne = false;
         for(let i = 0; i < this.goals.length && !showOne ; i++){
             if(SCORE_DATA.onIndex(this.goals[i].typeOfScore) >= this.goals[i].value && !this.goals[i].show){
@@ -291,26 +308,26 @@ class Game {
                 if (game.started != null) {
                     e = e || window.event;
                     if (e.keyCode == '38') {
-                        let point = game.map.nextInDirection(game.map.player.position, DIRECTION.TOP);
+                        let point = game.map.nextInDirection(game.map.player.position, DIRECTION.TOP, DIFICULTY.MULTIPLAYER == MULTIPLAYER.TRUE ? true : false);
                         document.getElementById(point.x + ":" + point.y).click();
                         document.getElementById(point.x + ":" + point.y).focus();
                         setTimeout(() => { document.getElementById(point.x + ":" + point.y).blur() }, 250);
 
                     }
                     else if (e.keyCode == '40') {
-                        let point = game.map.nextInDirection(game.map.player.position, DIRECTION.BOTTOM);
+                        let point = game.map.nextInDirection(game.map.player.position, DIRECTION.BOTTOM, DIFICULTY.MULTIPLAYER == MULTIPLAYER.TRUE ? true : false);
                         document.getElementById(point.x + ":" + point.y).click();
                         document.getElementById(point.x + ":" + point.y).focus();
                         setTimeout(() => { document.getElementById(point.x + ":" + point.y).blur() }, 250);
                     }
                     else if (e.keyCode == '37') {
-                        let point = game.map.nextInDirection(game.map.player.position, DIRECTION.LEFT);
+                        let point = game.map.nextInDirection(game.map.player.position, DIRECTION.LEFT, DIFICULTY.MULTIPLAYER == MULTIPLAYER.TRUE ? true : false);
                         document.getElementById(point.x + ":" + point.y).click();
                         document.getElementById(point.x + ":" + point.y).focus();
                         setTimeout(() => { document.getElementById(point.x + ":" + point.y).blur() }, 250);
                     }
                     else if (e.keyCode == '39') {
-                        let point = game.map.nextInDirection(game.map.player.position, DIRECTION.RIGHT);
+                        let point = game.map.nextInDirection(game.map.player.position, DIRECTION.RIGHT, DIFICULTY.MULTIPLAYER == MULTIPLAYER.TRUE ? true : false);
                         document.getElementById(point.x + ":" + point.y).click();
                         document.getElementById(point.x + ":" + point.y).focus();
                         setTimeout(() => { document.getElementById(point.x + ":" + point.y).blur() }, 250);
@@ -357,6 +374,19 @@ class Game {
             else{
                 ACHIEVEMENT("Ups... Bohužel odebrání 5% léčby stojí 10 bodů, a ty nemáš." , "img/exclamation.png")
             }
+        }
+    }
+
+    /**
+     * 
+     * @param {String} name = name of HTMl element 
+     */
+    flipPlayers(name){
+
+        if(name == this.secondPlayer.me.getAttribute("name") || name == undefined){
+        let pom = this.player;
+        this.player = this.secondPlayer;
+        this.secondPlayer = pom;
         }
     }
 
