@@ -19,7 +19,7 @@ class UI {
             this.clear();
             DIV_INFO.appendChild(this.getRules());
         }
-        else if(e.value == 1){
+        else if (e.value == 1) {
             this.clear();
             DIV_INFO.appendChild(this.getSeting());
         }
@@ -65,7 +65,7 @@ class UI {
     }
 
     clear() {
-        if(document.getElementById("content") != null){
+        if (document.getElementById("content") != null) {
             document.getElementById("content").remove();
         }
     }
@@ -147,11 +147,12 @@ class UI {
         let div = document.createElement("div");
         div.setAttribute("id", "content");
 
-        div.appendChild(this.getGraphic(POSITON.VERTICAL,"1 Hráč: ","input/radio/multiplayer/true",2,));
-        div.appendChild(this.getGraphic(POSITON.VERTICAL,"2 Hráči: ","input/radio/multiplayer",2,));
-        div.appendChild(this.getGraphic(POSITON.VERTICAL,"Velikost mapy: Střední 16x16","input/range/map_size/1", 1,"min/0/max/2"));
-        div.appendChild(this.getGraphic(POSITON.HORIZONTAL,"Nápovědy: ","input/checkbox/help/true",0,"title/Při najetí na item se zobazí jak je daleko"));
-        div.appendChild(this.getGraphic(POSITON.HORIZONTAL,"Přepočítat: ","select/Každý krok/Jen při chycení/helpType/",0,"title/Při najetí na item se zobazí jak je daleko, tímto nastavením určíte kdy se má vzdálenost přepočítat."))
+        div.appendChild(this.getGraphic(POSITON.VERTICAL, "1 Hráč: ", "input/radio/multiplayer/true", 2));
+        div.appendChild(this.getGraphic(POSITON.VERTICAL, "2 Hráči: ", "input/radio/multiplayer", 2));
+        div.appendChild(this.getGraphic(POSITON.VERTICAL, "Velikost mapy: Střední 16x16", "input/range/map_size/1", 1, "min/0/max/2"));
+        div.appendChild(this.getGraphic(POSITON.VERTICAL, "Herní režim: ", "select/EDU-kačka/Jeden bod/Seber vše/Příběh/game_mode/", 1));
+        div.appendChild(this.getGraphic(POSITON.HORIZONTAL, "Nápovědy: ", "input/checkbox/help/true", 0, "title/Při najetí na item se zobazí jak je daleko"));
+        div.appendChild(this.getGraphic(POSITON.HORIZONTAL, "Přepočítat: ", "select/Každý krok/Jen při chycení/helpType/", 0, "title/Při najetí na item se zobazí jak je daleko, tímto nastavením určíte kdy se má vzdálenost přepočítat."))
         //div.appendChild(this.getGraphic(POSITON.HORIZONTAL,"Inkubační doba: ","input/number/incubation/4",0,"min/1/title/Jak dlouho trvá než se z akažené stane mrví nebo vyléčený."));
 
         return div;
@@ -271,66 +272,104 @@ class UI {
 
     }
 
-    clearMap(){
+    clearMap() {
 
-        for(let i = MAP_TABLE.children.length; i > 0; i--){
+        for (let i = MAP_TABLE.children.length; i > 0; i--) {
             MAP_TABLE.children[0].remove();
         }
-        debugger;
     }
 
 
-    changeElement(e){
+    changeElement(e) {
 
-        if(e.target.parentNode.children[0].innerHTML.toLowerCase().includes("velikost mapy")){
+        if (e.target.parentNode.children[0].innerHTML.toLowerCase().includes("velikost mapy")) {
             DIFICULTY.MAP_SIZE = MAP_SIZE.onIndex(parseInt(e.target.value));
             window.UI.clearMap();
             window.game = new Game();
             e.target.parentNode.children[0].innerHTML = "Velikost mapy: " + MAP_SIZE.toString(parseInt(e.target.value));
         }
 
-        if(e.target.parentNode.children[0].innerHTML.toLowerCase().includes("nápovědy")){
-            if(e.target.checked){
+        if (e.target.parentNode.children[0].innerHTML.toLowerCase().includes("nápovědy")) {
+            if (e.target.checked) {
                 document.getElementsByName("helpType")[0].parentNode.style.display = "inherit";
-                DIFICULTY.SHOW_TOOLTIP = SHOW_TOOLTIP.onIndex(document.getElementsByName("helpType")[0].value == "Každý krok" ? 0: 1);
+                DIFICULTY.SHOW_TOOLTIP = SHOW_TOOLTIP.onIndex(document.getElementsByName("helpType")[0].value == "Každý krok" ? 0 : 1);
                 window.game.map.drawItems();
             }
-            else{
+            else {
                 document.getElementsByName("helpType")[0].parentNode.style.display = "none";
                 DIFICULTY.SHOW_TOOLTIP = SHOW_TOOLTIP.NEVER;
                 window.game.map.drawItems();
             }
         }
 
-        
-        if(e.target.parentNode.children[0].innerHTML.toLowerCase().includes("přepočítat")){
-            DIFICULTY.SHOW_TOOLTIP = SHOW_TOOLTIP.onIndex(e.target.value == "Každý krok" ? 0: 1);
+
+        if (e.target.parentNode.children[0].innerHTML.toLowerCase().includes("přepočítat")) {
+            DIFICULTY.SHOW_TOOLTIP = SHOW_TOOLTIP.onIndex(e.target.value == "Každý krok" ? 0 : 1);
             window.game.map.drawItems();
         }
 
-        if(e.target.parentNode.children[0].innerHTML == "1 Hráč: "){
+        if (e.target.parentNode.children[0].innerHTML == "1 Hráč: ") {
             DIFICULTY.MULTIPLAYER = MULTIPLAYER.FALSE;
             window.UI.clearMap();
             window.game = new Game();
         }
 
-        if(e.target.parentNode.children[0].innerHTML == "2 Hráči: "){
+        if (e.target.parentNode.children[0].innerHTML == "2 Hráči: ") {
             DIFICULTY.MULTIPLAYER = MULTIPLAYER.TRUE;
             window.UI.clearMap();
             window.game = new Game();
         }
 
+        if (e.target.parentNode.children[0].innerHTML.toLowerCase().includes("režim")) {
+            debugger;
+            switch (e.target.value) {
+                case "EDU-kačka":
+                    DIFICULTY.GAME_MODE = GAME_MODE.EDUCATION;
+                    document.getElementsByName("multiplayer")[0].disabled = false;
+                    document.getElementsByName("multiplayer")[1].disabled = false;
+                    document.getElementsByName("help")[0].disabled = false;
+                    break;
+                case "Jeden bod":
+                    DIFICULTY.GAME_MODE = GAME_MODE.ONE_POINT;
+                    document.getElementsByName("multiplayer")[0].checked = true;
+                    document.getElementsByName("multiplayer")[1].checked = false;
+                    document.getElementsByName("multiplayer")[0].disabled = true;
+                    document.getElementsByName("multiplayer")[1].disabled = true;
+                    document.getElementsByName("help")[0].disabled = false;
+                    break;
+                case "Seber vše":
+                    DIFICULTY.GAME_MODE = GAME_MODE.ALL_IN;
+                    document.getElementsByName("multiplayer")[0].checked = true;
+                    document.getElementsByName("multiplayer")[1].checked = false;
+                    document.getElementsByName("multiplayer")[0].disabled = true;
+                    document.getElementsByName("multiplayer")[1].disabled = true;
+                    if(document.getElementsByName("help")[0].checked){
+                    document.getElementsByName("help")[0].value = false;
+                    document.getElementsByName("help")[0].click(document.getElementsByName("help")[0]);
+                    document.getElementsByName("help")[0].disabled = true;
+                    }
+                    break;
+                case "Příběh":
+                    DIFICULTY.GAME_MODE = GAME_MODE.STORY;
+                    document.getElementsByName("multiplayer")[0].disabled = false;
+                    document.getElementsByName("multiplayer")[1].disabled = false;
+                    document.getElementsByName("help")[0].disabled = false;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
-    generateNewMap(){
+    generateNewMap() {
         window.UI.clearMap();
         window.game = new Game();
     }
 
 
-    showAchievement(text, imgPath){
+    showAchievement(text, imgPath) {
 
-        if(document.getElementById("achievement") != null){
+        if (document.getElementById("achievement") != null) {
             return;
         }
 
@@ -348,11 +387,11 @@ class UI {
         divCont.appendChild(cross);
 
 
-        divCont.onclick = function(){
+        divCont.onclick = function () {
 
             document.getElementById("achievementContent").classList.add("hide");
 
-            setTimeout(() => {document.getElementById("achievement").remove()}, 1000);
+            setTimeout(() => { document.getElementById("achievement").remove() }, 1000);
 
         };
 
@@ -374,10 +413,10 @@ class UI {
 
         setTimeout(() => {
             document.getElementById("achievementContent").classList.remove("hide");
-        },100);
+        }, 100);
 
 
-        
+
 
     }
 

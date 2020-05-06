@@ -56,14 +56,14 @@ class Map {
                             //Smaže označní cesty mezi aktuální a novou právě kliknutou pozicí (point)
                             //window.game.map.drawPointToPoint(window.game.map.player.position, point,"path",false);
                             //Posunu hráče na danou pozici, a znovu vykreslím kam může z nové pozice
-                            console.log("kliknul prřed move");
                             window.game.map.player.moveTo(point);
                             //Předám hře nové kolo
-                            console.log("kliknul prřed next Round");
                             window.game.nextRound();
                             //Z dané pozice kde hráč byl vymažu class valid (Aktuální jen před zahájením hry, šedivé pozice)
                             e.target.parentNode.classList.remove("valid");
                             e.target.parentNode.classList.remove("validLast");
+                            e.target.parentNode.classList.remove("cross");
+                            e.target.parentNode.classList.remove("crossLast");
                         }
                     }
                 }
@@ -75,24 +75,37 @@ class Map {
                         for (let x of game.map.item)
                             itemsPoints.push(x.position);
                         let indexOfItem = window.game.map.indexOfPoint(itemsPoints, point);
+                        
                         if (game.map.isItemOnPoint(point)) {
                             if (game.map.item[indexOfItem].drawPath) {
                                 game.map.item[indexOfItem].drawPath = false;
                                 game.map.clear();
                             }
                             else {
-                                if(SCORE_DATA.SCORE-20 > 0){
-                                    game.map.item[indexOfItem].drawPath = true;
-                                    //Vytvoření nového pointu z pozice hráče, aby nedošlo k předání poiteru na instanci Pointu, který by se jinak změnil
-                                    let position = new Point(window.game.map.player.position.x, window.game.map.player.position.y);
-                                    window.game.map.shortestWay(position, point, RETURN.DRAW);
-                                    SCORE(SCORE_DATA.SCORE -= 20);
+                                if(SCORE_DATA.SCORE - DIFICULTY.PRICE_FOR_PATH > 0){
+                                    if(game.map.item[indexOfItem].validNeighbour == undefined){
+                                        game.map.item[indexOfItem].drawPath = true;
+                                        //Vytvoření nového pointu z pozice hráče, aby nedošlo k předání poiteru na instanci Pointu, který by se jinak změnil
+                                        let position = new Point(window.game.map.player.position.x, window.game.map.player.position.y);
+                                        window.game.map.shortestWay(position, point, RETURN.DRAW);
+                                        SCORE(SCORE_DATA.SCORE -= DIFICULTY.PRICE_FOR_PATH);
+                                    }
+                                    else{
+                                        ACHIEVEMENT("Tento bod je na mě moc těžký, ale ukážu ti cestu, alespoň jednoho hráče.","img/question.png");
+                                        game.map.item[indexOfItem].drawPath = true;
+                                        //Vytvoření nového pointu z pozice hráče, aby nedošlo k předání poiteru na instanci Pointu, který by se jinak změnil
+                                        let position = new Point(window.game.map.player.position.x, window.game.map.player.position.y);
+                                        window.game.map.shortestWay(position, game.map.item[indexOfItem].validNeighbour, RETURN.DRAW);
+                                        SCORE(SCORE_DATA.SCORE -= DIFICULTY.PRICE_FOR_PATH);
+                                    }
                                 }
                                 else{
-                                    ACHIEVEMENT("Na to bohužel nemáš dostatek bodů, ukázka cesty stojí 20 bodů.","img/exclamation.png");
+                                    ACHIEVEMENT("Na to bohužel nemáš dostatek bodů, ukázka cesty stojí "+ DIFICULTY.PRICE_FOR_PATH +" bodů.","img/exclamation.png");
                                 }
                             }
                         }
+                    
+
                 }
 
                 var cont = document.createElement("div");
@@ -361,6 +374,10 @@ class Map {
                 continue;
             let cell = this.map.rows[newPoint.y].cells[newPoint.x];
             cell.classList.add("cell");
+            if(cell.classList.contains("bottle")){
+                cell.classList.remove("bottle");
+                SCORE(++SCORE_DATA.SCORE);
+            }
 
             this.validPosition.push(newPoint);
         }
@@ -380,6 +397,13 @@ class Map {
      *                                             TYPE.RAND - Náhodný bod v dané vzdálenosti od pointu.
      */
     validIndex(point, distance, count, type) {
+
+        if(this.allValidPosition.lenght != 0){
+            if(this.indexOfPoint(this.allValidPosition, point) == null){
+                console.log("Fale save activated");
+                point = this.allValidPosition[RANDOM_NUMBER(0,this.allValidPosition.lenght-1)];
+            }
+        }
 
         let all = point == null ? true : false;
         // Validace rohů, zda jse dá ze všech rohů, dostat do všech ostatních rohů.
@@ -699,6 +723,7 @@ class Map {
         for (let y = 0; y < this.size; y++)
             for (let x = 0; x < this.size; x++) {
                 this.map.rows[y].cells[x].style.backgroundColor = "transparent";
+                this.map.rows[y].cells[x].style.backgroundImage = "";
                 this.map.rows[y].cells[x].removeAttribute('class');
             }
         this.setAvailableDirection(this.player.position);
@@ -760,12 +785,12 @@ class Map {
                     let multiplayer = false;
                     //Vygeneruju náhodné validní body v random vzdálenosti od hráče, a zkontroluji zda se na něm náhodou již nějáký item nenachází, pokud ano generuji znovu.
                     do {
-                        if (safetyCycle++ > 5000) {
-                            ACHIEVEMENT("Ups... Prošel jsem 1000 náhodných možností, a nepovedlo se mi najít místo pro další Item.","img/exclamation.png");
+                        if (safetyCycle++ > 2000) {
+                            ACHIEVEMENT("Ups... Prošel jsem 2000 náhodných možností, a nepovedlo se mi najít místo pro další Item.","img/exclamation.png");
                             break;
                         }
 
-                        rand = RANDOM_NUMBER(2, 15); // Nastavení vzdálenosti SET
+                        rand = RANDOM_NUMBER(2, DIFICULTY.MAX_DISTANCE); // Nastavení vzdálenosti SET
                         point = this.validIndex(this.player.position, rand, 0, TYPE.LAST);
                         if (point == null)
                             continue;
@@ -821,7 +846,6 @@ class Map {
                 }
             }
         }
-
         this.drawItems();
     }
 
@@ -851,7 +875,7 @@ class Map {
                     lenght = this.shortestWay(this.player.position, this.item[i].position, RETURN.COUNT);
                 }
                 //Danému poli v mapě, na kterém se nachází item se nastaví title obsahující vzdálenost itemu odhráče
-                this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].setAttribute("data-title", "Nejkratší vzdálenost: " + lenght)
+                this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].setAttribute("data-title", "Nejkratší cesta: " + lenght + " Nebo si můžeš koupit cestu za " + DIFICULTY.PRICE_FOR_PATH)
             }
             else if(!toolTip && DIFICULTY.SHOW_TOOLTIP == SHOW_TOOLTIP.NEVER){
                 this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].removeAttribute("data-title");
@@ -872,6 +896,8 @@ class Map {
                     path = "url('img/0.0.png')";
                 else if (this.item[i].type == ITEMTYPE.MORTALITY)
                     path = "url('img/mortality.png')";
+                else if (this.item[i].type == ITEMTYPE.BOTTLE)
+                    path = "url('img/bottle"+RANDOM_NUMBER(0,15)+".png')";
 
                 //Danou adresu obrázku přidělíme místu v mapě (Css-ka se opět postarají o grafické vykreslení)
                 this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].style.backgroundImage = path;
@@ -883,17 +909,19 @@ class Map {
     /**
      * Metoda má za cíl označit všechna validní dosažitelná pole v mapě, dle constanty DIFICULTY, označí daná dosažitelná pole
      */
-    drawAllValid() {
+    drawAllValid(name) {
 
         //pouze si předám pointer na pole obsahující všechna validní dosažitelná pole z mapy
         let all = this.allValidPosition;
         // Pro všechna tato pole 
         for (let i = 0; i < all.length; i++) {
             //Přidám jim class valid (Pomocí css již kláda graficky daná pole označí)
-            this.map.rows[all[i].y].cells[all[i].x].classList.add("valid");
+            this.map.rows[all[i].y].cells[all[i].x].classList.add(name);
+            this.map.rows[all[i].y].cells[all[i].x].style.backgroundImage = "url('img/"+name +RANDOM_NUMBER(0,15)+".png')";
             //Pokud je definováno zapnutí Multiplayeru, označí se i pole dosažitelná pouze v multiplayeru
             if (DIFICULTY.MULTIPLAYER == MULTIPLAYER.TRUE && all[i].validNeighbour != null)
-                this.map.rows[all[i].validNeighbour.y].cells[all[i].validNeighbour.x].classList.add("validLast");
+                this.map.rows[all[i].validNeighbour.y].cells[all[i].validNeighbour.x].classList.add(name + "Last");
+                this.map.rows[all[i].validNeighbour.y].cells[all[i].validNeighbour.x].style.backgroundImage = "url('img/"+name +RANDOM_NUMBER(0,15)+".png')";
         }
 
         //Znovu grafiky označím pointy dosažitelné z aktuální pozice hráče
@@ -928,14 +956,21 @@ class Map {
 
                     //Pro všechny itemy 
                     for (let j = 0; j < this.item.length; j++) {
+                        //Přeskoč item, na kterém se právě stojí
+                        if(this.item[j] == this.item[i]){
+                            continue;
+                        }
                         //přepočítám vzdálenost jak je item daleko od hráče, (pro přičtení bodů)
-                        this.item[j].distance = this.shortestWay(this.player.position, this.item[j].position, RETURN.COUNT);
+                        let lenght = this.shortestWay(this.player.position, this.item[j].position, RETURN.COUNT);
+                        this.item[j].distance = lenght == null? this.item[j].distance : lenght;
                     }
 
                     //Vymažu z daného pole grafiku itemu
                     this.map.rows[this.player.position.y].cells[this.player.position.x].children[0].style.backgroundImage = "";
                     //Vymažu z dané pozice nápovědu
                     this.map.rows[this.player.position.y].cells[this.player.position.x].children[0].removeAttribute("data-title");
+                    //Vymažu classu
+                    this.map.rows[this.player.position.y].cells[this.player.position.x].children[0].removeAttribute("class");
                     //Uložím si item na kterém stojí hráč
                     let returnItem = this.item[i];
                     //Smažu item z gobálního pole itemů

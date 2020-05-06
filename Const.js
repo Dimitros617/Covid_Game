@@ -134,9 +134,10 @@ const MULTIPLAYER = {
 
 const GAME_MODE = {
 
-    ARCADE: 0,
+    EDUCATION: 0,
     ONE_POINT: 1,
-    EDUCATION: 2,
+    ALL_IN: 2,
+    STORY: 3,
 
 };
 
@@ -145,7 +146,9 @@ const DIFICULTY = {
     MAP_SIZE: MAP_SIZE.MEDIUM,
     MULTIPLAYER: MULTIPLAYER.FALSE,
     SHOW_TOOLTIP: SHOW_TOOLTIP.EVERY_STEP,
-    GAME_MODE: GAME_MODE.ARCADE,
+    GAME_MODE: GAME_MODE.STORY,
+    MAX_DISTANCE: 15, // V jaké vzdálenosti se mohou max spawnovat itemy od hráče
+    PRICE_FOR_PATH: 20,
 
 };
 
@@ -190,8 +193,9 @@ const ITEMTYPE = {
     CURE_VALUE: 10, // O kolik procent klesne léčba, když hráč sebere item
     MORTALITY: "mortality",
     MORTALITY_VALUE: 10, // O kolik procen vzroste umrtnost když hráč item sebere
+    BOTTLE: "bottle",
 
-    length: 4,
+    length: 5,
 
     onIndex(x) {
         switch (x) {
@@ -203,6 +207,8 @@ const ITEMTYPE = {
                 return this.CURE;
             case 3:
                 return this.MORTALITY;
+            case 4:
+                return this.BOTTLE;
             default:
                 return null;
         }

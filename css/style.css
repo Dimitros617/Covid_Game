@@ -2,7 +2,7 @@
 body {
   margin: 0;
   overflow: hidden;
-  background-image: url(pozadi.png);
+  background-image: url(../img/pozadi.png);
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -251,6 +251,7 @@ div#live {
   font-size: 22px;
   border-radius: 0px 14px 14px 0px;
   position: relative;
+  cursor: pointer;
 }
 
  div#live:hover {
@@ -298,11 +299,23 @@ select#selectBox {
   background: none;
   border: none;
   font-family: 'Comfortaa';
-  background: linear-gradient(#3e3e3e, #1d1d1d);
+  background: linear-gradient(#131313b3, #303030), url(../img/selectArrow.png) black no-repeat 96% !important;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 1px 5px 20px 0 rgba(0, 0, 0, 0.54);
   color: #ffffff;
-
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
+
+select option {
+  margin: 40px;
+  background: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+  padding: 20px 0px;
+}
+
+
 
 div#divOne {
  
@@ -424,7 +437,7 @@ table#mapTable {
   /*background-color: transparent !important; /*DEBUG*/
   background-position: center center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
   border: 1px solid #dcdcdc6b;
   margin: 0;
   padding: 0;
@@ -441,7 +454,7 @@ div#player {
   width: 28px;
   height: 28px;
   position: absolute;
-  background-image: url(img/player.png);
+  background-image: url(../img/player.png);
   background-size: cover;
   z-index: 1;
   transition-duration: 1s;
@@ -504,14 +517,17 @@ div#player:active, div#player:focus {
 
 /* ----------------- Itemy ---------------------------- */
 
-div.item, div.human, div.group, div.cure, div.mortality {
+div.item, div.human, div.group, div.cure, div.mortality, div.bottle, td.bottleDraw {
   background-color: transparent;
-  background-size: cover;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
   transition:  0.3s;
   /*transition-delay: 0.7s; */
 }
 
-div.item:hover, div.human:hover, div.group:hover, div.cure:hover, div.mortality:hover {
+
+div.item:hover, div.human:hover, div.group:hover, div.cure:hover, div.mortality:hover, div.bottle:hover {
   transform: scale(2);
   cursor: pointer;
 }
@@ -520,20 +536,20 @@ div.item:hover, div.human:hover, div.group:hover, div.cure:hover, div.mortality:
 /* ----------------- Validní pozice na mapě ---------------------------- */
 
 td.path {
-  background-image: url(img/pathPoint.png)!important;
+  background-image: url(../img/pathPoint.png)!important;
   transition-duration: 0.5s;
   transition-delay: 0.5s;
 }
 
 td.path.cell, td.cell.path {
-  background-image: url(img/pathPoint.png), url(img/cell.png)!important;
+  background-image: url(../img/pathPoint.png), url(../img/cell.png)!important;
   cursor: pointer;
 }
 
 
 td.cell, td.valid.cell, td.validLast.cell, td.valid.validLast.cell{
   background-size: cover;
-  background-image: url(img/cell.png) !important;
+  background-image: url(../img/cell.png) !important;
   transition:  0.3s;
   transform: scale(1.1);
   cursor: pointer;
@@ -553,11 +569,11 @@ td.cell:active, td.valid.cell:active, td.cell:focus, td.valid.cell:focus  {
 
 
 td.valid, td.valid.validLast {
-  background-image: url(img/cellPossible.png)!important;
+  background-image: url(../img/cellPossible.png)!important;
 }
 
 td.validLast {
-  background-image: url(img/cellPossibleLast.png)!important;
+  background-image: url(../img/cellPossibleLast.png)!important;
 }
 
 
@@ -598,7 +614,7 @@ div#loadingBox {
 }
 
 div#loadingImg {
-  background-image: url(img/loading.gif);
+  background-image: url(../img/loading.gif);
   background-position: center center;
   background-repeat: no-repeat;
   background-size: contain;
@@ -859,3 +875,50 @@ div#cross:hover {
   color: red;
   transform: scale(0.9);
 }
+/*
+select.round {
+  background-color: blueviolet;
+  font: inherit;
+  line-height: 1.5em;
+  padding: 0.5em 3.5em 0.5em 1em;
+  margin: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: linear-gradient(#3e3e3e, #1d1d1d);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 1px 5px 20px 0 rgba(0, 0, 0, 0.54);
+  background-color: white;
+  text-align-last: center;
+  align-content: center;
+  text-align: center;
+  height: 54px;
+  font-size: 23px;
+  font-weight: 600;
+  font-family: 'Comfortaa';
+  width: 100%;
+}
+
+select.round {
+
+  background-image: linear-gradient(45deg, #ba1b1b00 50%, #7d7d7d 50%), linear-gradient(135deg, gray 50%, transparent 50%), radial-gradient(#ddd 70%, #b91d1d00 72%);
+  background-position: calc(100% - 27px) calc(1em + 2px), calc(100% - 22px) calc(1em + 2px), calc(100% - 0.5em) .5em;
+  background-size: 5px 5px, 5px 5px, 1.5em 1.5em;
+  background-repeat: no-repeat;
+}
+
+select.round:focus {
+  background-image:
+    linear-gradient(45deg, white 50%, transparent 50%),
+    linear-gradient(135deg, transparent 50%, white 50%),
+    radial-gradient(gray 70%, transparent 72%);
+    background-position: calc(100% - 22px) 1em, calc(100% - 27px) 1em, calc(100% - .5em) .5em;
+  background-size:
+    5px 5px,
+    5px 5px,
+    1.5em 1.5em;
+  background-repeat: no-repeat;
+  border-color: green;
+  outline: 0;
+}*/

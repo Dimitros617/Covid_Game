@@ -6,10 +6,10 @@
     <meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
     <meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
 
-    <link rel="stylesheet" type="text/css" href="style.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet'>
-    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Arvo&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/style.css" media="screen">
+    <link href='css/Comfortaa.css' rel='stylesheet'>
+    <link href="css/Source_Code_Pro.css" rel="stylesheet">
+    <link href="css/Avro.css" rel="stylesheet">
     <link rel="shortcut icon" href="img/favicon.ico" type="favicon/ico" />
 
 </head>
@@ -70,7 +70,7 @@
         </div>
 
         <div id="info">
-            <select id="selectBox" onchange="window.UI.infoChange(this)">
+            <select id="selectBox" class="round" onchange="window.UI.infoChange(this)">
             </select>
         </div>
     </div>
@@ -82,7 +82,7 @@
     </div>
 
     <div id="news">
-    <div id="live" class="blob" onclick="{window.UI.showAchievement('<a href\'http:\/\/dominikfrolik.cz/\'> Děkuji za hraní </a>','img/copyright.png'); SCORE(SCORE_DATA.SCORE += 100)}">&bull; ŽIVĚ</div>
+    <div id="live" class="blob" onclick="{if(this.copyright == undefined){ SCORE(SCORE_DATA.SCORE += 100); /*this.copyright = false*/; window.UI.showAchievement('Děkji za hraní + 100 Bodů','img/copyright.png')} else {window.UI.showAchievement('Děkji za hraní svůj bonus, už jsi ale dostal.','img/copyright.png')}}">&bull; ŽIVĚ</div>
         <div id="text"> Užijte si hru...</div>
         <div id="round">KOLO - 00</div>
     </div>
