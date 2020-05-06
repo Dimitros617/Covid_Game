@@ -335,7 +335,7 @@ label#score {
 
 
 
-label#scoreLabel, label#mortalityLabel, label#infecticityLabel {
+label#scoreLabel, label#mortalityLabel, label#cureLabel {
   font-size: 19px;
   font-family: 'Comfortaa';
   color: #aaaead;
@@ -348,7 +348,7 @@ label#scoreLabel, label#mortalityLabel, label#infecticityLabel {
   height: 36px;
 }
 
-label#mortality, label#infecticity {
+label#mortality, label#cure {
   font-size: 1.3vw;
   margin-left: auto;
   margin-right: auto;
@@ -361,7 +361,7 @@ label#mortality, label#infecticity {
   letter-spacing: 3px;
 }
 
-div#divMortality, div#divInfecticity {
+div#divMortality, div#divcure {
   margin-top: 30px;
 }
 
@@ -497,14 +497,14 @@ div#player:active, div#player:focus {
 
 /* ----------------- Itemy ---------------------------- */
 
-div.item, div.human, div.group, div.infecticity, div.mortality {
+div.item, div.human, div.group, div.cure, div.mortality {
   background-color: transparent;
   background-size: cover;
   transition:  0.3s;
   /*transition-delay: 0.7s; */
 }
 
-div.item:hover, div.human:hover, div.group:hover, div.infecticity:hover, div.mortality:hover {
+div.item:hover, div.human:hover, div.group:hover, div.cure:hover, div.mortality:hover {
   transform: scale(2);
   cursor: pointer;
 }
@@ -822,7 +822,7 @@ div#achievementText {
   font-size: 1.4vw;
 }
 
-label#addMortality, label#addInfecticity {
+label#addMortality, label#addCure {
   color: red;
   font-weight: 900;
   font-size: 20px;
@@ -833,7 +833,7 @@ label#addMortality, label#addInfecticity {
 
 }
 
-label#addMortality:hover, label#addInfecticity:hover {
+label#addMortality:hover, label#addCure:hover {
   color: rgb(255, 255, 255);
   cursor: pointer;
   font-size: 20px;

@@ -1,13 +1,20 @@
 const TITLE = "GAME | COVID-19";
 const PEOPLE_INFECTED_DAY = 4; // Počet dní před tím než zemřou
-const START_SCORE = 10;
 
-const SPREAD_MULTIPLIER = 2;
+const SCORE_DATA_DEFAULT = {
 
+    SCORE: 10,
+    INFECTED: new Array(),
+    DEAD: 0,
+    HEAL: 0,
+    MORTALITY: 50,
+    CURE: 0,
+
+};
 
 const SCORE = x => document.getElementById("score").innerHTML = x > 1000000 ? (x / 1000000).toFixed(2) + "M" : x > 1000 ? (x / 1000).toFixed(2) + "K" : x;
 const MORTALITY = x => document.getElementById("mortality").innerHTML =  x > 100 ? 100 + "%": x + "%";
-const INFECTICITY = x => document.getElementById("infecticity").innerHTML = x > 100 ? 100 + "%": x + "%";
+const CURE = x => document.getElementById("cure").innerHTML = x > 100 ? 100 + "%": x + "%";
 const INFECTED = x => document.getElementById("infected").innerHTML = x > 1000 ? (x / 1000).toFixed(2) + "K" : x;
 const DEAD = x => document.getElementById("dead").innerHTML = x > 1000 ? (x / 1000).toFixed(2) + "K" : x;
 const HEAL = x => document.getElementById("Heal").innerHTML = x > 1000 ? (x / 1000).toFixed(2) + "K" : x;
@@ -30,17 +37,17 @@ const LOADING = (x, y) => {
 const MAP_TABLE = document.getElementById("map");
 const DIV_INFO = document.getElementById("info");
 const ADD_MORTALITY = document.getElementById("addMortality");
-const ADD_INFECTICITY = document.getElementById("addInfecticity");
+const ADD_CURE = document.getElementById("addCure");
 
 
 const SCORE_DATA = {
 
-    SCORE: START_SCORE,
-    INFECTED: new Array(),
-    DEAD: 0,
-    HEAL: 0,
-    MORTALITY: 50,
-    INFECTICITY: 10,
+    SCORE: SCORE_DATA_DEFAULT.SCORE,
+    INFECTED: SCORE_DATA_DEFAULT.INFECTED,
+    DEAD: SCORE_DATA_DEFAULT.DEAD,
+    HEAL: SCORE_DATA_DEFAULT.HEAL,
+    MORTALITY: SCORE_DATA_DEFAULT.MORTALITY,
+    CURE: SCORE_DATA_DEFAULT.CURE,
 
     onIndex(x) {
         switch (x) {
@@ -55,7 +62,7 @@ const SCORE_DATA = {
             case 7:
                 return this.MORTALITY;
             case 8:
-                return this.INFECTICITY;
+                return this.CURE;
             default:
                 return null;
         }
@@ -154,7 +161,7 @@ const TYPE = {
     DEAD: 5,
     HEAL: 6,
     MORTALITY: 7,
-    INFECTICITY: 8,
+    CURE: 8,
 
 };
 
@@ -170,8 +177,8 @@ const ITEMTYPE = {
     HUMAN: "human",
     GROUP: "group",
     GROUP_SIZE: 5,
-    INFECTICITY: "infecticity",
-    INFECTICITY_VALUE: 10,
+    CURE: "cure",
+    CURE_VALUE: 10, // O kolik procent klesne léčba, když hráč sebere item
     MORTALITY: "mortality",
     MORTALITY_VALUE: 10, // O kolik procen vzroste umrtnost když hráč item sebere
 
@@ -184,7 +191,7 @@ const ITEMTYPE = {
             case 1:
                 return this.GROUP;
             case 2:
-                return this.INFECTICITY;
+                return this.CURE;
             case 3:
                 return this.MORTALITY;
             default:

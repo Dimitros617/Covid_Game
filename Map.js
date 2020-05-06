@@ -824,8 +824,8 @@ class Map {
                 let path = "";
                 if (this.item[i].type == ITEMTYPE.HUMAN)
                     path = "url('img/" + this.item[i].dificulty + "." + RANDOM_NUMBER(1, 7) + ".png')";
-                else if (this.item[i].type == ITEMTYPE.INFECTICITY)
-                    path = "url('img/infecticity.png')";
+                else if (this.item[i].type == ITEMTYPE.CURE)
+                    path = "url('img/cure.png')";
                 else if (this.item[i].type == ITEMTYPE.GROUP)
                     path = "url('img/0.0.png')";
                 else if (this.item[i].type == ITEMTYPE.MORTALITY)

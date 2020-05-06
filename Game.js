@@ -29,12 +29,12 @@ class Game {
             this.setShop();
     
     
-            SCORE(SCORE_DATA.SCORE);
-            MORTALITY(SCORE_DATA.MORTALITY);
-            INFECTICITY(SCORE_DATA.INFECTICITY);
-            INFECTED(SCORE_DATA.INFECTED.length);
-            DEAD(SCORE_DATA.DEAD);
-            HEAL(SCORE_DATA.HEAL);
+            SCORE(SCORE_DATA.SCORE = SCORE_DATA_DEFAULT.SCORE);
+            MORTALITY(SCORE_DATA.MORTALITY = SCORE_DATA_DEFAULT.MORTALITY);
+            CURE(SCORE_DATA.CURE = SCORE_DATA_DEFAULT.CURE);
+            INFECTED((SCORE_DATA.INFECTED = SCORE_DATA_DEFAULT.INFECTED).length);
+            DEAD(SCORE_DATA.DEAD = SCORE_DATA_DEFAULT.DEAD);
+            HEAL(SCORE_DATA.HEAL = SCORE_DATA_DEFAULT.HEAL);
     
             this.map.mainButton.innerHTML = "START";
             LOADING(false);
@@ -55,32 +55,35 @@ class Game {
         this.newRule(TYPE.DEAD, 1, "První mrtvý lidé stále vykupují obchody", 4, 0, ITEMTYPE.GROUP, true);
         this.newRule(TYPE.DEAD, 16, "Mrtvý přibývají vláda se schází a chce vyhlásit stav nouze", 3, 0, ITEMTYPE.GROUP, true);
         this.newRule(TYPE.DEAD, 24, "Vláda se shodla, nařídila, že lidé se nesmí shlukovat do skupinek", 0, 0, ITEMTYPE.GROUP, true);
-        this.newRule(TYPE.HEAL, 1, "První uzdravený se dostávají zpět domu", 1, 0, ITEMTYPE.INFECTICITY, false);
-        this.newRule(TYPE.HEAL, 10, "Již se z nemocnice vrátilo 10 lidí", 1, 0, ITEMTYPE.INFECTICITY, false);
+        this.newRule(TYPE.HEAL, 1, "První uzdravený se dostávají zpět domu", 1, 0, ITEMTYPE.CURE, false);
+        this.newRule(TYPE.HEAL, 10, "Již se z nemocnice vrátilo 10 lidí", 1, 0, ITEMTYPE.CURE, false);
         this.newRule(TYPE.DEAD, 43, "Vláda nařizuje zákaz vycházení, lidé by měli omezit chození ven", 2, 0, ITEMTYPE.HUMAN, true);
         this.newRule(TYPE.DEAD, 50, "Vláda nařídila si povině chránít ústa rouškamy", 2, 100, ITEMTYPE.HUMAN, true);
         this.newRule(TYPE.DEAD, 50,  null, 0, 0, ITEMTYPE.HUMAN, true);
-        //this.newRule(TYPE.INFECTICITY, 15, "Nakazlivost", 1, 0, ITEMTYPE.INFECTICITY, true);
+        //this.newRule(TYPE.CURE, 15, "Nakazlivost", 1, 0, ITEMTYPE.CURE, true);
     }
 
     createGoals(){
 
-        this.newGoal(TYPE.SCORE, 100, "Gratuluji dosáhli jste 100 bodů", "img/winner.gif");
-        this.newGoal(TYPE.SCORE, 1000, "WOW dosáhli jste už 1000 bodů", "img/winner.gif");
-        this.newGoal(TYPE.SCORE, 10000, "Jsi nezastavitelný už máš 10 000 bodů", "img/winner.gif");
+        this.newGoal(TYPE.DEAD, 0, "Jů. Lék už je skoro hotový.", "img/medicine.png");
+        this.newGoal(TYPE.INFECTED, 1, "Úmrtnost se vyšplhala tak vysoko, že umírá každý druhý člověk", "img/award.png");
+/*
+        this.newGoal(TYPE.SCORE, 100, "Gratuluji dosáhli jste 100 bodů", "img/award.png");
+        this.newGoal(TYPE.SCORE, 1000, "WOW dosáhli jste už 1000 bodů", "img/award.png");
+        this.newGoal(TYPE.SCORE, 10000, "Jsi nezastavitelný už máš 10 000 bodů", "img/award.png");
         
-        this.newGoal(TYPE.DEAD, 10, "Gratuluji dosáhli jste 10 mrtvých", "img/winner.gif");
-        this.newGoal(TYPE.DEAD, 100, "WOW už umřelo 100 lidí", "img/winner.gif");
+        this.newGoal(TYPE.DEAD, 10, "Gratuluji dosáhli jste 10 mrtvých", "img/award.png");
+        this.newGoal(TYPE.DEAD, 100, "WOW už umřelo 100 lidí", "img/award.png");
 
-        this.newGoal(TYPE.HEAL, 10, "Sakra ta imunita, už 10 lidí se vyléčilo", "img/winner.gif");
-        this.newGoal(TYPE.HEAL, 100, "Pozor už se vyléčilo 100 lidí", "img/winner.gif");
+        this.newGoal(TYPE.HEAL, 10, "Sakra ta imunita, už 10 lidí se vyléčilo", "img/award.png");
+        this.newGoal(TYPE.HEAL, 100, "Pozor už se vyléčilo 100 lidí", "img/award.png");
 
-        this.newGoal(TYPE.INFECTICITY, 50, "Infekticita je tak velká že se nakazí už každý druhý člověk", "img/winner.gif");
-        this.newGoal(TYPE.MORTALITY, 50, "Úmrtnost se vyšplhala tak vysoko, že umírá každý druhý člověk", "img/winner.gif");
+        this.newGoal(TYPE.CURE, 50, "Jů. Lék už je skoro hotový.", "img/medicine.png");
+        this.newGoal(TYPE.MORTALITY, 50, "Úmrtnost se vyšplhala tak vysoko, že umírá každý druhý člověk", "img/award.png");
 
-        this.newGoal(TYPE.INFECTICITY, 100, "Infekčnost je teď na maximu, každé kolo se zdvojnásobují nakažení", "img/winner.gif");
-        this.newGoal(TYPE.MORTALITY, 100, "Úmrtnost je neúprosná, neexistuje lék, každý kdo je nakažený 100% umře", "img/winner.gif");
-
+        this.newGoal(TYPE.CURE, 100, "Infekčnost je teď na maximu, každé kolo se zdvojnásobují nakažení", "img/medicine.png");
+        this.newGoal(TYPE.MORTALITY, 100, "Úmrtnost je neúprosná, neexistuje lék, každý kdo je nakažený 100% umře", "img/award.png");
+*/
     }
 
     start() {
@@ -89,6 +92,7 @@ class Game {
         this.checkActions();
         this.map.player.resetPosition();
         this.started = true;
+        ROUND(this.round = 1);
 
         DIV_INFO.children[0].children[1].disabled = true;
         DIV_INFO.children[0].children[1].style.color = "grey";
@@ -98,12 +102,12 @@ class Game {
    }
 
     reStart(){
-        SCORE(SCORE_DATA.SCORE = 10);
-        MORTALITY(SCORE_DATA.MORTALITY = 50);
-        INFECTICITY(SCORE_DATA.INFECTICITY = 10);
-        INFECTED(SCORE_DATA.INFECTED = []);
-        DEAD(SCORE_DATA.DEAD = 0);
-        HEAL(SCORE_DATA.HEAL = 0);
+        SCORE(SCORE_DATA.SCORE = SCORE_DATA_DEFAULT.SCORE);
+        MORTALITY(SCORE_DATA.MORTALITY = SCORE_DATA_DEFAULT.MORTALITY);
+        CURE(SCORE_DATA.CURE = SCORE_DATA_DEFAULT.CURE);
+        INFECTED((SCORE_DATA.INFECTED = SCORE_DATA_DEFAULT.INFECTED).length);
+        DEAD(SCORE_DATA.DEAD = SCORE_DATA_DEFAULT.DEAD);
+        HEAL(SCORE_DATA.HEAL = SCORE_DATA_DEFAULT.HEAL);
         window.UI.generateNewMap();
     }
 
@@ -111,7 +115,6 @@ class Game {
 
         this.started = null;
         this.map.mainButton.innerHTML = "ZNOVU";
-        ACHIEVEMENT("Ups hra skončila, došli ti body.", "img/cross.png");
         NEWS("Gratuluji, celkové skóre je: " + this.getFinalScore());
         DIV_INFO.children[0].children[1].disabled = false;
         DIV_INFO.children[0].children[1].style.color = "black";
@@ -123,9 +126,17 @@ class Game {
     nextRound() {
 
         if (SCORE_DATA.SCORE <= 0) {
+            ACHIEVEMENT("Ups hra skončila, došli ti body.", "img/cross.png");
             this.gameOver();
             return;
         }
+
+        if (SCORE_DATA.CURE >= 100) {
+            ACHIEVEMENT("Ups hra skončila, lék byl dokončen, a vyrus vyléčen.", "img/cross.png");
+            this.gameOver();
+            return;
+        }
+
 
         let cell = this.map.checkPlayerPosition();
         if (Object.getPrototypeOf(cell) === Object.getPrototypeOf(document.createElement("div").classList)) {
@@ -133,7 +144,7 @@ class Game {
                 if (SCORE_DATA.MORTALITY > 0) {
                     MORTALITY(--SCORE_DATA.MORTALITY);
                 }
-                SCORE(--SCORE_DATA.SCORE);
+                SCORE(SCORE_DATA.SCORE -= parseInt(this.round /10));
             }
             else {
                 if (cell.length != 0) {
@@ -149,22 +160,22 @@ class Game {
             switch (cell.type) {
                 case ITEMTYPE.HUMAN:
                     SCORE_DATA.INFECTED.push({ liveSpan: cell.liveSpan, value: cell.distance });
-                    SCORE(SCORE_DATA.SCORE += cell.distance + 1);
+                    SCORE(SCORE_DATA.SCORE += ((cell.distance +1) * parseInt(this.round /10)));
                     INFECTED(SCORE_DATA.INFECTED.length);
                     break;
                 case ITEMTYPE.GROUP:
                     for (let i = 0; i < ITEMTYPE.GROUP_SIZE; i++) {
                         SCORE_DATA.INFECTED.push({ liveSpan: cell.liveSpan, value: cell.distance });
                     }
-                    SCORE(SCORE_DATA.SCORE += (cell.distance + 1) * ITEMTYPE.GROUP_SIZE);
+                    SCORE(SCORE_DATA.SCORE += ((cell.distance +1) * parseInt(this.round /10)) * ITEMTYPE.GROUP_SIZE);
                     INFECTED(SCORE_DATA.INFECTED.length);
 
                     break;
                 case ITEMTYPE.MORTALITY:
                     MORTALITY(SCORE_DATA.MORTALITY += ITEMTYPE.MORTALITY_VALUE);
                     break;
-                case ITEMTYPE.INFECTICITY:
-                    INFECTICITY(SCORE_DATA.INFECTICITY = (SCORE_DATA.INFECTICITY + ITEMTYPE.INFECTICITY_VALUE));
+                case ITEMTYPE.CURE:
+                    CURE(SCORE_DATA.CURE - ITEMTYPE.CURE_VALUE > 0 ? SCORE_DATA.CURE -= ITEMTYPE.CURE_VALUE : 0);
                     break;
                 default:
                     break;
@@ -175,6 +186,7 @@ class Game {
 
         if (this.started) {
             ROUND(++this.round);
+            CURE(++SCORE_DATA.CURE);
             this.checkActions();
             this.checkGoals();
         }
@@ -213,28 +225,19 @@ class Game {
                     break;
                 }
                 console.log("pocet cyklu: " + i);
-                if (RANDOM_NUMBER(0, 100) < SCORE_DATA.INFECTICITY) {
+                if (RANDOM_NUMBER(0, 100) < SCORE_DATA.INFECTED[i].value) {
                     SCORE_DATA.INFECTED.push({ liveSpan: PEOPLE_INFECTED_DAY, value: SCORE_DATA.INFECTED[i].value });
                     SCORE(SCORE_DATA.SCORE += SCORE_DATA.INFECTED[i].value);
-                    if(SCORE_DATA.INFECTICITY > 4 && SCORE_DATA.INFECTED[i].liveSpan-1 < 0){
-                        debugger;
-                        INFECTICITY(SCORE_DATA.INFECTICITY -= 5);
-                    }
-                }
-                else{
-                    if(SCORE_DATA.INFECTICITY < 100 && SCORE_DATA.INFECTED[i].liveSpan-1 < 0){
-                        INFECTICITY(SCORE_DATA.INFECTICITY += 1);
-                    }
                 }
                 if (--SCORE_DATA.INFECTED[i].liveSpan < 0) {
 
                     if (RANDOM_NUMBER(0, 100) < SCORE_DATA.MORTALITY) {
                         DEAD(++SCORE_DATA.DEAD);
-                        SCORE(SCORE_DATA.SCORE += SCORE_DATA.INFECTED[i].value / 2)
+                        SCORE(SCORE_DATA.SCORE += ((SCORE_DATA.INFECTED[i].value / 2))* parseInt(this.round /10));
                     }
                     else {
                         HEAL(++SCORE_DATA.HEAL);
-                        SCORE(SCORE_DATA.SCORE -= parseInt(SCORE_DATA.INFECTED[i].value));
+                        SCORE(SCORE_DATA.SCORE -= (parseInt(SCORE_DATA.INFECTED[i].value) * parseInt(this.round /10)));
                     }
                     SCORE_DATA.INFECTED.splice(i, 1);
                     i--;
@@ -247,6 +250,7 @@ class Game {
     }
 
     checkGoals(){
+        debugger;
         let showOne = false;
         for(let i = 0; i < this.goals.length && !showOne ; i++){
             if(SCORE_DATA.onIndex(this.goals[i].typeOfScore) >= this.goals[i].value && !this.goals[i].show){
@@ -340,13 +344,18 @@ class Game {
             }
         }
 
-        ADD_INFECTICITY.onclick = function(){
+        ADD_CURE.onclick = function(){
             if(SCORE_DATA.SCORE - 10 >= 0){
+                if(SCORE_DATA.CURE - 5 >= 0){
                 SCORE(SCORE_DATA.SCORE -= 10);
-                INFECTICITY(SCORE_DATA.INFECTICITY += 5);
+                CURE(SCORE_DATA.CURE -= 5);
+                }
+                else{
+                    ACHIEVEMENT("Léčba je tak malá, že není ji možné více snížit." , "img/exclamation.png")
+                }
             }
             else{
-                ACHIEVEMENT("Ups... Bohužel přidání 5% nakažlivosti stojí 10 bodů, a ty nemáš." , "img/exclamation.png")
+                ACHIEVEMENT("Ups... Bohužel odebrání 5% léčby stojí 10 bodů, a ty nemáš." , "img/exclamation.png")
             }
         }
     }
