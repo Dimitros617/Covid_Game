@@ -100,7 +100,7 @@ class Map {
                                     }
                                 }
                                 else{
-                                    ACHIEVEMENT("Na to bohužel nemáš dostatek bodů, ukázka cesty stojí "+ DIFICULTY.PRICE_FOR_PATH +" bodů.","img/exclamation.png");
+                                    ACHIEVEMENT("Na to bohužel nemáš dostatek bodů, ukázka cesty stojí "+ (DIFICULTY.PRICE_FOR_PATH) +" bodů.","img/exclamation.png");
                                 }
                             }
                         }
@@ -874,8 +874,10 @@ class Map {
                 else{
                     lenght = this.shortestWay(this.player.position, this.item[i].position, RETURN.COUNT);
                 }
+                //Nastavím cenu za nákup cesty
+                DIFICULTY.PRICE_FOR_PATH = lenght+1;
                 //Danému poli v mapě, na kterém se nachází item se nastaví title obsahující vzdálenost itemu odhráče
-                this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].setAttribute("data-title", "Nejkratší cesta: " + lenght + " Nebo si můžeš koupit cestu za " + DIFICULTY.PRICE_FOR_PATH)
+                this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].setAttribute("data-title", "Nejkratší cesta: " + lenght + " " + CZ_STRING(lenght,"tah") + ", nebo si ji kup za: " + DIFICULTY.PRICE_FOR_PATH + " " + CZ_STRING(lenght,"bod"))
             }
             else if(!toolTip && DIFICULTY.SHOW_TOOLTIP == SHOW_TOOLTIP.NEVER){
                 this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].removeAttribute("data-title");

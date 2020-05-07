@@ -321,7 +321,6 @@ class UI {
         }
 
         if (e.target.parentNode.children[0].innerHTML.toLowerCase().includes("režim")) {
-            debugger;
             switch (e.target.value) {
                 case "EDU-kačka":
                     DIFICULTY.GAME_MODE = GAME_MODE.EDUCATION;

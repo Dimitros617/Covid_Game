@@ -48,6 +48,7 @@ const SCORE_DATA = {
     HEAL: SCORE_DATA_DEFAULT.HEAL,
     MORTALITY: SCORE_DATA_DEFAULT.MORTALITY,
     CURE: SCORE_DATA_DEFAULT.CURE,
+    TOTAL_SCORE: 0,
 
     onIndex(x) {
         switch (x) {
@@ -223,6 +224,7 @@ const POSITON = {
 
 const RANDOM_NUMBER = (minimum, maximum) => Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
 
+const CZ_STRING = (int, string) => int == 1 ? string : int >1 && int <5 ? string + "y" : string + "ů";
 
 
 

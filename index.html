@@ -82,7 +82,7 @@
     </div>
 
     <div id="news">
-    <div id="live" class="blob" onclick="{if(this.copyright == undefined){ SCORE(SCORE_DATA.SCORE += 100); /*this.copyright = false*/; window.UI.showAchievement('Děkji za hraní + 100 Bodů','img/copyright.png')} else {window.UI.showAchievement('Děkji za hraní svůj bonus, už jsi ale dostal.','img/copyright.png')}}">&bull; ŽIVĚ</div>
+    <div id="live" class="blob" onclick="{if(window.copyright == undefined){ SCORE(SCORE_DATA.SCORE += 100); /*window.copyright = false*/; window.UI.showAchievement('Děkji za hraní + 100 Bodů','img/copyright.png')} else {window.UI.showAchievement('Děkuji za hraní svůj bonus, už jsi ale dostal, nebo není v tomto herním režimu povolen.','img/copyright.png')}}">&bull; ŽIVĚ</div>
         <div id="text"> Užijte si hru...</div>
         <div id="round">KOLO - 00</div>
     </div>

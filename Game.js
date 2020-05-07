@@ -59,7 +59,6 @@ class Game {
     }
 
     createScenary() {
-        debugger;
 
         switch (DIFICULTY.GAME_MODE) {
             case GAME_MODE.EDUCATION://------------------------------------------------------------------------------
@@ -172,6 +171,8 @@ class Game {
                 DEAD(SCORE_DATA.DEAD = SCORE_DATA_DEFAULT.DEAD);
                 HEAL(SCORE_DATA.HEAL = SCORE_DATA_DEFAULT.HEAL);
                 DIFICULTY.PRICE_FOR_PATH = this.map.item[0].distance;
+                debugger;
+                window.copyright = false;
                 break;
             case GAME_MODE.ALL_IN://------------------------------------------------------------------------------
                 SCORE(SCORE_DATA.SCORE = SCORE_DATA_DEFAULT.SCORE);
@@ -181,6 +182,9 @@ class Game {
                 DEAD(SCORE_DATA.DEAD = SCORE_DATA_DEFAULT.DEAD);
                 HEAL(SCORE_DATA.HEAL = SCORE_DATA_DEFAULT.HEAL);
                 DIFICULTY.SHOW_TOOLTIP = SHOW_TOOLTIP.NEVER;
+                window.copyright = false;
+                this.bottleHalf = true;
+                this.bottleThree = true;
                 break;
             case GAME_MODE.STORY://------------------------------------------------------------------------------
 
@@ -202,7 +206,8 @@ class Game {
     }
 
     gameOver() {
-
+        debugger
+        SCORE(0);
         this.started = null;
         this.map.mainButton.innerHTML = "ZNOVU";
         DIV_INFO.children[0].children[1].disabled = false;
@@ -225,16 +230,49 @@ class Game {
                         SCORE(--SCORE_DATA.SCORE);
                     }
                     else if (Object.getPrototypeOf(cell) === Object.getPrototypeOf(new Item())) {
-                        debugger;
                         SCORE(SCORE_DATA.SCORE += cell.distance + 1);
                     }
-                    DIFICULTY.PRICE_FOR_PATH = this.map.item.length == 0 ? DIFICULTY.PRICE_FOR_PATH : this.map.item[0].distance;
+                    if(SCORE_DATA.SCORE <= 0){
+                        ACHIEVEMENT("Bohužel došli ti body, ale zkus to znovu, určitě budeš lepší. Celkové skore je: " + SCORE_DATA.TOTAL_SCORE, "img/cross.png");
+                        NEWS("Celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
+                        this.gameOver();
+                        return;
+                    }
+
+                    
+                    SCORE_DATA.TOTAL_SCORE += SCORE_DATA.SCORE;
                     ROUND(++this.round);
                     this.checkActions();
                     this.checkGoals();
                     break;
                 case GAME_MODE.ALL_IN://------------------------------------------------------------------------------
                     //TODO když už nejsou ždáné lahvčky winn projed mapu cyklem a  když zadna nebude obsahovat backggroud img contain bottle je to winn
+                   
+                    let countBottles = document.getElementsByClassName("bottle").length;
+                    let allBottles = this.map.allValidPosition.length;
+
+                    if(countBottles <= (allBottles /2) && this.bottleHalf){
+                        ACHIEVEMENT("Už zbývá jen půlka. Jen tak dál", "img/award.png");
+                        this.bottleHalf = false;
+                    }
+                    if(countBottles <= (3) && this.bottleThree){
+                        ACHIEVEMENT("Jsi jen kousek od výtězstvý, držím ti palce", "img/award.png");
+                        this.bottleThree = false;
+                    }
+                    if(countBottles == 0){
+                        ACHIEVEMENT("Gratuluji VYHRÁL si celkové skore je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));, "img/winner.gif");
+                        NEWS("Celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
+                        this.gameOver();
+                        return;
+                    }
+                    if(SCORE_DATA.SCORE <= 0){
+                        ACHIEVEMENT("Bohužel došli ti body, ale zkus to znovu, určitě budeš lepší. Celkové skore je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));, "img/cross.png");
+                        NEWS("Celkové skóre je: "  + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
+                        this.gameOver();
+                        return;
+                    }
+
+                    SCORE_DATA.TOTAL_SCORE += SCORE_DATA.SCORE;
                     SCORE(--SCORE_DATA.SCORE);
                     ROUND(++this.round);
                     this.checkActions();
@@ -246,18 +284,19 @@ class Game {
 
                     if (SCORE_DATA.SCORE <= 0) {
                         ACHIEVEMENT("Ups hra skončila, došli ti body.", "img/cross.png");
-                        NEWS("Gratuluji, celkové skóre je: " + this.getFinalScore());
+                        NEWS("Gratuluji, celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
                         this.gameOver();
                         return;
                     }
 
                     if (SCORE_DATA.CURE >= 100) {
                         ACHIEVEMENT("Ups hra skončila, lék byl dokončen, a vyrus vyléčen.", "img/cross.png");
-                        NEWS("Gratuluji, celkové skóre je: " + this.getFinalScore());
+                        NEWS("Gratuluji, celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
                         this.gameOver();
                         return;
                     }
-;
+
+                    SCORE_DATA.TOTAL_SCORE += SCORE_DATA.SCORE;
                     if (Object.getPrototypeOf(cell) === Object.getPrototypeOf(document.createElement("div").classList)) {
 
                         if (SCORE_DATA.MORTALITY > 0) {
@@ -301,7 +340,6 @@ class Game {
                     this.checkActions();
                     this.checkGoals();
 
-
                     break;
                 default:
                     ACHIEVEMENT("Ups.. Nastala chyba při výberu herního režimu.", "img/cross.png")
@@ -316,7 +354,8 @@ class Game {
                 SCORE(--SCORE_DATA.SCORE);
             }
         }
-
+        SCORE(SCORE_DATA.SCORE = parseInt(SCORE_DATA.SCORE));
+        SCORE_DATA.TOTAL_SCORE = parseInt(SCORE_DATA.TOTAL_SCORE);
     }
 
 
@@ -385,20 +424,6 @@ class Game {
         }
     }
 
-    //Not WORKING
-    getFinalScore() {
-
-        let score = SCORE_DATA.SCORE;
-        for (let i = 0; i < SCORE_DATA.INFECTED.length; i++) {
-            score += SCORE_DATA.INFECTED[i].value;
-        }
-        score += SCORE_DATA.DEAD * 10;
-        score += SCORE_DATA.HEAL * 5;
-
-        return score;
-    }
-
-
     newRule(typeOfScore, value, news, itemCount, chance, type, repeat) {
         this.actions.push(new Action(typeOfScore, value, news, itemCount, chance, type, repeat));
     }
@@ -411,6 +436,7 @@ class Game {
 
         document.onkeydown = function (e) {
 
+            //Try je zde pro to, že pokud uživatel klikne na šipku směrem do zdi, vrací se null, což způsobuje crash,ovšem logice to nevadí
             try {
                 if (game.started != null) {
                     e = e || window.event;
@@ -450,9 +476,7 @@ class Game {
                         }
                     }
                 }
-            } catch (error) {
-
-            }
+            } catch (error) {}
         }
     }
 
