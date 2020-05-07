@@ -151,6 +151,7 @@ class UI {
         div.appendChild(this.getGraphic(POSITON.VERTICAL, "2 Hráči: ", "input/radio/multiplayer", 2));
         div.appendChild(this.getGraphic(POSITON.VERTICAL, "Velikost mapy: Střední 16x16", "input/range/map_size/1", 1, "min/0/max/2"));
         div.appendChild(this.getGraphic(POSITON.VERTICAL, "Herní režim: ", "select/EDU-kačka/Jeden bod/Seber vše/Příběh/game_mode/", 1));
+        div.appendChild(this.getGraphic(POSITON.VERTICAL, "Obtížnost: ", "select/Lehká/Střední/Těžká/dificulty/Střední", 1));
         div.appendChild(this.getGraphic(POSITON.HORIZONTAL, "Nápovědy: ", "input/checkbox/help/true", 0, "title/Při najetí na item se zobazí jak je daleko"));
         div.appendChild(this.getGraphic(POSITON.HORIZONTAL, "Přepočítat: ", "select/Každý krok/Jen při chycení/helpType/", 0, "title/Při najetí na item se zobazí jak je daleko, tímto nastavením určíte kdy se má vzdálenost přepočítat."))
         //div.appendChild(this.getGraphic(POSITON.HORIZONTAL,"Inkubační doba: ","input/number/incubation/4",0,"min/1/title/Jak dlouho trvá než se z akažené stane mrví nebo vyléčený."));
@@ -342,10 +343,10 @@ class UI {
                     document.getElementsByName("multiplayer")[1].checked = false;
                     document.getElementsByName("multiplayer")[0].disabled = true;
                     document.getElementsByName("multiplayer")[1].disabled = true;
-                    if(document.getElementsByName("help")[0].checked){
-                    document.getElementsByName("help")[0].value = false;
-                    document.getElementsByName("help")[0].click(document.getElementsByName("help")[0]);
-                    document.getElementsByName("help")[0].disabled = true;
+                    if (document.getElementsByName("help")[0].checked) {
+                        document.getElementsByName("help")[0].value = false;
+                        document.getElementsByName("help")[0].click(document.getElementsByName("help")[0]);
+                        document.getElementsByName("help")[0].disabled = true;
                     }
                     break;
                 case "Příběh":
@@ -353,6 +354,23 @@ class UI {
                     document.getElementsByName("multiplayer")[0].disabled = false;
                     document.getElementsByName("multiplayer")[1].disabled = false;
                     document.getElementsByName("help")[0].disabled = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if (e.target.parentNode.children[0].innerHTML.toLowerCase().includes("obtížnost")) {
+            
+            switch (e.target.value) {
+                case "Lehká": 
+                    DIFICULTY.MAX_DISTANCE = DISTANCE.SHORT;
+                    break;
+                case "Střední":
+                    DIFICULTY.MAX_DISTANCE = DISTANCE.MEDIUM;
+                    break;
+                case "Těžká":
+                    DIFICULTY.MAX_DISTANCE = DISTANCE.LONG;
                     break;
                 default:
                     break;

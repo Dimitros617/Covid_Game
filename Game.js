@@ -27,7 +27,6 @@ class Game {
             this.map.drawAllValid("valid");
 
             this.setArrows();
-            this.setShop();
 
             this.player = this.map.player;
             if (DIFICULTY.MULTIPLAYER == MULTIPLAYER.TRUE) {
@@ -146,6 +145,7 @@ class Game {
 
     start() {
 
+        debugger;
         this.map.clear();
         this.map.player.resetPosition();
         this.started = true;
@@ -161,9 +161,17 @@ class Game {
 
         switch (DIFICULTY.GAME_MODE) {
             case GAME_MODE.EDUCATION://------------------------------------------------------------------------------
+                this.setShop(true);
+                this.catchItems = [];
+                for (let i = 0; i < ITEMTYPE.length; i++) {
+                    for (let j = 0; j < 2; j++) {
+                        this.catchItems[ITEMTYPE.onIndex(i) + j] = 0;
 
+                    }
+                }
                 break;
             case GAME_MODE.ONE_POINT://------------------------------------------------------------------------------
+                this.setShop(false);
                 SCORE(SCORE_DATA.SCORE = SCORE_DATA_DEFAULT.SCORE);
                 MORTALITY(SCORE_DATA.MORTALITY = SCORE_DATA_DEFAULT.MORTALITY);
                 CURE(SCORE_DATA.CURE = SCORE_DATA_DEFAULT.CURE);
@@ -173,8 +181,10 @@ class Game {
                 DIFICULTY.PRICE_FOR_PATH = this.map.item[0].distance;
                 debugger;
                 window.copyright = false;
+                this.win = false;
                 break;
             case GAME_MODE.ALL_IN://------------------------------------------------------------------------------
+                this.setShop(false);
                 SCORE(SCORE_DATA.SCORE = SCORE_DATA_DEFAULT.SCORE);
                 MORTALITY(SCORE_DATA.MORTALITY = SCORE_DATA_DEFAULT.MORTALITY);
                 CURE(SCORE_DATA.CURE = SCORE_DATA_DEFAULT.CURE);
@@ -187,7 +197,7 @@ class Game {
                 this.bottleThree = true;
                 break;
             case GAME_MODE.STORY://------------------------------------------------------------------------------
-
+                this.setShop(true);
                 break;
             default:
                 break;
@@ -217,70 +227,52 @@ class Game {
     }
 
 
-    nextRound() {
+    nextRound(notWait) {
         var cell = this.map.checkPlayerPosition();
         if (this.started) {
             switch (DIFICULTY.GAME_MODE) {
                 case GAME_MODE.EDUCATION://------------------------------------------------------------------------------
 
-                    break;
-                case GAME_MODE.ONE_POINT://------------------------------------------------------------------------------
-                    //TO DO dodělat konec hry když jsou body pod 0 + každých 50 kol + 10 bodů
+
+                    SCORE_DATA.TOTAL_SCORE += SCORE_DATA.SCORE;
                     if (Object.getPrototypeOf(cell) === Object.getPrototypeOf(document.createElement("div").classList)) {
+
+                        if (SCORE_DATA.MORTALITY > 0) {
+                            MORTALITY(--SCORE_DATA.MORTALITY);
+                        }
                         SCORE(--SCORE_DATA.SCORE);
                     }
                     else if (Object.getPrototypeOf(cell) === Object.getPrototypeOf(new Item())) {
-                        SCORE(SCORE_DATA.SCORE += cell.distance + 1);
-                    }
-                    if(SCORE_DATA.SCORE <= 0){
-                        ACHIEVEMENT("Bohužel došli ti body, ale zkus to znovu, určitě budeš lepší. Celkové skore je: " + SCORE_DATA.TOTAL_SCORE, "img/cross.png");
-                        NEWS("Celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
-                        this.gameOver();
-                        return;
+                        switch (cell.type) {
+                            case ITEMTYPE.HUMAN:
+                                SCORE_DATA.INFECTED.push({ liveSpan: cell.liveSpan, value: cell.distance });
+                                SCORE(SCORE_DATA.SCORE += (cell.distance + 1));
+                                INFECTED(SCORE_DATA.INFECTED.length);
+                                break;
+                            case ITEMTYPE.GROUP:
+                                for (let i = 0; i < ITEMTYPE.GROUP_SIZE; i++) {
+                                    SCORE_DATA.INFECTED.push({ liveSpan: cell.liveSpan, value: cell.distance });
+                                }
+                                SCORE(SCORE_DATA.SCORE += (cell.distance + 1) * ITEMTYPE.GROUP_SIZE);
+                                INFECTED(SCORE_DATA.INFECTED.length);
+
+                                break;
+                            case ITEMTYPE.MORTALITY:
+                                MORTALITY(SCORE_DATA.MORTALITY += ITEMTYPE.MORTALITY_VALUE);
+                                break;
+                            case ITEMTYPE.CURE:
+                                CURE(SCORE_DATA.CURE - ITEMTYPE.CURE_VALUE > 0 ? SCORE_DATA.CURE -= ITEMTYPE.CURE_VALUE : 0);
+                                break;
+                            default:
+                                break;
+                        }
                     }
 
-                    
-                    SCORE_DATA.TOTAL_SCORE += SCORE_DATA.SCORE;
+                    this.checkInfected()
                     ROUND(++this.round);
+                    CURE(++SCORE_DATA.CURE);
                     this.checkActions();
                     this.checkGoals();
-                    break;
-                case GAME_MODE.ALL_IN://------------------------------------------------------------------------------
-                    //TODO když už nejsou ždáné lahvčky winn projed mapu cyklem a  když zadna nebude obsahovat backggroud img contain bottle je to winn
-                   
-                    let countBottles = document.getElementsByClassName("bottle").length;
-                    let allBottles = this.map.allValidPosition.length;
-
-                    if(countBottles <= (allBottles /2) && this.bottleHalf){
-                        ACHIEVEMENT("Už zbývá jen půlka. Jen tak dál", "img/award.png");
-                        this.bottleHalf = false;
-                    }
-                    if(countBottles <= (3) && this.bottleThree){
-                        ACHIEVEMENT("Jsi jen kousek od výtězstvý, držím ti palce", "img/award.png");
-                        this.bottleThree = false;
-                    }
-                    if(countBottles == 0){
-                        ACHIEVEMENT("Gratuluji VYHRÁL si celkové skore je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));, "img/winner.gif");
-                        NEWS("Celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
-                        this.gameOver();
-                        return;
-                    }
-                    if(SCORE_DATA.SCORE <= 0){
-                        ACHIEVEMENT("Bohužel došli ti body, ale zkus to znovu, určitě budeš lepší. Celkové skore je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));, "img/cross.png");
-                        NEWS("Celkové skóre je: "  + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
-                        this.gameOver();
-                        return;
-                    }
-
-                    SCORE_DATA.TOTAL_SCORE += SCORE_DATA.SCORE;
-                    SCORE(--SCORE_DATA.SCORE);
-                    ROUND(++this.round);
-                    this.checkActions();
-                    this.checkGoals();
-
-                    break;
-                case GAME_MODE.STORY://------------------------------------------------------------------------------
-
 
                     if (SCORE_DATA.SCORE <= 0) {
                         ACHIEVEMENT("Ups hra skončila, došli ti body.", "img/cross.png");
@@ -295,6 +287,80 @@ class Game {
                         this.gameOver();
                         return;
                     }
+
+
+                    break;
+                case GAME_MODE.ONE_POINT://------------------------------------------------------------------------------
+                    //TO DO dodělat konec hry když jsou body pod 0 + každých 50 kol + 10 bodů
+                    if (Object.getPrototypeOf(cell) === Object.getPrototypeOf(document.createElement("div").classList)) {
+                        SCORE(--SCORE_DATA.SCORE);
+                    }
+                    else if (Object.getPrototypeOf(cell) === Object.getPrototypeOf(new Item())) {
+                        SCORE(SCORE_DATA.SCORE += cell.distance + 1);
+                        CURE(SCORE_DATA.CURE += RANDOM_NUMBER(1, 5));
+                    }
+                    if (SCORE_DATA.SCORE <= 0) {
+                        ACHIEVEMENT("Bohužel došli ti body, ale zkus to znovu, určitě budeš lepší. Celkové skore je: " + SCORE_DATA.TOTAL_SCORE, "img/cross.png");
+                        NEWS("Celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
+                        this.gameOver();
+                        return;
+                    }
+                    if (SCORE_DATA.CURE >= 100 && !this.win) {
+                        ACHIEVEMENT("VÝHRA, dosáhl jsi 100% léčby a všechny si vyléčil. Celkové skore je: " + SCORE_DATA.TOTAL_SCORE + " jestli cheš můžeš pokračovat.", "img/cross.png");
+                        NEWS("Celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
+                        this.win = true;
+                        this.map.mainButton.innerHTML = "UKONČIT"
+                    }
+                    if (this.win && !notWait) {
+                        ACHIEVEMENT("Wow Vyhrál si s celkovým skore: " + SCORE_DATA.TOTAL_SCORE, "img/cross.png");
+                        NEWS("Celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
+                        this.win = false;
+                        this.gameOver();
+                        return;
+                    }
+
+
+                    SCORE_DATA.TOTAL_SCORE += SCORE_DATA.SCORE;
+                    ROUND(++this.round);
+                    this.checkActions();
+                    this.checkGoals();
+                    break;
+                case GAME_MODE.ALL_IN://------------------------------------------------------------------------------
+                    //TODO když už nejsou ždáné lahvčky winn projed mapu cyklem a  když zadna nebude obsahovat backggroud img contain bottle je to winn
+
+                    let countBottles = document.getElementsByClassName("bottle").length;
+                    let allBottles = this.map.allValidPosition.length;
+
+                    if (countBottles <= (allBottles / 2) && this.bottleHalf) {
+                        ACHIEVEMENT("Už zbývá jen půlka. Jen tak dál", "img/award.png");
+                        this.bottleHalf = false;
+                    }
+                    if (countBottles <= (3) && this.bottleThree) {
+                        ACHIEVEMENT("Jsi jen kousek od výtězstvý, držím ti palce", "img/award.png");
+                        this.bottleThree = false;
+                    }
+                    if (countBottles == 0) {
+                        ACHIEVEMENT("Gratuluji VYHRÁL si celkové skore je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE), "img/winner.gif");
+                        NEWS("Celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
+                        this.gameOver();
+                        return;
+                    }
+                    if (SCORE_DATA.SCORE <= 0) {
+                        ACHIEVEMENT("Bohužel došli ti body, ale zkus to znovu, určitě budeš lepší. Celkové skore je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE), "img/cross.png");
+                        NEWS("Celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
+                        this.gameOver();
+                        return;
+                    }
+
+                    SCORE_DATA.TOTAL_SCORE += SCORE_DATA.SCORE;
+                    SCORE(--SCORE_DATA.SCORE);
+                    ROUND(++this.round);
+                    this.checkActions();
+                    this.checkGoals();
+
+                    break;
+                case GAME_MODE.STORY://------------------------------------------------------------------------------
+
 
                     SCORE_DATA.TOTAL_SCORE += SCORE_DATA.SCORE;
                     if (Object.getPrototypeOf(cell) === Object.getPrototypeOf(document.createElement("div").classList)) {
@@ -339,6 +405,20 @@ class Game {
                     CURE(++SCORE_DATA.CURE);
                     this.checkActions();
                     this.checkGoals();
+
+                    if (SCORE_DATA.SCORE <= 0) {
+                        ACHIEVEMENT("Ups hra skončila, došli ti body.", "img/cross.png");
+                        NEWS("Gratuluji, celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
+                        this.gameOver();
+                        return;
+                    }
+
+                    if (SCORE_DATA.CURE >= 100) {
+                        ACHIEVEMENT("Ups hra skončila, lék byl dokončen, a vyrus vyléčen.", "img/cross.png");
+                        NEWS("Gratuluji, celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
+                        this.gameOver();
+                        return;
+                    }
 
                     break;
                 default:
@@ -389,19 +469,19 @@ class Game {
                 if (i > length) {
                     break;
                 }
-                if (RANDOM_NUMBER(0, 100) < SCORE_DATA.INFECTED[i].value) {
+                if (RANDOM_NUMBER(0, 100) < SCORE_DATA.INFECTED[i].value * (DIFICULTY.GAME_MODE == GAME_MODE.EDUCATION ? 1.5 : 1)) {
                     SCORE_DATA.INFECTED.push({ liveSpan: PEOPLE_INFECTED_DAY, value: SCORE_DATA.INFECTED[i].value });
-                    SCORE(SCORE_DATA.SCORE += SCORE_DATA.INFECTED[i].value);
+                    SCORE(SCORE_DATA.SCORE += SCORE_DATA.INFECTED[i].value * (DIFICULTY.GAME_MODE == GAME_MODE.EDUCATION ? 1 : parseInt(this.round / 10)));
                 }
                 if (--SCORE_DATA.INFECTED[i].liveSpan < 0) {
 
                     if (RANDOM_NUMBER(0, 100) < SCORE_DATA.MORTALITY) {
                         DEAD(++SCORE_DATA.DEAD);
-                        SCORE(SCORE_DATA.SCORE += ((SCORE_DATA.INFECTED[i].value / 2)) * parseInt(this.round / 10));
+                        SCORE(SCORE_DATA.SCORE += ((SCORE_DATA.INFECTED[i].value / 2)) * (DIFICULTY.GAME_MODE == GAME_MODE.EDUCATION ? 1 : parseInt(this.round / 10)));
                     }
                     else {
                         HEAL(++SCORE_DATA.HEAL);
-                        SCORE(SCORE_DATA.SCORE -= (parseInt(SCORE_DATA.INFECTED[i].value) * parseInt(this.round / 10)));
+                        SCORE(SCORE_DATA.SCORE -= (parseInt(SCORE_DATA.INFECTED[i].value) * (DIFICULTY.GAME_MODE == GAME_MODE.EDUCATION ? 1 : parseInt(this.round / 10))));
                     }
                     SCORE_DATA.INFECTED.splice(i, 1);
                     i--;
@@ -420,6 +500,18 @@ class Game {
                 showOne = true;
                 ACHIEVEMENT(this.goals[i].text, this.goals[i].img);
                 this.goals[i].show = true;
+            }
+        }
+    }
+
+    checkEduGoals(item) {
+        //tipeOfScore = tipeOfItem pro edu goaly
+        let showOne = false;
+        this.catchItems[item.type + item.dificulty]++;
+        for (let i = 0; i < ITEMTYPE.length; i++) {
+            for (let j = 0; j < 2; j++) {
+                
+
             }
         }
     }
@@ -476,35 +568,44 @@ class Game {
                         }
                     }
                 }
-            } catch (error) {}
+            } catch (error) { }
         }
     }
 
-    setShop() {
+    setShop(bool) {
 
-        ADD_MORTALITY.onclick = function () {
-            if (SCORE_DATA.SCORE - 10 >= 0) {
-                SCORE(SCORE_DATA.SCORE -= 10);
-                MORTALITY(SCORE_DATA.MORTALITY += 5);
-            }
-            else {
-                ACHIEVEMENT("Ups... Bohužel přidání 5% úmrtnosti stojí 10 bodů, a ty nemáš.", "img/exclamation.png")
-            }
-        }
+        if (bool) {
+            ADD_MORTALITY.style.display = "inherit";
+            ADD_CURE.style.display = "inherit";
 
-        ADD_CURE.onclick = function () {
-            if (SCORE_DATA.SCORE - 10 >= 0) {
-                if (SCORE_DATA.CURE - 5 >= 0) {
+            ADD_MORTALITY.onclick = function () {
+                if (SCORE_DATA.SCORE - 10 >= 0) {
                     SCORE(SCORE_DATA.SCORE -= 10);
-                    CURE(SCORE_DATA.CURE -= 5);
+                    MORTALITY(SCORE_DATA.MORTALITY += 5);
                 }
                 else {
-                    ACHIEVEMENT("Léčba je tak malá, že není ji možné více snížit.", "img/exclamation.png")
+                    ACHIEVEMENT("Ups... Bohužel přidání 5% úmrtnosti stojí 10 bodů, a ty nemáš.", "img/exclamation.png")
                 }
             }
-            else {
-                ACHIEVEMENT("Ups... Bohužel odebrání 5% léčby stojí 10 bodů, a ty nemáš.", "img/exclamation.png")
+
+            ADD_CURE.onclick = function () {
+                if (SCORE_DATA.SCORE - 10 >= 0) {
+                    if (SCORE_DATA.CURE - 5 >= 0) {
+                        SCORE(SCORE_DATA.SCORE -= 10);
+                        CURE(SCORE_DATA.CURE -= 5);
+                    }
+                    else {
+                        ACHIEVEMENT("Léčba je tak malá, že není ji možné více snížit.", "img/exclamation.png")
+                    }
+                }
+                else {
+                    ACHIEVEMENT("Ups... Bohužel odebrání 5% léčby stojí 10 bodů, a ty nemáš.", "img/exclamation.png")
+                }
             }
+        }
+        else {
+            ADD_MORTALITY.style.display = "none";
+            ADD_CURE.style.display = "none";
         }
     }
 

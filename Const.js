@@ -70,6 +70,14 @@ const SCORE_DATA = {
     }
 };
 
+const DISTANCE = {
+
+SHORT: 7,
+MEDIUM: 12,
+LONG: 20,
+
+};
+
 
 const MAP_SIZE = {
 
@@ -148,7 +156,7 @@ const DIFICULTY = {
     MULTIPLAYER: MULTIPLAYER.FALSE,
     SHOW_TOOLTIP: SHOW_TOOLTIP.EVERY_STEP,
     GAME_MODE: GAME_MODE.STORY,
-    MAX_DISTANCE: 15, // V jaké vzdálenosti se mohou max spawnovat itemy od hráče
+    MAX_DISTANCE: DISTANCE.MEDIUM, // V jaké vzdálenosti se mohou max spawnovat itemy od hráče
     PRICE_FOR_PATH: 20,
 
 };

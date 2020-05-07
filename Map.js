@@ -58,7 +58,7 @@ class Map {
                             //Posunu hráče na danou pozici, a znovu vykreslím kam může z nové pozice
                             window.game.map.player.moveTo(point);
                             //Předám hře nové kolo
-                            window.game.nextRound();
+                            window.game.nextRound(true);
                             //Z dané pozice kde hráč byl vymažu class valid (Aktuální jen před zahájením hry, šedivé pozice)
                             e.target.parentNode.classList.remove("valid");
                             e.target.parentNode.classList.remove("validLast");
@@ -137,7 +137,7 @@ class Map {
                 //x.target.children[0].style.width = (x.target.children[0].getBoundingClientRect().width / 2) * -1
             }
             else if(window.game.started == true && window.game.started != null){
-                game.nextRound();
+                game.nextRound(false);
                 game.map.player.me.focus();
                 setTimeout(() => { game.map.player.me.blur() }, 250);
             }
@@ -364,8 +364,10 @@ class Map {
 
     setAvailableDirection(point) {
 
-        for (let i = 0; i < this.validPosition.length; i++)
+        for (let i = 0; i < this.validPosition.length; i++){
             this.map.rows[this.validPosition[i].y].cells[this.validPosition[i].x].classList.remove("cell");
+            this.map.rows[this.validPosition[i].y].cells[this.validPosition[i].x].removeAttribute("cell-title");
+        }
 
         this.validPosition = [];
         for (let i = 0; i < 4; i++) {
@@ -374,6 +376,7 @@ class Map {
                 continue;
             let cell = this.map.rows[newPoint.y].cells[newPoint.x];
             cell.classList.add("cell");
+            cell.setAttribute("cell-title", "Cena: " + (DIFICULTY.GAME_MODE == GAME_MODE.STORY ? (parseInt(window.game.round/10)+1) : 1) + " " + CZ_STRING((DIFICULTY.GAME_MODE == GAME_MODE.STORY ? (parseInt(window.game.round/10)+1) : 1),"bod"))
             if(cell.classList.contains("bottle")){
                 cell.classList.remove("bottle");
                 SCORE(++SCORE_DATA.SCORE);

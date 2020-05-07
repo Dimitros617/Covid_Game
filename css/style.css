@@ -523,6 +523,7 @@ div.item, div.human, div.group, div.cure, div.mortality, div.bottle, td.bottleDr
   background-position: center center;
   background-repeat: no-repeat;
   transition:  0.3s;
+  cursor: pointer;
   /*transition-delay: 0.7s; */
 }
 
@@ -660,6 +661,41 @@ div#loadingText {
   transform: scale(0.5);
 }
 [data-title] {
+  position: relative;
+}
+
+
+
+[cell-title]:hover:after {
+  opacity: 1;
+  transition: all 0.1s ease 0.5s;
+  visibility: visible;
+  transition-delay: 1.3s;
+}
+[cell-title]:after {
+  content: attr(cell-title);
+  font-family: 'Comfortaa';
+  background-color: #848484cc;
+  color: #fff;
+  font-size: 140%;
+  position: absolute;
+  padding: 10px;
+  padding-right: 20px;
+  margin-right: -40px;
+  margin-top: -43px;
+  font-weight: 700;
+  right: 100%;
+  white-space: nowrap;
+  box-shadow: 1px 1px 3px #000000c7;
+  opacity: 0;
+  border-right: 20px solid #00000014;
+  border-radius: 5px 20px 20px 5px;
+  z-index: 99999;
+  visibility: hidden;
+  letter-spacing: 2px;
+  transform: scale(0.5);
+}
+[cell-title] {
   position: relative;
 }
 
