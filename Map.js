@@ -304,11 +304,10 @@ class Map {
         let addX = 0;
         let addY = 0;
         let free = true;
-
+        let lastBottle = false;
 
         do {
             cell = this.map.rows[point.y + addY].cells[point.x + addX];
-            this.map.rows[point.y + addY].cells[point.x + addX].style.background = "green";
             if (cell == undefined) {
 
                 let a = this.map;
@@ -317,7 +316,17 @@ class Map {
                 cell = c;
 
             }
-            this.map.rows[point.y + addY].cells[point.x + addX].style.background = "";
+            if(free && DIFICULTY.GAME_MODE == GAME_MODE.ALL_IN){
+                if(this.map.rows[point.y + addY].cells[point.x + addX].classList.contains("bottle")){
+                    lastBottle = this.map.rows[point.y + addY].cells[point.x + addX];
+                }
+                else{
+                    lastBottle = false;
+                }
+            }
+            this.map.rows[point.y + addY].cells[point.x + addX].classList.remove("bottle");
+            this.map.rows[point.y + addY].cells[point.x + addX].style.backgroundImage = "";
+
             switch (direction % 4) {
                 case 0:
                     free = cell.style.borderTop == "" ? true : false;
@@ -351,6 +360,12 @@ class Map {
                 default:
                     cell.style.border = "1px solid black";
                     break;
+            }
+
+            if(!free && DIFICULTY.GAME_MODE == GAME_MODE.ALL_IN){
+                if(lastBottle != false){
+                    lastBottle.classList.add("bottle");
+                }
             }
             
             //this.player.moveTo(new Point(point.x + addX, point.y + addY));

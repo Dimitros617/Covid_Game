@@ -61,6 +61,20 @@ class Game {
 
         switch (DIFICULTY.GAME_MODE) {
             case GAME_MODE.EDUCATION://------------------------------------------------------------------------------
+                this.newRule(TYPE.SCORE, -1, "Zkus jaké je to lehké hrát za virus, když jsou lidé hloupí a neposlouchají", 0, 0, ITEMTYPE.HUMAN, false);
+                this.newRule(TYPE.DEAD, 0, null, 3, 0, ITEMTYPE.HUMAN, true);
+                this.newRule(TYPE.DEAD, 0, null, 2, 0, ITEMTYPE.GROUP, true);
+                this.newRule(TYPE.DEAD, 20, null, 1, 0, ITEMTYPE.HUMAN, true);
+                this.newRule(TYPE.DEAD, 20, null, 1, 50, ITEMTYPE.HUMAN, true);
+                this.newRule(TYPE.DEAD, 25, null, 1, 100, ITEMTYPE.HUMAN, true);
+                this.newRule(TYPE.DEAD, 35, null, 1, 0, ITEMTYPE.GROUP, true);
+
+                this.newRule(TYPE.MORTALITY, -10, null, 3, 0, ITEMTYPE.MORTALITY, true);
+                this.newRule(TYPE.MORTALITY, -40, null, 1, 0, ITEMTYPE.MORTALITY, true);
+                this.newRule(TYPE.MORTALITY, 50, null, 0, 0, ITEMTYPE.MORTALITY, true);
+
+                this.newRule(TYPE.SCORE, 1, null, 1, 0, ITEMTYPE.CURE, true);
+
 
                 break;
             case GAME_MODE.ONE_POINT://------------------------------------------------------------------------------
@@ -76,6 +90,10 @@ class Game {
                 this.newRule(TYPE.MORTALITY, -10, null, 3, 0, ITEMTYPE.MORTALITY, true);
                 this.newRule(TYPE.MORTALITY, -40, null, 1, 0, ITEMTYPE.MORTALITY, true);
                 this.newRule(TYPE.MORTALITY, 50, null, 0, 0, ITEMTYPE.MORTALITY, true);
+
+                this.newRule(TYPE.CURE, -10, null, 0, 0, ITEMTYPE.CURE, true);
+                this.newRule(TYPE.CURE, 30, null, 1, 0, ITEMTYPE.CURE, true);
+                this.newRule(TYPE.CURE, 50, null, 3, 0, ITEMTYPE.CURE, true);
 
                 this.newRule(TYPE.DEAD, 0, "Vláda prohlašuje, že Virus se v ČR zatím nevyskytuje", 4, 0, ITEMTYPE.HUMAN, true);
                 this.newRule(TYPE.DEAD, 0, null, 2, 0, ITEMTYPE.GROUP, true);
@@ -101,10 +119,63 @@ class Game {
         switch (DIFICULTY.GAME_MODE) {
             case GAME_MODE.EDUCATION://------------------------------------------------------------------------------
 
+                if (this.catchItems == undefined) {
+                    this.catchItems = [];
+                    for (let i = 0; i < ITEMTYPE.length; i++) {
+                        for (let j = 0; j < 2; j++) {
+                            this.catchItems[ITEMTYPE.onIndex(i) + j] = [];
+
+                        }
+                    }
+                }
+
+                //Člověk bez roušky
+                this.catchItems[ITEMTYPE.HUMAN + 0].push({ text: "Nakazil jsi Milana. Pří jízdě v MHD neměl rukavice, dotýkal se madel a když přišel domů, pustil se do jídla bez umytí rukou. Myjte si ruce mýdlem a teplou vodou.", img: "img/handWash.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 0].push({ text: "Vlaďka šla ven bez roušky. Nakažený kolemjdoucí zakašlal, nezakryl si ústa a Vlaďku nakazil. Kašlat a pšíkat je nejbezpečnější do rukávu na předloktí.", img: "img/armhuman.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 0].push({ text: "Po tom co si Pepa podal ruku s nakaženým a poté si neumyl ruce, sám se stal nakažlivým. Místo podání rukou můžete pozdravit slovy nebo zamáváním.", img: "img/hand.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 0].push({ text: "Honza šel na nákup. Cestou v MHD si upravoval brýle, sahal si na obličej a tak se nakazil. Nesahejte si na obličej a používejte dezinfekci, pokud máte možnost i venku.", img: "img/handWash.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 0].push({ text: "Pokud nakažený člověk zakašle a nezakyje si ústa, může nakazit další lidi, až do vzdálenosti 2 metrů.", img: "img/distance.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 0].push({ text: "Maruška byla u babičky na návštěvě. Na rozloučenou dala babičce pusu. Babička se nakazila. Staří lidé se nakazí snadněji. Místo osobní návštěvy, jim raději zavolejte.", img: "img/phone.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 0].push({ text: "Dominik byl venku jen chvíli, a po návratu domů si hned pořádně umyl ruce. Zapoměl však dezinfikovat telefon, na kterém se vir zachytil. Dezinfikujte mobilní telefony, klíče, brýle, klávesnice i myš u počítače.", img: "img/exclamation.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 0].push({ text: "Pravidelně větrejte. V uzavřeném a nevětraném prostředí zvyšujete riziko nakažení celé rodiny.", img: "img/home.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 0].push({ text: "Často a důkladně si myjte ruce mýdlem a teplou vodou, po dobu nejméně 30 sekund. Po umytí si ruce důkladně osušte papírovou utěrkou. Nedotýkejte se očí, nosu či úst, pokud nemáte umyté ruce..", img: "img/handWash.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 0].push({ text: "Posilujte imunitní systém kvalitní stravou a dostatečným množstvím vitamínů (zvyšte konzumaci ovoce a zeleniny, případně dodejte vitamín C, D).", img: "img/exclamation.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 0].push({ text: "Koronavirus má podobné příznaky jako chřipka nebo jiná respirační viróza, běžná v tomto období. Příznaky jsou: zvýšená teplota až horečka, kašel a dušnost (zadýchávání se).", img: "img/exclamation.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 0].push({ text: "Kdyby si Kačka vydenzinfikovala ruce při vstupu do obchodu. Nemusela by teď být nakažená. Pokud máte při vstupu do obchodu možnost využít dezinfekci, použijte ji.", img: "img/handWash.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 0].push({ text: "Čistota půl zdraví. Pravidelně uklízejte především kuchyň a koupelnu běžnými čistícími prostředky.", img: "img/exclamation.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 0].push({ text: "V obchodech nepoužívejte košíky ani vozíky. Nákup ukládejte rovnou do tašek. Pokud to jde, plaťte kartou.", img: "img/exclamation.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 0].push({ text: "Roušky jsou vyprodané. Co s tím? Místo roušky můžete ústa i nos zakrýt šátkem či bavlněnou textílií, nebo si roušku vlastnoručně vyrobit. ", img: "img/cureBig.png" });
+
+
+                //Člověk s rouškou
+                this.catchItems[ITEMTYPE.HUMAN + 1].push({ text: "Adam měl sice roušku a rukavice, když šel nakoupit, ale pořád si sahal na telefon a upravoval brýle, proto se nakazil. Používejte rukavice, ale ani s nimi se nedotýkejte obličeje a po návratu domů si dezinfikujte telefon.", img: "img/handWash.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 1].push({ text: "Lída si vzala roušku, ale potakala kamarádku a protože ji nerozuměla, tak si ji sundala, kamarádka ji nakazila. Rouška není módní doplňěk nesundavejte si ji.", img: "img/cureBig.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 1].push({ text: "Bára používala dokola tu samou roušku. Například bavlněnou roušku je nutné vydezinfikovat po každém použití. Minimální teplota, která by roušku měla zbavit virů, je 60 °C.", img: "img/exclamation.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 1].push({ text: "Ondra si cestou ven nasadil roušku. Rouška mu ale zakrývala jen ústa ale nos ne. Ondra se nakazil protože si roušku správně nenasadil.", img: "img/cureBig.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 1].push({ text: "Honza si před nasazením roušky neumyl ruce. Nakazil se i přesto že měl roušku. Před nasazením vydezinfikované roušky si pečlivě umyjte ruce.", img: "img/handWash.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 1].push({ text: "Lukáš přišel domů, sundal si jednorázovou roušku a položil ji na stůl. Jednorázovou roušku po použití rovnou vyhoďte do odpadkového koše. Je pouze na jedno použití.", img: "img/exclamation.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 1].push({ text: "Klára svoji bavlněnou roušku po příchodu z venku nechala válet na zemi. Bavlněnou roušku můžeme desinfikovat. Roušku po sundání rovnou vhoďte do pračky. Perte na 60°C.", img: "img/exclamation.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 1].push({ text: "Abychom si mohli roušku natvarovat přesně podle našeho nosu a tváří, mají v sobě jednorázové roušky drátek. Když do nasazené roušky prudce dýchnu a vzduch nikudy neuniká, mám roušku nasazenou správně.", img: "img/cureBig.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 1].push({ text: "Jsem nakažený a měl bych zůstat doma, ale venku je tak krásně... Vezmu si roušku, to bude v poho. Pokud jste nakažení, zůstaňte doma. Buďte zdopovědní ke svému okolí. ", img: "img/home.png" });
+                this.catchItems[ITEMTYPE.HUMAN + 1].push({ text: "Nemůžu najít svojí roušku.. Půjčím si bráchovo. NE! Pokud je vás v domácnosti více, potřebujete každý SVOJI VLASTNÍ roušku, kterou po každém použití dezinfikujete. Perte na 60°C.", img: "img/exclamation.png" });
+
+
+                //Skupinka lidí
+                this.catchItems[ITEMTYPE.GROUP + 0].push({ text: "Pán šel nakoupit. Při čekání ve frontě nedodržoval 2m odstup a protože byl nakažený, nakazil lidi ve frontě. Dodržujte mezi sebou 2m rozestupy.", img: "img/distance.png" });
+                this.catchItems[ITEMTYPE.GROUP + 0].push({ text: "Maminka poslala syna hrát si ven s kamarády. Jeden z nich byl nakažený a nakazil všechny ostatní. Děti vir přinesly domů a nakazily své rodiče. Pokud to není nutné, zůstaňte doma.", img: "img/home.png" });
+                this.catchItems[ITEMTYPE.GROUP + 0].push({ text: "Na schůzce si všichni podali ruce. Stačil jeden nakažený člověk, který tak nakazil celou skupinu lidí. Nepodávajte si ruce, a nesahejte si na obličej.", img: "img/hand.png" });
+                this.catchItems[ITEMTYPE.GROUP + 0].push({ text: "V tramvaji bylo narváno, ale Honza tak pospíchal, že se tam nacpal. Stačilo, že byl jeden nakažený a nakazil všechny ostatní. Vyhýbejte se místům, kde se shromažďuje větší množství lidí.", img: "img/distance.png" });
+                this.catchItems[ITEMTYPE.GROUP + 0].push({ text: "Monika se už doma sama nudila a tak si pozvala návštěvu. Její návštěva však byla nakažená, a Monika tak nakazila celou svoji rodinu. Místo osbní návštěvy si raději zavolejte.", img: "img/phone.png" });
+                this.catchItems[ITEMTYPE.GROUP + 0].push({ text: "Viděla jsem v obchodě pána, jak si holou rukou bez rukavice, dával rohlíky do sáčku. Při manipulaci s nebaleným pečivem používejte jednorázové rukavice, které obchod nabízí. Omezíte tak šíření nákazy.", img: "img/hand.png" });
+                this.catchItems[ITEMTYPE.GROUP + 0].push({ text: "Napiš mi vlastní nápad a pomoc my hru udělat ještě lepší. mail@dominikfrolik.cz", img: "img/question.png" });
+                this.catchItems[ITEMTYPE.GROUP + 0].push({ text: "Starší sestra byla po práci unavená, zapoměla si umýt ruce a šla spát, druhý den na to zapoměla, a díky tomu roznesla vir ještě dál.", img: "img/handWash.png" });
+                this.catchItems[ITEMTYPE.GROUP + 0].push({ text: "Protože starší pán, neměl kdo by mu nakoupil, musel se vydal do krámu sám, a nakazil se hned u vchodu, protože starší lidé se rychleji nakazí. Dodružujte omezení obchodů od 8 do 10 hod. jen pro starší, a pokud můžete zkuste nakoupit staršímu člověku ve svém okolí, pomůžete mu tím.", img: "img/question.png" });
+                this.catchItems[ITEMTYPE.GROUP + 0].push({ text: "Pepa si už s přátely myslely, že je to dobré a virus už mezi námi není, vydal se ven bez roušky. Po cestě se nakazil od stejně bezohledných kolemjdoucích, a v parku dostal pokutu 5000Kč. Noste stále ochranu úst a nosu.", img: "img/cureBig.png" });
+
                 break;
             case GAME_MODE.ONE_POINT://------------------------------------------------------------------------------
                 this.newGoal(TYPE.SCORE, 50, "Jde ti to dobře, pokračuj dál..", "img/award.png");
-                this.newGoal(TYPE.SCORE, 100, "Páni! jsi k nezastavení, sem se dostane málo kdo.", "img/award.png");
+                this.newGoal(TYPE.SCORE, 100, "Páni! jsi k nezastavení.", "img/award.png");
                 this.newGoal(TYPE.SCORE, 150, "No, co na to říct, jsi dobrej.", "img/award.png");
                 this.newGoal(TYPE.SCORE, 200, "To tě to ještě nepřestalo bavit? Tak daleko jsem tě nečekal.", "img/award.png");
                 this.newGoal(TYPE.SCORE, 250, "Sakra tvojí hlavu bych chtěl prostudovat.", "img/award.png");
@@ -145,7 +216,9 @@ class Game {
 
     start() {
 
-        debugger;
+        if(SCORE_DATA.SCORE < SCORE_DATA_DEFAULT.SCORE){
+            SCORE(SCORE_DATA.SCORE = SCORE_DATA_DEFAULT.SCORE);
+        }
         this.map.clear();
         this.map.player.resetPosition();
         this.started = true;
@@ -156,21 +229,21 @@ class Game {
         DIV_INFO.children[0].onchange({ target: DIV_INFO.children[0] });
         this.createScenary();
         this.createGoals();
-
         this.checkActions();
 
         switch (DIFICULTY.GAME_MODE) {
             case GAME_MODE.EDUCATION://------------------------------------------------------------------------------
                 this.setShop(true);
-                this.catchItems = [];
+                this.catchItemsIndex = [];
                 for (let i = 0; i < ITEMTYPE.length; i++) {
                     for (let j = 0; j < 2; j++) {
-                        this.catchItems[ITEMTYPE.onIndex(i) + j] = 0;
-
+                        let index = this.catchItems[ITEMTYPE.onIndex(i) + j].length;
+                        this.catchItemsIndex[ITEMTYPE.onIndex(i) + j] = index == 0 ? null : RANDOM_NUMBER(0, index - 1);
                     }
                 }
                 break;
             case GAME_MODE.ONE_POINT://------------------------------------------------------------------------------
+                window.UI.showPlayerSelect("img/0.1.png", "img/0.2.png", "img/0.3.png", "img/0.4.png", "img/0.5.png", "img/0.6.png", "img/0.7.png");
                 this.setShop(false);
                 SCORE(SCORE_DATA.SCORE = SCORE_DATA_DEFAULT.SCORE);
                 MORTALITY(SCORE_DATA.MORTALITY = SCORE_DATA_DEFAULT.MORTALITY);
@@ -179,11 +252,11 @@ class Game {
                 DEAD(SCORE_DATA.DEAD = SCORE_DATA_DEFAULT.DEAD);
                 HEAL(SCORE_DATA.HEAL = SCORE_DATA_DEFAULT.HEAL);
                 DIFICULTY.PRICE_FOR_PATH = this.map.item[0].distance;
-                debugger;
                 window.copyright = false;
                 this.win = false;
                 break;
             case GAME_MODE.ALL_IN://------------------------------------------------------------------------------
+                window.UI.showPlayerSelect("img/0.1.png", "img/0.2.png", "img/0.3.png", "img/0.4.png", "img/0.5.png", "img/0.6.png", "img/0.7.png");
                 this.setShop(false);
                 SCORE(SCORE_DATA.SCORE = SCORE_DATA_DEFAULT.SCORE);
                 MORTALITY(SCORE_DATA.MORTALITY = SCORE_DATA_DEFAULT.MORTALITY);
@@ -212,22 +285,23 @@ class Game {
         INFECTED((SCORE_DATA.INFECTED = SCORE_DATA_DEFAULT.INFECTED).length);
         DEAD(SCORE_DATA.DEAD = SCORE_DATA_DEFAULT.DEAD);
         HEAL(SCORE_DATA.HEAL = SCORE_DATA_DEFAULT.HEAL);
+        SCORE_DATA.TOTAL_SCORE = 0;
         window.UI.generateNewMap();
     }
 
     gameOver() {
-        debugger
         SCORE(0);
+        window.UI.scoreBoard[DIFICULTY.GAME_MODE].push(SCORE_DATA.TOTAL_SCORE);
         this.started = null;
         this.map.mainButton.innerHTML = "ZNOVU";
         DIV_INFO.children[0].children[1].disabled = false;
         DIV_INFO.children[0].children[1].style.color = "black";
         DIV_INFO.children[0].onchange({ target: DIV_INFO.children[0] });
-
     }
 
 
     nextRound(notWait) {
+
         var cell = this.map.checkPlayerPosition();
         if (this.started) {
             switch (DIFICULTY.GAME_MODE) {
@@ -246,6 +320,7 @@ class Game {
                         switch (cell.type) {
                             case ITEMTYPE.HUMAN:
                                 SCORE_DATA.INFECTED.push({ liveSpan: cell.liveSpan, value: cell.distance });
+
                                 SCORE(SCORE_DATA.SCORE += (cell.distance + 1));
                                 INFECTED(SCORE_DATA.INFECTED.length);
                                 break;
@@ -266,13 +341,16 @@ class Game {
                             default:
                                 break;
                         }
+                        let msg = this.checkEduGoals(cell);
+                        if (msg != undefined)
+                            ACHIEVEMENT(msg.text, msg.img);
                     }
 
                     this.checkInfected()
                     ROUND(++this.round);
                     CURE(++SCORE_DATA.CURE);
                     this.checkActions();
-                    this.checkGoals();
+
 
                     if (SCORE_DATA.SCORE <= 0) {
                         ACHIEVEMENT("Ups hra skončila, došli ti body.", "img/cross.png");
@@ -287,7 +365,6 @@ class Game {
                         this.gameOver();
                         return;
                     }
-
 
                     break;
                 case GAME_MODE.ONE_POINT://------------------------------------------------------------------------------
@@ -434,8 +511,10 @@ class Game {
                 SCORE(--SCORE_DATA.SCORE);
             }
         }
+
         SCORE(SCORE_DATA.SCORE = parseInt(SCORE_DATA.SCORE));
         SCORE_DATA.TOTAL_SCORE = parseInt(SCORE_DATA.TOTAL_SCORE);
+
     }
 
 
@@ -477,7 +556,7 @@ class Game {
 
                     if (RANDOM_NUMBER(0, 100) < SCORE_DATA.MORTALITY) {
                         DEAD(++SCORE_DATA.DEAD);
-                        SCORE(SCORE_DATA.SCORE += ((SCORE_DATA.INFECTED[i].value / 2)) * (DIFICULTY.GAME_MODE == GAME_MODE.EDUCATION ? 1 : parseInt(this.round / 10)));
+                        SCORE(SCORE_DATA.SCORE += (parseInt(SCORE_DATA.INFECTED[i].value / 2)) * (DIFICULTY.GAME_MODE == GAME_MODE.EDUCATION ? 1 : parseInt(this.round / 10)));
                     }
                     else {
                         HEAL(++SCORE_DATA.HEAL);
@@ -506,14 +585,8 @@ class Game {
 
     checkEduGoals(item) {
         //tipeOfScore = tipeOfItem pro edu goaly
-        let showOne = false;
-        this.catchItems[item.type + item.dificulty]++;
-        for (let i = 0; i < ITEMTYPE.length; i++) {
-            for (let j = 0; j < 2; j++) {
-                
-
-            }
-        }
+        let story = this.catchItems[item.type + item.dificulty][(this.catchItemsIndex[item.type + item.dificulty] += 1) % this.catchItems[item.type + item.dificulty].length]
+        return story;
     }
 
     newRule(typeOfScore, value, news, itemCount, chance, type, repeat) {
@@ -575,8 +648,8 @@ class Game {
     setShop(bool) {
 
         if (bool) {
-            ADD_MORTALITY.style.display = "inherit";
-            ADD_CURE.style.display = "inherit";
+            ADD_MORTALITY.style.display = "contents";
+            ADD_CURE.style.display = "contents";
 
             ADD_MORTALITY.onclick = function () {
                 if (SCORE_DATA.SCORE - 10 >= 0) {

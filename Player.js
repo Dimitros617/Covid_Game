@@ -14,11 +14,18 @@ class Player {
         this.me.setAttribute("id", "player");
         this.me.setAttribute("name", name);
         MAP_TABLE.appendChild(this.me);
+        window.easterEggPlayerCounter = 0;
+
         this.initMe();
     }
 
     initMe(){
         this.me.onclick = function(e){
+
+            if(window.easterEggPlayerCounter++ == 10){
+                ACHIEVEMENT("Aktivoval si tajný bonus a získáváš + 10 bodů", "img/copyright.png");
+                SCORE((SCORE_DATA.SCORE+=10));
+            }
             if(DIFICULTY.MULTIPLAYER == MULTIPLAYER.TRUE){
             window.game.flipPlayers(e.target.getAttribute("name"));
             window.game.secondPlayer.me.classList.add("blackAndWhite");

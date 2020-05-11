@@ -20,12 +20,26 @@ body {
   display: block;
 }
 
+h1 {  
+  font-family: 'Comfortaa';
+  color: #ffffff;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #efefef;
+  padding: 42px 30px 20px 30px;
+  width: 103%;
+  margin: -20px 0px 21px -24px;
+  box-shadow: 2px 6px 16px #00000021;
+  background: linear-gradient(#404040, #505050);
+}
+
 h2 {
   display: block;
-  float: left;
+  /* float: left; */
+  text-align: center;
   width: 95%;
   padding: 10;
-  font-family: "Century Gothic";
+  font-family: 'Comfortaa';
+  font-weight: 700;
   padding-top: 37px;
   border-bottom: 2px solid #c8c8c8;
   margin-left: auto;
@@ -33,11 +47,10 @@ h2 {
 }
 
 h3 {
-  background: #d9d9d9;
   color: #313131;
   text-align: center;
-  font-family: "Century Gothic";
-  font-size: 30px;
+  font-family: 'Comfortaa';
+  font-size: 20px;
   margin-top: 0px;
   margin-bottom: 0;
   height: 50px;
@@ -72,6 +85,7 @@ img {
   margin-right: auto;
   display: block;
   margin-top: 15px;
+  width: 100%;
 }
 
 p {
@@ -86,6 +100,17 @@ option {
   padding: 5px 0px;
   height: 40px;
 }
+
+#box {
+  overflow: hidden;
+  height: auto;
+  background: #f3f3f3;
+  padding: 17px;
+  border-radius: 16px;
+  margin: 25px 0px;
+  box-shadow: 0px 2px 5px #a5a5a5e8;
+}
+
 /*-------------------------- animation --------------------------*/
 
 
@@ -228,7 +253,7 @@ div#news {
   float: left;
   width: 100%;
   height: 45px;
-  margin-top: 12px;
+  margin-top: 1vw;
 }
 
 div#leftPanel {
@@ -260,7 +285,7 @@ cursor: pointer;
 }
 
 div#ruleText {
-  margin-bottom: 150px;
+  margin-top: 20px;
 }
 
 div#text {
@@ -451,8 +476,8 @@ td.cel, td.valid, td.validLast{
 }
 
 div#player {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   position: absolute;
   background-image: url(../img/player.png);
   background-size: cover;
@@ -711,13 +736,14 @@ div#graphicHorizontal {
 }
 
 div#graphicHorizontal label#label {
-  font-size: 20px;
+  font-size: 25px;
   font-family: "Century Gothic";
-  margin-right: 24px;
+  margin-right: 0;
   color: #333333;
   float: left;
-  padding-top: 11px;
+  padding-top: 7px;
   font-weight: 600;
+  margin-left: 20%;
 }
 
 div#graphicHorizontal input.element, div#graphicHorizontal select.element {
@@ -739,15 +765,14 @@ div#graphicHorizontal select.element {
 }
 
 div#graphicHorizontal label.element {
-  width: 60%;
   height: 31px;
   border: none;
   color: #232323;
-  font-size: 20px;
+  font-size: 25px;
   font-family: "Century Gothic";
-  float: right;
-  padding-top: 14px;
-
+  float: left;
+  padding-top: 8px;
+  margin-left: 20px;
 }
 
 
@@ -839,7 +864,7 @@ div#achievement {
 div#achievementContent {
   background: white;
   width: 100%;
-  height: 100%;
+  height: fit-content;
   margin-top: 20%;
   position: absolute;
   border-radius: 15px;
@@ -868,7 +893,8 @@ div#achievementImg {
   background-repeat: no-repeat;
   background-size: contain;
   width: 100%;
-  height: 80%;
+  height: 400px;
+  margin-top: -25px;
 }
 
 div#achievementText {
@@ -878,7 +904,57 @@ div#achievementText {
   padding-left: auto;
   text-align: center;
   padding-top: 12px;
-  font-size: 1.4vw;
+  padding-bottom: 15px;
+  font-size: 1.3vw;
+}
+
+div#playerSelectText {
+  font-family: 'Comfortaa';
+  font-weight: bolder;
+  color: black;
+  padding-left: auto;
+  text-align: center;
+  padding-top: 30px;
+  padding-bottom: 40px;
+  font-size: 1.3vw;
+}
+
+div#playerImg {
+  height: 100px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  float: left;
+  transition-duration: 0.5s;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+div#playerImg:hover {
+  transform: scale(1.1);
+}
+
+#selectButton {
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5%;
+  display: block;
+  height: 40px;
+  background: #dad8d8;
+  border: none;
+  border-radius: 10px;
+  font-family: "Century Gothic";
+  font-weight: 700;
+  font-size: larger;
+  transition-duration: 0.5s;
+}
+
+#selectButton:hover {
+
+  background: #212121;
+  color: #dad8d8;
+  cursor: pointer;
+
 }
 
 label#addMortality, label#addCure {
