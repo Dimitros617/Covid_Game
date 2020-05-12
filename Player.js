@@ -40,8 +40,8 @@ class Player {
     moveTo(point) {
 
         this.position = point;
-        let x = this.map.map.getBoundingClientRect().width / this.map.size;
-        let y = this.map.map.getBoundingClientRect().height / this.map.size;
+        let x = this.map.map.offsetWidth / this.map.size;
+        let y = this.map.map.offsetWidth / this.map.size;
         this.me.style.marginLeft = x * point.x + x / 2 - this.me.getBoundingClientRect().width / 2;
         this.me.style.marginTop = y * point.y + y / 2 - this.me.getBoundingClientRect().height / 2;
         this.map.setAvailableDirection(this.position);

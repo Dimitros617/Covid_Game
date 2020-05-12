@@ -38,6 +38,7 @@ const MAP_TABLE = document.getElementById("map");
 const DIV_INFO = document.getElementById("info");
 const ADD_MORTALITY = document.getElementById("addMortality");
 const ADD_CURE = document.getElementById("addCure");
+const SCORE_TABLE = document.getElementById("scoreTable");
 
 
 const SCORE_DATA = {

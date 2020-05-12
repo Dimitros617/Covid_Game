@@ -19,7 +19,7 @@ class Map {
     constructor(size) {
 
         this.size = size;
-        this.pxSizeCell = MAP_TABLE.offsetHeight / this.size;
+        this.pxSizeCell = MAP_TABLE.offsetWidth / this.size;
         this.validPosition = [];
         this.allValidPosition = [];
         this.item = [];

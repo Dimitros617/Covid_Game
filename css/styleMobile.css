@@ -1,0 +1,151 @@
+@media screen and (max-width: 1240px) {
+    body {
+        overflow: auto;
+        background: linear-gradient(#737373, #2d2d2d);
+    }
+    div#leftPanel {
+        float: none;
+        width: 100%;
+        height: 90%;
+    }
+    div#game {
+        float: none;
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+    div#map {
+        height: auto;
+        float: none;
+        margin-left: 0;
+        margin-right: 0;
+        margin-top: 1.5%;
+        width: 100%;
+        transform: scale(0.95);
+    }
+    div#news {
+        float: left;
+        margin-top: 80px;
+        width: 100%;
+        height: 45px;
+        margin-top: 0;
+    }
+    div#round {
+        font-size: 60px;
+        padding-left: 30px;
+        padding-top: 30px;
+        padding-bottom: 50px;
+        text-align: center;
+        width: 100%;
+        margin-top: 30px;
+        margin-bottom: 100px;
+    }
+    div#live {
+        float: none;
+        background-color: red;
+        width: 80%;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 80px;
+        height: auto;
+        font-family: 'Comfortaa';
+        font-weight: bolder;
+        color: white;
+        padding-left: auto;
+        text-align: center;
+        padding-top: 25px;
+        padding-bottom: 25px;
+        font-size: 50px;
+        border-radius: 15px;
+        position: relative;
+        cursor: pointer;
+    }
+    div#text {
+        float: none;
+        display: block;
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 20px;
+        height: auto;
+        background: #000000a3;
+        color: white;
+        font-family: 'Comfortaa';
+        color: white;
+        padding-left: 25px;
+        border-radius: 15px;
+        padding-top: 14px;
+        padding-bottom: 15px;
+        /* margin-left: 0px; */
+    }
+    div#achievement {
+        width: 80%;
+    }
+    div#achievementText {
+        font-size: 3.3vw !important;
+    }
+    div#info {
+        width: 90%;
+    }
+    div#resizer {
+        display: none;
+    }
+    select#selectBox {
+        height: 100px;
+        font-size: 50px;
+    }
+    div#content {
+        height: 80%;
+    }
+    label#scoreLabel, label#mortalityLabel, label#cureLabel {
+        font-size: 40px;
+        display: block;
+    }
+    label#score {
+        font-size: 20.5vw;
+    }
+
+    label#mortality, label#cure {
+        font-size: 5.3vw;
+    }
+
+    label#addMortality, label#addCure {
+        font-size: 50px;
+        margin-left: 0;
+        margin-right: 75px;
+
+    }
+
+    label.value {
+        font-size: 10.5vw;
+    }
+
+    label.label {
+        font-size: 35px;
+    }
+
+    div#playerSelectText {
+        font-size: 4.3vw;
+    }
+
+    #selectButton {
+        height: 80px;
+        font-size: 4vw;
+
+    }
+
+    div#graphicVertical label#label, div#graphicHorizontal label#label {
+        font-size: 40px;
+    }
+
+    div#graphicVertical input.element, div#graphicVertical select.element, div#graphicHorizontal input.element {
+        height: 50px;
+    }
+
+    div#graphicVertical select.element, div#graphicHorizontal select.element {
+        height: 70px;
+        font-size: 4vw;
+    }
+
+}

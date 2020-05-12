@@ -12,9 +12,6 @@ class UI {
 
         this.loadCookieScoreBoard();
         this.infoChange(DIV_INFO.children[0]);
-
-
-
     }
 
     infoChange(e) {
@@ -179,7 +176,7 @@ class UI {
         ruleText.setAttribute("id", "ruleTextSecond");
         ruleText.innerHTML = "<p>Hrobeček přidá 10% pravděpodobnosti ÚMRTNOSTI.</p>";
         div.appendChild(ruleText);
-        
+
         img = document.createElement("div");
         img.setAttribute("id", "imgPreviewLong");
         img.style.backgroundImage = "url(img/bottle.png)";
@@ -246,8 +243,8 @@ class UI {
 
 
             for (let j = 0; j < this.scoreBoard[i].length; j++) {
-                if(!isNaN(parseInt(this.scoreBoard[i][j])))
-                    box.append(this.getGraphic(POSITON.HORIZONTAL, (j+1) + ". místo: ", "label/" + this.scoreBoard[i][j] + CZ_STRING(this.scoreBoard[i][j]," bod")));
+                if (!isNaN(parseInt(this.scoreBoard[i][j])))
+                    box.append(this.getGraphic(POSITON.HORIZONTAL, (j + 1) + ". místo: ", "label/" + this.scoreBoard[i][j] + CZ_STRING(this.scoreBoard[i][j], " bod")));
             }
             if (this.scoreBoard[i].length == 0) {
                 box.append(this.getGraphic("h3/Zatím nebyly odehrány žádné hry"));
@@ -597,7 +594,7 @@ class UI {
                         }
                     }
                 }
-                
+
                 if (document.getElementById("selectButton") == null) {
                     let butt = window.UI.getGraphic(POSITON.VERTICAL, "Pokračovat", "button", 1, "id/selectButton");
                     butt.children[1].remove();
@@ -638,7 +635,7 @@ class UI {
         for (let j = 0; j < this.scoreBoard.length; j++) {
             let value = "";
             for (let i = 0; i < this.scoreBoard[j].length; i++) {
-                if(this.scoreBoard[j][i] != ""){
+                if (this.scoreBoard[j][i] != "") {
                     value += this.scoreBoard[j][i] + "/";
                 }
             }
@@ -660,7 +657,7 @@ class UI {
             for (let j = 0; j < GAME_MODE.length; j++) {
                 this.scoreBoard[j] = [];
             }
-            setTimeout(() => {            ACHIEVEMENT("Děkuji, že jste si přišli zahrát, hra má několik herních režimů, které nemusí odpovídat skutečnostem. Součástí je i herní režim EDU, který slouží jako edukační pro všechny kteří se chtějí vzdělat ohledně COVID-19.<br> Web nemá za cíl nikoho poškodit, ani zesměšnit či pohoršit. <br>Přeji příjemnou hru.<br> <br>Zavřením toho okna souhlasíte s používání cookies", "img/copyright.png")},100);
+            setTimeout(() => { ACHIEVEMENT("Děkuji, že jste si přišli zahrát, hra má několik herních režimů, které nemusí odpovídat skutečnostem. Součástí je i herní režim EDU, který slouží jako edukační pro všechny kteří se chtějí vzdělat ohledně COVID-19.<br> Web nemá za cíl nikoho poškodit, ani zesměšnit či pohoršit. <br>Přeji příjemnou hru.<br> <br>Zavřením toho okna souhlasíte s používání cookies", "img/copyright.png") }, 100);
         }
     }
 }
