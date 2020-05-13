@@ -15,7 +15,7 @@
         height: auto;
     }
     div#map {
-        height: auto;
+        height: none;
         float: none;
         margin-left: 0;
         margin-right: 0;
@@ -149,3 +149,9 @@
     }
 
 }
+
+@media screen and (max-width: 1240px) and (orientation: landscape) {
+    html {
+      display: none;
+    }
+  }

@@ -19,7 +19,8 @@ class Map {
     constructor(size) {
 
         this.size = size;
-        this.pxSizeCell = MAP_TABLE.offsetWidth / this.size;
+        let table_size = MAP_TABLE.offsetWidth < MAP_TABLE.offsetHeight ? MAP_TABLE.offsetWidth : MAP_TABLE.offsetHeight;
+        this.pxSizeCell = table_size / this.size;
         this.validPosition = [];
         this.allValidPosition = [];
         this.item = [];
@@ -30,8 +31,7 @@ class Map {
         this.player = new Player(this, "player1");
         
         this.createMap();
-        /* this.player.resetPosition();
-        this.setAvailableDirection(this.player.position); */
+       MAP_TABLE.style.height = "-webkit-fill-available";
 
     }
 
