@@ -29,7 +29,7 @@ class Map {
         this.itemWasOnPosition = false;
 
         this.player = new Player(this, "player1");
-        
+        MAP_TABLE.style.height = "";
         this.createMap();
        MAP_TABLE.style.height = "-webkit-fill-available";
 
