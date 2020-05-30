@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Player.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Player.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @description Metoda se stará o grafické i funkční ovládání a vykreslování hráče 
+ * @author Dominik Frolík
+ * @see www.dominikfrolik.cz
+ */
+class Player {
+
+    map; // Intace třídy Map
+    position; // Instance třídy Point obsahující aktuální pozici hráče v mapě
+
+    me; // Pointer na HTML element hráče
+
+    /**
+     * @description donstuktor nastaví pozici hráče na X0: Y0 vytvoří div a graficky ho nastaví do HTML
+     * @param {Map} map = Instance mapy na kterou se má hráč vykreslovat
+     * @param {String} name = name atribut elementu player 
+     */
+    constructor(map, name) {
+
+        this.map = map;
+
+        this.position = new Point(0, 0);
+        this.me = document.createElement("div");
+        this.me.setAttribute("id", "player");
+        this.me.setAttribute("name", name);
+        MAP_TABLE.appendChild(this.me);
+        window.easterEggPlayerCounter = 0;
+
+        this.initMe();
+    }
+
+
+    /**
+     * @description inicializace click eventu pro element hráče v HTML
+     */
+    initMe(){
+        this.me.onclick = function(e){
+
+            if(window.easterEggPlayerCounter++ == 10){
+                ACHIEVEMENT("Aktivoval si tajný bonus a získáváš + 10 bodů", "img/copyright.png");
+                SCORE((SCORE_DATA.SCORE+=10));
+            }
+            if(DIFICULTY.MULTIPLAYER == MULTIPLAYER.TRUE){
+            window.game.flipPlayers(e.target.getAttribute("name"));
+            window.game.secondPlayer.me.classList.add("blackAndWhite");
+            window.game.player.me.classList.remove("blackAndWhite");
+            window.game.map.player = window.game.player;
+            window.game.map.setAvailableDirection(window.game.map.player.position);
+            }
+        };
+    }
+
+
+    /**
+     * @description grafická změna pozice hráče v mapě, a následné vykreslení validních pozic z dané pozice
+     * @param {Point} point = pozice na kterou se má hráč posunout
+     */
+    moveTo(point) {
+
+        this.position = point;
+        let x = this.map.map.offsetWidth / this.map.size;
+        let y = this.map.map.offsetHeight / this.map.size;
+        this.me.style.marginLeft = x * point.x + x / 2 - this.me.getBoundingClientRect().width / 2;
+        this.me.style.marginTop = y * point.y + y / 2 - this.me.getBoundingClientRect().height / 2;
+        this.map.setAvailableDirection(this.position);
+    }
+
+
+    /**
+     * @description mapa slouží k přesunu hráče na náhodnou validní pozici, která neobsahuje žádný item.
+     */
+    resetPosition() {
+        let randValidPoint = this.map.allValidPosition[RANDOM_NUMBER(0, this.map.allValidPosition.length - 1)];
+        if (this.map.item.length != 0) {
+            do {
+                randValidPoint = this.map.allValidPosition[RANDOM_NUMBER(0, this.map.allValidPosition.length - 1)];
+                console.log("Nalezen random point validní, hledám nové místo pro hráče");
+            } while (this.map.isItemOnPoint(randValidPoint) || (window.game.player.x == randValidPoint.x &amp;&amp; window.game.player.y == randValidPoint.y))
+        }
+        else {
+            this.position = new Point(randValidPoint.x, randValidPoint.y);
+            this.moveTo(this.position);
+        }
+    }
+
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Covid Game - Dokumentace</a></h2><h3>Třídy</h3><ul><li><a href="Action.html">Action</a></li><li><a href="Game.html">Game</a></li><li><a href="Item.html">Item</a></li><li><a href="Map.html">Map</a></li><li><a href="Player.html">Player</a></li><li><a href="Point.html">Point</a></li><li><a href="UI.html">UI</a></li></ul><h3>Globální</h3><ul><li><a href="global.html#CZ_STRING">CZ_STRING</a></li><li><a href="global.html#DIFICULTY">DIFICULTY</a></li><li><a href="global.html#DIRECTION">DIRECTION</a></li><li><a href="global.html#DISTANCE">DISTANCE</a></li><li><a href="global.html#GAME_MODE">GAME_MODE</a></li><li><a href="global.html#ITEMTYPE">ITEMTYPE</a></li><li><a href="global.html#LOADING">LOADING</a></li><li><a href="global.html#MAP_SIZE">MAP_SIZE</a></li><li><a href="global.html#MAP_TABLE">MAP_TABLE</a></li><li><a href="global.html#MULTIPLAYER">MULTIPLAYER</a></li><li><a href="global.html#POSITON">POSITON</a></li><li><a href="global.html#RANDOM_NUMBER">RANDOM_NUMBER</a></li><li><a href="global.html#RETURN">RETURN</a></li><li><a href="global.html#SCORE">SCORE</a></li><li><a href="global.html#SCORE_DATA">SCORE_DATA</a></li><li><a href="global.html#SHOW_TOOLTIP">SHOW_TOOLTIP</a></li><li><a href="global.html#TYPE">TYPE</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sat May 30 2020 14:39:45 GMT+0200 (GMT+02:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

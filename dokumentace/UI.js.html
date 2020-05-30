@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: UI.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: UI.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @description Třída se stará o nastavení hry před samotným spuštěním, grafikcé vykreslování pravidel, nastavení, tabulky score, Zakládá hru novou instancí třídy Game. Pracuje se tabulkou score ukládá a načítá do cookies prohlížeče
+ * @author Dominik Frolík
+ * @see www.dominikfrolik.cz
+ */
+class UI {
+    /**
+     * @description vytvoření stránky pravidel, nastavení a score které se načítá z cookies
+     */
+    constructor() {
+
+        this.expand = false;
+        this.scoreBoard = [];
+        DIV_INFO.appendChild(this.getResizer());
+        DIV_INFO.children[0].appendChild(new Option("Pravidla", 0, true, true));
+        DIV_INFO.children[0].appendChild(new Option("Nastavení", 1, false, false));
+        DIV_INFO.children[0].appendChild(new Option("Nejlepší score", 2, false, false));
+
+
+        this.loadCookieScoreBoard();
+        this.infoChange(DIV_INFO.children[0]);
+    }
+
+
+    /**
+     * @description metoda se volá při změně selectoboxu v HTML pro uživatele změna mazi pravidly, nastavením a score boardem
+     * @param {Element} e = html element selectu 
+     */
+    infoChange(e) {
+
+        if (e.value == 0) {
+            this.clear();
+            DIV_INFO.appendChild(this.getRules());
+        }
+        else if (e.value == 1) {
+
+            this.clear();
+            DIV_INFO.appendChild(this.getSeting());
+            document.getElementsByName("multiplayer")[0].checked = DIFICULTY.MULTIPLAYER == MULTIPLAYER.FALSE ? true : false;
+            document.getElementsByName("multiplayer")[1].checked = DIFICULTY.MULTIPLAYER == MULTIPLAYER.TRUE ? true : false;
+            document.getElementsByName("map_size")[0].value = DIFICULTY.MAP_SIZE == MAP_SIZE.EASY ? 0 : DIFICULTY.MAP_SIZE == MAP_SIZE.MEDIUM ? 1 : 2;
+            document.getElementsByName("map_size")[0].dispatchEvent(new Event("input"))
+            document.getElementsByName("game_mode")[0].value = DIFICULTY.GAME_MODE == GAME_MODE.EDUCATION ? "EDU-kačka" : DIFICULTY.GAME_MODE == GAME_MODE.ONE_POINT ? "Jeden bod" : DIFICULTY.GAME_MODE == GAME_MODE.ALL_IN ? "JSeber vše" : DIFICULTY.GAME_MODE == GAME_MODE.STORY ? "Příběh" : null;
+            document.getElementsByName("dificulty")[0].value = DIFICULTY.MAX_DISTANCE == DISTANCE.SHORT ? "Lehká" : DIFICULTY.MAX_DISTANCE == DISTANCE.MEDIUM ? "Střední" : "Těžká";
+            document.getElementsByName("help")[0].checked = DIFICULTY.SHOW_TOOLTIP == SHOW_TOOLTIP.NEVER ? false : true;
+            document.getElementsByName("help")[0].dispatchEvent(new Event("input"))
+            document.getElementsByName("helpType")[0].value = DIFICULTY.SHOW_TOOLTIP == SHOW_TOOLTIP.EVERY_CATCH ? "Jen při chycení" : "Každý krok";
+        }
+        else if (e.value == 2) {
+            this.clear();
+            DIV_INFO.appendChild(this.getScoreBoard());
+        }
+
+
+
+        //Zajištění aby po změně selectu bylo zachováno zda je okno zvěšeno či nikoli
+        if (this.expand) {
+            DIV_INFO.classList.add("expand");
+            DIV_INFO.children[2].classList.add("expand");
+        }
+        else {
+            DIV_INFO.classList.remove("expand");
+            DIV_INFO.children[2].classList.remove("expand");
+        }
+
+
+
+    }
+
+    /**
+     * @description Metoda slouží k vytvoření eleentu pro zvětšení části s nastavením pravidly, nebo score boardem
+     * @returns vradí div clickable elementu
+     */
+    getResizer() {
+
+        let div = document.createElement("div");
+        div.setAttribute("id", "resizer");
+        div.innerHTML = "Zvětšit";
+
+        div.onclick = function (e) {
+
+            let list = DIV_INFO.classList;
+
+            if (list.length == 0) {
+                DIV_INFO.classList.add("expand");
+                DIV_INFO.children[2].classList.add("expand");
+                e.target.innerHTML = "Zmenšit";
+                window.UI.expand = true;
+            }
+            else {
+                DIV_INFO.classList.remove("expand");
+                DIV_INFO.children[2].classList.remove("expand");
+                e.target.innerHTML = "Zvětšit";
+                window.UI.expand = false;
+            }
+
+        }
+
+        return div;
+
+    }
+
+    /**
+     * @description metoda vymaže obsah elementu pro zobrazování části s nastavením pravidly, nebo score boardem
+     */
+    clear() {
+        if (document.getElementById("content") != null) {
+            document.getElementById("content").remove();
+        }
+    }
+
+
+    /**
+     * @description Metoda vytvoří stránku obsahující pravidla všetně grafického rozložení
+     * @returns div obdahující stránku pravidel
+     */
+    getRules() {
+
+        let div = document.createElement("div");
+        div.setAttribute("id", "content");
+
+        let ruleText = document.createElement("div");
+        ruleText.setAttribute("id", "ruleText");
+        ruleText.innerHTML = "&lt;p>Covid-Game vlastně vůbec nen&amp;iacute; hra, ale &lt;strong>optimalizačn&amp;iacute; &amp;uacute;loha&lt;/strong>, ve kter&amp;eacute; m&amp;aacute;te za &amp;uacute;kol pomoci viru naj&amp;iacute;t cestu k c&amp;iacute;li. &lt;strong>Pohybuj&amp;iacute;c&amp;iacute;&lt;/strong> se virus se může &lt;strong>zastavit pouze o zeď nebo někter&amp;eacute;ho kamar&amp;aacute;da&lt;/strong> (jin&amp;yacute; virus). Dostat je rychle tam, kam potřebujeme, nen&amp;iacute; proto vůbec jednoduch&amp;eacute;. Do &lt;strong>celkov&amp;eacute;ho skore&lt;/strong> se započ&amp;iacute;t&amp;aacute;v&amp;aacute; vždy &lt;strong>aktu&amp;aacute;ln&amp;iacute; Score&lt;/strong> tedy každ&amp;yacute;m kolem se Celkov&amp;eacute; zv&amp;yacute;&amp;scaron;&amp;iacute; o aktu&amp;aacute;ln&amp;iacute;. Proto se vyplat&amp;iacute; m&amp;iacute;t co nejd&amp;eacute;le na sv&amp;eacute;m kontě co největ&amp;scaron;&amp;iacute; score.&lt;/p>&lt;p>&amp;nbsp;&lt;/p>";
+        div.appendChild(ruleText);
+
+        ruleText = document.createElement("div");
+        ruleText.setAttribute("id", "ruleText");
+        ruleText.innerHTML = "&lt;p>&amp;nbsp;&lt;/p>&lt;p>&lt;strong>&lt;h2>HERN&amp;Iacute; MOD: Př&amp;iacute;běh&lt;/h2>&lt;/strong>&lt;/p>&lt;p>Každ&amp;yacute; &lt;strong>krok ubere 1 bod&lt;/strong> a každ&amp;yacute;ch &lt;strong>10 kol se cena zvy&amp;scaron;uje o jena&lt;/strong>.&lt;/p>&lt;p>Každ&amp;yacute; &lt;strong>nakažen&amp;yacute; přid&amp;aacute; tolik bodů&lt;/strong>, jak&amp;aacute; byla jeho &lt;strong>vzd&amp;aacute;lenost od posledn&amp;iacute;ho sebran&amp;eacute;ho itemu + 1&lt;/strong> &lt;strong>vyn&amp;aacute;soben&amp;aacute; cenou tahu,&lt;/strong> (Aby se cesta vyplatila), pot&amp;eacute; trv&amp;aacute; &lt;strong>4 kola&lt;/strong>, než dojde k tomu, že s danou pravděpodobnost&amp;iacute;, kter&amp;yacute; odpov&amp;iacute;d&amp;aacute; vzd&amp;aacute;lenosti &lt;strong>zemře&lt;/strong>, v tom př&amp;iacute;padě znovu &lt;strong>přid&amp;aacute; score&lt;/strong> o &lt;strong>1/2 jeho vzdalenosti&lt;/strong> (Vyn&amp;aacute;sobenou cenou tahu), nebo se &lt;strong>vyl&amp;eacute;č&amp;iacute;&lt;/strong> v tom př&amp;iacute;padě se &lt;strong>ubere score rovno jeho vzd&amp;aacute;lenosti&lt;/strong> (Opět vyn&amp;aacute;sobena cenou tahu). Po celou dobu, co je nakažen&amp;yacute; m&amp;aacute; každ&amp;eacute; kolo nakažen&amp;yacute; pravděpodobnost že &lt;strong>nakaz&amp;iacute; dal&amp;scaron;&amp;iacute;ho člověka,&lt;/strong> kter&amp;yacute; bude m&amp;iacute;t stejnou hodnotu score, jako ten co ho nakazil.&lt;/p>&lt;p>&lt;strong>Hra koč&amp;iacute;, pokud dojdou body, nebo se l&amp;eacute;čba dostane na 100%&lt;/strong>&lt;/p>&lt;p>&lt;strong>C&amp;iacute;lem je z&amp;iacute;skat co největ&amp;scaron;&amp;iacute; score.&lt;/strong>&lt;/p>&lt;p>&lt;em> (Např. nakaz&amp;iacute;m člověka kter&amp;yacute; byl vzd&amp;aacute;len 10 kroků v tahu 15, score se zvět&amp;scaron;&amp;iacute; o 22, protože Item m&amp;aacute; vzd&amp;aacute;lenost 10 + 1 * cena kroku je 2, každ&amp;eacute; kolo m&amp;aacute;m &amp;scaron;anci že přibyde dal&amp;scaron;&amp;iacute; nakažen&amp;yacute;, kter&amp;yacute; mi přid&amp;aacute; dal&amp;scaron;&amp;iacute;ch 10 bodů score. Po 4 dnech, buďto zemře, (přid&amp;aacute; 5 * 2 bodů) nebo se uzdrav&amp;iacute; (Odebere 10 * 2 bodů).&lt;/em>&lt;/p>&lt;p>&amp;nbsp;&lt;/p>";
+        div.appendChild(ruleText);
+
+        ruleText = document.createElement("div");
+        ruleText.setAttribute("id", "ruleText");
+        ruleText.innerHTML = "&lt;p>&lt;strong>&lt;h2>HERN&amp;Iacute; MOD: Edukace&lt;/h2>&lt;/strong>&lt;/p>&lt;p>Každ&amp;yacute; &lt;strong>krok ubere 1 bod.&lt;/strong>&lt;/p>&lt;p>Každ&amp;yacute; &lt;strong>nakažen&amp;yacute; přid&amp;aacute; tolik bodů&lt;/strong>, jak&amp;aacute; byla jeho &lt;strong>vzd&amp;aacute;lenost od posledn&amp;iacute;ho sebran&amp;eacute;ho itemu + 1&lt;/strong>&lt;strong>,&lt;/strong> (Aby se cesta vyplatila), pot&amp;eacute; trv&amp;aacute; &lt;strong>4 kola&lt;/strong>, než dojde k tomu, že s danou pravděpodobnost&amp;iacute;, kter&amp;yacute; odpov&amp;iacute;d&amp;aacute; &lt;strong>vzd&amp;aacute;lenosti * 1,5&lt;/strong>&amp;nbsp;&lt;strong>zemře&lt;/strong>, v tom př&amp;iacute;padě znovu &lt;strong>přid&amp;aacute; score&lt;/strong> o &lt;strong>1/2 jeho vzdalenosti&lt;/strong>, nebo se &lt;strong>vyl&amp;eacute;č&amp;iacute;&lt;/strong> v tom př&amp;iacute;padě se &lt;strong>ubere score rovno jeho vzd&amp;aacute;lenosti&lt;/strong>&amp;nbsp;. Po celou dobu, co je nakažen&amp;yacute; m&amp;aacute; každ&amp;eacute; kolo nakažen&amp;yacute; pravděpodobnost že &lt;strong>nakaz&amp;iacute; dal&amp;scaron;&amp;iacute;ho člověka,&lt;/strong> kter&amp;yacute; bude m&amp;iacute;t stejnou hodnotu score, jako ten co ho nakazil.&lt;/p>&lt;p>&lt;strong>Hra koč&amp;iacute;, pokud dojdou body, nebo se l&amp;eacute;čba dostane na 100%&lt;/strong>&lt;/p>&lt;p>&lt;strong>C&amp;iacute;lem je z&amp;iacute;skat co největ&amp;scaron;&amp;iacute; score.&lt;/strong>&lt;/p>&lt;p>&lt;em> (Např. nakaz&amp;iacute;m člověka kter&amp;yacute; byl vzd&amp;aacute;len 10 kroků , score se zvět&amp;scaron;&amp;iacute; o 11, protože Item m&amp;aacute; vzd&amp;aacute;lenost 10 + 1, každ&amp;eacute; kolo m&amp;aacute;m &amp;scaron;anci že přibyde dal&amp;scaron;&amp;iacute; nakažen&amp;yacute;, kter&amp;yacute; mi přid&amp;aacute; dal&amp;scaron;&amp;iacute;ch 10 bodů score. Po 4 dnech, buďto zemře, (přid&amp;aacute; 5 bodů) nebo se uzdrav&amp;iacute; (Odebere 10 bodů).&lt;/em>&lt;/p>&lt;p>&amp;nbsp;&lt;/p>";
+        div.appendChild(ruleText);
+
+        ruleText = document.createElement("div");
+        ruleText.setAttribute("id", "ruleText");
+        ruleText.innerHTML = "&lt;p>&amp;nbsp;&lt;/p>&lt;p>&lt;strong>&lt;h2>HERN&amp;Iacute; MOD: Jeden bod&lt;/h2>&lt;/strong>&lt;/p>&lt;p>Každ&amp;yacute; &lt;strong>krok ubere 1 bod.&lt;/strong>&lt;/p>&lt;p>každ&amp;aacute; &lt;strong>lahvička přid&amp;aacute; tolik bodů, jako je vzd&amp;aacute;lenost od posledn&amp;iacute; sebran&amp;eacute; lahvičky,&lt;/strong> nebo startovn&amp;iacute; pozice +1. Z&amp;aacute;roveň&lt;strong> lahvička přid&amp;aacute; n&amp;aacute;hodně mezi 1 - 5% l&amp;eacute;čby.&lt;/strong>&lt;/p>&lt;p>&lt;strong>Hra koč&amp;iacute;, pokud dojdou body.&lt;/strong>&lt;/p>&lt;p>&lt;strong>C&amp;iacute;lem je z&amp;iacute;skat 100% l&amp;eacute;čbu, nebo maximální score co jen dovedete.&lt;/strong>&lt;/p>&lt;p>&amp;nbsp;&lt;/p>";
+        div.appendChild(ruleText);
+
+        ruleText = document.createElement("div");
+        ruleText.setAttribute("id", "ruleText");
+        ruleText.innerHTML = "&lt;p>&amp;nbsp;&lt;/p>&lt;p>&lt;strong>&lt;h2>HERN&amp;Iacute; MOD: Seber v&amp;scaron;e&lt;/h2>&lt;/strong>&lt;/p>&lt;p>Každ&amp;yacute; &lt;strong>krok ubere 1 bod.&lt;/strong>&lt;/p>&lt;p>&amp;nbsp;&lt;/p>&lt;p>&lt;strong>&lt;img src='img/relues1.gif' alt='' />&lt;/strong>&lt;/p>&lt;p>Vždy když se hr&amp;aacute;č pohne, vy&amp;scaron;le tlakovou vlnu, do v&amp;scaron;ech stran. Z toho důvodu znič&amp;iacute; v&amp;scaron;echny lahvičky ve v&amp;scaron;ech směrech, pokud nen&amp;iacute; lahvička u zdi. Tu dok&amp;aacute;ze sebrat a přidat si ji do sb&amp;iacute;rky.&lt;/p>&lt;p>&lt;strong>Hra koč&amp;iacute;, pokud dojdou body.&lt;/strong>&lt;/p>&lt;p>&lt;strong>C&amp;iacute;lem je z&amp;iacute;skat v&amp;scaron;echny lahvičky, &lt;/strong>a vyčistit mapu.&lt;/p>&lt;p>&amp;nbsp;&lt;/p>";
+        div.appendChild(ruleText);
+
+        ruleText = document.createElement("div");
+        ruleText.setAttribute("id", "ruleText");
+        ruleText.innerHTML = "&lt;br>&lt;br>&lt;br>&lt;br>&lt;br>&lt;br>&lt;br>&lt;p>&lt;strong>FUNKCE&lt;/strong>&lt;/p>&lt;p>Poukud &lt;strong>najedete my&amp;scaron;&amp;iacute; zobraz&amp;iacute; se V&amp;aacute;m vzd&amp;aacute;lenost k dan&amp;eacute;mu itemu,&lt;/strong> v &lt;strong>nastaven&amp;iacute;&lt;/strong> lze nastavit, zda se bude vzd&amp;aacute;lenost zobrazovat z &lt;strong>aktu&amp;aacute;ln&amp;iacute; pozice&lt;/strong> na mapě, nebo se zobraz&amp;iacute; jen vzd&amp;aacute;lenost, od &lt;strong>posledn&amp;iacute;ho sebran&amp;eacute;ho itemu&lt;/strong>, či &lt;strong>nikoliv&lt;/strong>.&lt;/p>&lt;p>Pokud &lt;strong>klikneme&lt;/strong> na item &lt;strong>2x&lt;/strong> (Double klik) za body si můžeme &lt;strong>koupit cestu.&lt;/strong> Zobrazen&amp;iacute; cesty z jak&amp;eacute;hokoliv m&amp;iacute;sta na mapě stoj&amp;iacute; &lt;strong>vždy stejně bodů jako je vzdálenost + 1&lt;/strong>&lt;/p>&lt;p>Cesta zmiz&amp;iacute;, když je item sebr&amp;aacute;n, nebo dal&amp;scaron;&amp;iacute;m dvojklikem na item (Smaz&amp;aacute;n&amp;iacute; je &lt;strong>zdarma&lt;/strong>). Pokud najedeme na červeně zvýrazněné pole, kam můžeme šlápnout, zobrazí se nám také cena cesty.&lt;/p>&lt;br>&lt;br>&lt;br>&lt;br>&lt;br>&lt;br>&lt;br>";
+        div.appendChild(ruleText);
+
+
+        let img = document.createElement("div");
+        img.setAttribute("id", "imgPreview");
+        img.style.backgroundImage = "url(img/humans.png)";
+        div.appendChild(img);
+
+        ruleText = document.createElement("div");
+        ruleText.setAttribute("id", "ruleTextSecond");
+        ruleText.innerHTML = "&lt;p>Člověk bez roušky se nakazí ihned po stoupnutí na jeho pozici.&lt;/p>";
+        div.appendChild(ruleText);
+
+        img = document.createElement("div");
+        img.setAttribute("id", "imgPreview");
+        img.style.backgroundImage = "url(img/humansDefend.png)";
+        div.appendChild(img);
+
+        ruleText = document.createElement("div");
+        ruleText.setAttribute("id", "ruleTextSecond");
+        ruleText.innerHTML = "&lt;p>Člověk s rouškou si ji po stoupnutí na jeho pozici sundá, a je nutné buďto počkat jedno kolo na místě, nebo se na pole vrátit jindy.&lt;/p>";
+        div.appendChild(ruleText);
+
+        img = document.createElement("div");
+        img.setAttribute("id", "imgPreviewLong");
+        img.style.backgroundImage = "url(img/0.0.png)";
+        div.appendChild(img);
+
+        ruleText = document.createElement("div");
+        ruleText.setAttribute("id", "ruleTextSecond");
+        ruleText.innerHTML = "&lt;p>Skupinkase počítá jako 5* člověk bez roušky.&lt;/p>";
+        div.appendChild(ruleText);
+
+        img = document.createElement("div");
+        img.setAttribute("id", "imgPreviewLong");
+        img.style.backgroundImage = "url(img/cure.png)";
+        div.appendChild(img);
+
+        ruleText = document.createElement("div");
+        ruleText.setAttribute("id", "ruleTextSecond");
+        ruleText.innerHTML = "&lt;p>Rouška sníží léčbu o 10% .&lt;/p>";
+        div.appendChild(ruleText);
+
+        img = document.createElement("div");
+        img.setAttribute("id", "imgPreviewLong");
+        img.style.backgroundImage = "url(img/rip.png)";
+        div.appendChild(img);
+
+        ruleText = document.createElement("div");
+        ruleText.setAttribute("id", "ruleTextSecond");
+        ruleText.innerHTML = "&lt;p>Hrobeček přidá 10% pravděpodobnosti ÚMRTNOSTI.&lt;/p>";
+        div.appendChild(ruleText);
+
+        img = document.createElement("div");
+        img.setAttribute("id", "imgPreviewLong");
+        img.style.backgroundImage = "url(img/bottle.png)";
+        div.appendChild(img);
+
+        ruleText = document.createElement("div");
+        ruleText.setAttribute("id", "ruleTextSecond");
+        ruleText.innerHTML = "&lt;p>Lahvička přidá náhodně 1 až 5 % LÉČBY&lt;/p>";
+        div.appendChild(ruleText);
+
+
+        return div;
+    }
+
+
+    /**
+     * @description Metoda vytvoří stránku obsahující nastavení všetně grafického rozložení
+     * @returns div obdahující stránku nastavení
+     */
+    getSeting() {
+
+        let div = document.createElement("div");
+        div.setAttribute("id", "content");
+
+        let mody = "";
+        for (let i = 0; i &lt; GAME_MODE.length; i++) {
+            mody += GAME_MODE.toString(i) + "/";
+        }
+        div.appendChild(this.getGraphic(POSITON.VERTICAL, "1 Hráč: ", "input/radio/multiplayer/true", 2));
+        div.appendChild(this.getGraphic(POSITON.VERTICAL, "2 Hráči: ", "input/radio/multiplayer", 2));
+        div.appendChild(this.getGraphic(POSITON.VERTICAL, "Velikost mapy: Střední 16x16", "input/range/map_size/1", 1, "min/0/max/2"));
+        div.appendChild(this.getGraphic(POSITON.VERTICAL, "Herní režim: ", "select/" + mody + "game_mode/" + GAME_MODE.toString(GAME_MODE.EDUCATION), 1));
+        div.appendChild(this.getGraphic(POSITON.VERTICAL, "Obtížnost: ", "select/Lehká/Střední/Těžká/dificulty/Střední", 1, "title/V jaké vdálenosti se budou itemi vytvářet, lehká budou mít max. vzdálenost 7 kroků, Těžká až 20."));
+        div.appendChild(this.getGraphic(POSITON.HORIZONTAL, "Nápovědy: ", "input/checkbox/help/true", 0, "title/Při najetí na item se zobazí jak je daleko"));
+        div.appendChild(this.getGraphic(POSITON.HORIZONTAL, "Přepočítat: ", "select/Každý krok/Jen při chycení/helpType/", 0, "title/Při najetí na item se zobazí jak je daleko, tímto nastavením určíte kdy se má vzdálenost přepočítat."))
+        //div.appendChild(this.getGraphic(POSITON.HORIZONTAL,"Inkubační doba: ","input/number/incubation/4",0,"min/1/title/Jak dlouho trvá než se z akažené stane mrví nebo vyléčený."));
+        this.saveCookieScoreBoard();
+        return div;
+    }
+
+
+    /**
+     * @description Metoda vytvoří stránku obsahující pravidla všetně grafického rozložení
+     * @returns div obdahující stránku pravidel
+     */
+    getScoreBoard() {
+
+        let div = document.createElement("div");
+        div.setAttribute("id", "content");
+
+
+
+        for (let i = 0; i &lt; GAME_MODE.length; i++) {
+
+            let box = document.createElement("div");
+            box.setAttribute("id", "box");
+
+            box.append(this.getGraphic("h1/" + GAME_MODE.toString(i)));
+
+            //Buble sort
+            let change = true;
+            while (change) {
+                change = false;
+                for (let j = 0; j &lt; this.scoreBoard[i].length - 1; j++) {
+                    if (this.scoreBoard[i][j] &lt; this.scoreBoard[i][j + 1]) {
+                        let temp = this.scoreBoard[i][j];
+                        this.scoreBoard[i][j] = this.scoreBoard[i][j + 1];
+                        this.scoreBoard[i][j + 1] = temp;
+                        change = true;
+                    }
+                }
+            }
+            //-------------------
+
+
+            for (let j = 0; j &lt; this.scoreBoard[i].length; j++) {
+                if (!isNaN(parseInt(this.scoreBoard[i][j])))
+                    box.append(this.getGraphic(POSITON.HORIZONTAL, (j + 1) + ". místo: ", "label/" + this.scoreBoard[i][j] + CZ_STRING(this.scoreBoard[i][j], " bod")));
+            }
+            if (this.scoreBoard[i].length == 0) {
+                box.append(this.getGraphic("h3/Zatím nebyly odehrány žádné hry"));
+            }
+
+            div.appendChild(box);
+        }
+
+        return div;
+    }
+
+
+
+
+    /**
+     * V případě zádosti o vykreslení nadpisu se volá funkce jen s jedním vstupním parametrem typu string např. getGraphic("h1/Nadpis");
+     * nejprve se definuje tip nadpisu h1 či h2
+     * h1 = je upršen pro hlavičku boxu
+     * h2 lze použít kdekoliv v boxu jako doplňovací
+     * 
+     * @param {enum} position = VERTICAL nebo HORIZONTAL grafické vykreslení
+     * @param {int} count = počet kolik elementů mábýt vykresleno na daném řádku pokud je zvoleno VERTICALní rozložení, Nemusí se zadávat pokud není zapotřebí počet definovat
+     * @param {String} textLabel = Textová náplň popisku daného elementu
+     * @param {String} inputType label/ a následovaný textovým obsahem
+     *                           select/ následovaný textovým popisem obsahu výběrového seznamu odděleného lomítkem a nakonec / index položky která se nastaví jako vybraná (nepovinné)
+     *                           input/text, input/number, input/range, input/password atd. + /name +  /value která se má nastavit např. input/text/value
+     *                           
+     *                           button "mezera" href odkaz podporováno i s lomítky
+     * 
+     * @returns {Div} vrátí div obsahující label a příslučný element s nastavenými hodnotami
+     */
+    getGraphic(position, textLabel, inputType, count, atribute) {
+
+        if (arguments.length == 1) {
+            let h = document.createElement(arguments[0].split("/")[0]);
+            h.textContent = arguments[0].split("/")[1].trim();
+            return h;
+        }
+
+
+
+        let div = document.createElement("div");
+        div.setAttribute("ID", position == 0 ? "graphicVertical" : "graphicHorizontal");
+
+        if (inputType.split(" ")[0] == "button") {
+            let a;
+            if (inputType.split(" ")[1] != undefined) {
+                a = document.createElement("a");
+                a.setAttribute("href", inputType.split(" ")[1]);
+            }
+            let button = document.createElement("button");
+            button.innerHTML = textLabel.split("/")[0];
+            div.style.width = 100 / count + "%";
+            if (inputType.split(" ")[1] != undefined) {
+                a.appendChild(button);
+                div.appendChild(a);
+            }
+            else {
+                div.appendChild(button);
+            }
+
+            let label = document.createElement("label");
+            label.setAttribute("class", "element");
+            label.textContent = textLabel.split("/")[1];
+            div.appendChild(label);
+
+            for (let i = 0; atribute != undefined &amp;&amp; i &lt; atribute.split("/").length; i += 2)
+                button.setAttribute(atribute.split("/")[i], atribute.split("/")[i + 1]);
+
+            return div
+        }
+
+
+        if (position == 0)
+            div.style.width = 100 / count + "%";
+        let label = document.createElement("label");
+        label.setAttribute("id", "label");
+        label.setAttribute("name", inputType.split("/")[2] + "Label");
+        label.textContent = textLabel;
+        div.appendChild(label);
+
+
+        let input = document.createElement(inputType.split("/")[0]);
+        input.setAttribute("type", inputType.split("/")[1]);
+
+        if (inputType.split("/").length > 3) {
+            input.value = inputType.split("/")[3].replace(/©/g, "/");
+            if (inputType.split("/")[1] = "checkbox")
+                input.checked = inputType.split("/")[3] == "true" ? true : false;
+        }
+        input.setAttribute("name", inputType.split("/")[2]);
+        input.setAttribute("class", "element");
+        if (inputType.split("/")[0] == "label")
+            input.textContent = inputType.split("/")[1];
+        if (inputType.split("/")[0] == "select") {
+            for (let i = 1; i &lt; inputType.split("/").length - 2; i++) {
+                let o = document.createElement("option");
+                o.setAttribute("value", inputType.split("/")[i]);
+                let t = document.createTextNode(inputType.split("/")[i]);
+                o.appendChild(t);
+                input.appendChild(o);
+            }
+            let opts = input.options;
+            for (let opt, j = 0; opt = opts[j]; j++) {
+                if (opt.value == inputType.split("/")[inputType.split("/").length - 1]) {
+                    input.selectedIndex = j;
+                    break;
+                }
+            }
+            input.setAttribute("name", inputType.split("/")[inputType.split("/").length - 2]);
+        }
+
+        for (let i = 0; atribute != undefined &amp;&amp; i &lt; atribute.split("/").length; i += 2)
+            input.setAttribute(atribute.split("/")[i], atribute.split("/")[i + 1]);
+
+        input.addEventListener("input", (x) => this.changeElement(x));
+        /*input.addEventListener("focus", enterElement);
+        input.addEventListener("blur", leaveElement);*/
+
+
+        div.appendChild(input);
+
+        return div;
+
+    }
+
+
+    /**
+     * @description Metoda vymaže element table map z HTML dokumentu
+     */
+    clearMap() {
+
+        for (let i = MAP_TABLE.children.length; i > 0; i--) {
+            MAP_TABLE.children[0].remove();
+        }
+    }
+
+
+    /**
+     * @description Metoda se volá při změně jednotivých prvků v nastavení, dle změny prvky se nastaví hra samotná
+     * @param {Element} e 
+     */
+    changeElement(e) {
+
+        if (e.target.parentNode.children[0].innerHTML.toLowerCase().includes("velikost mapy")) {
+            DIFICULTY.MAP_SIZE = MAP_SIZE.onIndex(parseInt(e.target.value));
+            window.UI.clearMap();
+            window.game = new Game();
+            e.target.parentNode.children[0].innerHTML = "Velikost mapy: " + MAP_SIZE.toString(parseInt(e.target.value));
+        }
+
+        if (e.target.parentNode.children[0].innerHTML.toLowerCase().includes("nápovědy")) {
+            if (e.target.checked) {
+                document.getElementsByName("helpType")[0].parentNode.style.display = "inherit";
+                DIFICULTY.SHOW_TOOLTIP = SHOW_TOOLTIP.onIndex(document.getElementsByName("helpType")[0].value == "Každý krok" ? 0 : 1);
+                if (window.game.map != undefined)
+                    window.game.map.drawItems();
+            }
+            else {
+                document.getElementsByName("helpType")[0].parentNode.style.display = "none";
+                DIFICULTY.SHOW_TOOLTIP = SHOW_TOOLTIP.NEVER;
+                window.game.map.drawItems();
+            }
+        }
+
+
+        if (e.target.parentNode.children[0].innerHTML.toLowerCase().includes("přepočítat")) {
+            DIFICULTY.SHOW_TOOLTIP = SHOW_TOOLTIP.onIndex(e.target.value == "Každý krok" ? 0 : 1);
+            window.game.map.drawItems();
+        }
+
+        if (e.target.parentNode.children[0].innerHTML == "1 Hráč: ") {
+            DIFICULTY.MULTIPLAYER = MULTIPLAYER.FALSE;
+            window.UI.clearMap();
+            window.game = new Game();
+        }
+
+        if (e.target.parentNode.children[0].innerHTML == "2 Hráči: ") {
+            DIFICULTY.MULTIPLAYER = MULTIPLAYER.TRUE;
+            window.UI.clearMap();
+            window.game = new Game();
+        }
+
+        if (e.target.parentNode.children[0].innerHTML.toLowerCase().includes("režim")) {
+            switch (e.target.value) {
+                case GAME_MODE.toString(0):
+                    DIFICULTY.GAME_MODE = GAME_MODE.EDUCATION;
+                    document.getElementsByName("multiplayer")[0].disabled = false;
+                    document.getElementsByName("multiplayer")[1].disabled = false;
+                    document.getElementsByName("help")[0].disabled = false;
+                    break;
+                case GAME_MODE.toString(1):
+                    DIFICULTY.GAME_MODE = GAME_MODE.ONE_POINT;
+                    document.getElementsByName("multiplayer")[0].checked = true;
+                    document.getElementsByName("multiplayer")[1].checked = false;
+                    document.getElementsByName("multiplayer")[0].disabled = true;
+                    document.getElementsByName("multiplayer")[1].disabled = true;
+                    document.getElementsByName("help")[0].disabled = false;
+                    break;
+                case GAME_MODE.toString(2):
+                    DIFICULTY.GAME_MODE = GAME_MODE.ALL_IN;
+                    document.getElementsByName("multiplayer")[0].checked = true;
+                    document.getElementsByName("multiplayer")[1].checked = false;
+                    document.getElementsByName("multiplayer")[0].disabled = true;
+                    document.getElementsByName("multiplayer")[1].disabled = true;
+                    if (document.getElementsByName("help")[0].checked) {
+                        document.getElementsByName("help")[0].value = false;
+                        document.getElementsByName("help")[0].click(document.getElementsByName("help")[0]);
+                        document.getElementsByName("help")[0].disabled = true;
+                    }
+                    break;
+                case GAME_MODE.toString(3):
+                    DIFICULTY.GAME_MODE = GAME_MODE.STORY;
+                    document.getElementsByName("multiplayer")[0].disabled = false;
+                    document.getElementsByName("multiplayer")[1].disabled = false;
+                    document.getElementsByName("help")[0].disabled = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if (e.target.parentNode.children[0].innerHTML.toLowerCase().includes("obtížnost")) {
+
+            switch (e.target.value) {
+                case "Lehká":
+                    DIFICULTY.MAX_DISTANCE = DISTANCE.SHORT;
+                    break;
+                case "Střední":
+                    DIFICULTY.MAX_DISTANCE = DISTANCE.MEDIUM;
+                    break;
+                case "Těžká":
+                    DIFICULTY.MAX_DISTANCE = DISTANCE.LONG;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+
+    /**
+     * Metoda vymaže graficky mapu a založí novou instaci hry 
+     */
+    generateNewMap() {
+        window.UI.clearMap();
+        window.game = new Game();
+    }
+
+
+    /**
+     * @description Metoda vytvoří vyskakovací okno achievementu a graficky ho zobrazí v HTMl
+     * @param {String} text = Tect který má být v notifikaci zobrazen
+     * @param {String} imgPath = Path obrázku který se má zobrazit
+     */
+    showAchievement(text, imgPath) {
+
+        if (document.getElementById("achievement") != null) {
+            return;
+        }
+
+        let div = document.createElement("div");
+        div.setAttribute("id", "achievement");
+
+
+        let divCont = document.createElement("div");
+        divCont.setAttribute("id", "achievementContent");
+        divCont.setAttribute("class", "hide");
+
+        let cross = document.createElement("div");
+        cross.setAttribute("id", "cross");
+        cross.innerHTML = "&amp;#10006;";
+        divCont.appendChild(cross);
+
+
+        divCont.onclick = function () {
+
+            document.getElementById("achievementContent").classList.add("hide");
+
+            setTimeout(() => { document.getElementById("achievement").remove() }, 1000);
+
+        };
+
+        let img = document.createElement("div");
+        img.setAttribute("id", "achievementImg");
+        img.style.backgroundImage = "url(" + imgPath + ")";
+
+        divCont.appendChild(img);
+
+        let txt = document.createElement("div");
+        txt.setAttribute("id", "achievementText");
+        txt.innerHTML = text;
+        if (text.length &lt; 100)
+            txt.style.fontSize = "1.4vw";
+
+        divCont.appendChild(txt);
+
+        div.appendChild(divCont);
+
+        document.body.appendChild(div);
+
+        setTimeout(() => {
+            document.getElementById("achievementContent").classList.remove("hide");
+        }, 100);
+
+
+
+
+    }
+
+    /**
+     * @description Metoda slouží k zobrazení vyskakovacího okna pro věběr grafiky hráče a logika výběru
+     * @param {Array} Arguments = stringové hodnoty path img, ze kterých chceme dát uživately navybranou.
+     */
+    showPlayerSelect() {
+
+        if (document.getElementById("achievement") != null) {
+            return;
+        }
+
+        let div = document.createElement("div");
+        div.setAttribute("id", "achievement");
+
+
+        let divCont = document.createElement("div");
+        divCont.setAttribute("id", "achievementContent");
+        divCont.setAttribute("class", "hide");
+
+        let cross = document.createElement("div");
+        cross.setAttribute("id", "cross");
+        cross.innerHTML = "&amp;#10006;";
+        divCont.appendChild(cross);
+
+
+        cross.onclick = function () {
+
+            document.getElementById("achievementContent").classList.add("hide");
+
+            setTimeout(() => { document.getElementById("achievement").remove() }, 1000);
+
+        };
+
+        let text = document.createElement("div");
+        text.setAttribute("id", "playerSelectText");
+        text.innerHTML = "Vyber si za koho chceš hrát."
+
+        divCont.appendChild(text);
+
+        for (let i = 0; i &lt; arguments.length; i++) {
+            let img = document.createElement("div");
+            img.setAttribute("id", "playerImg");
+            img.style.backgroundImage = "url('" + arguments[i] + "')";
+            img.style.width = (100 / arguments.length) - 1 + "%";
+
+            img.onclick = function (e) {
+                e.target.classList.remove("blackAndWhite");
+                e.target.classList.add("selectSkin");
+
+                let img = e.target.style.backgroundImage;
+                for (let i = 0; i &lt; e.target.parentNode.children.length; i++) {
+                    if (e.target.parentNode.children[i].id == "playerImg") {
+                        if (e.target.parentNode.children[i].style.backgroundImage != img) {
+                            e.target.parentNode.children[i].classList.add("blackAndWhite");
+                            e.target.parentNode.children[i].classList.remove("selectSkin");
+                        }
+                    }
+                }
+
+                if (document.getElementById("selectButton") == null) {
+                    let butt = window.UI.getGraphic(POSITON.VERTICAL, "Pokračovat", "button", 1, "id/selectButton");
+                    butt.children[1].remove();
+                    butt.children[0].onclick = function () {
+
+                        document.getElementById("player").style.backgroundImage = document.getElementsByClassName("selectSkin")[0].style.backgroundImage;
+                        document.getElementById("cross").dispatchEvent(new Event("click"));
+                    }
+                    e.target.parentNode.appendChild(butt);
+                }
+            }
+
+            divCont.appendChild(img);
+        }
+
+
+        div.appendChild(divCont);
+
+        document.body.appendChild(div);
+
+        setTimeout(() => {
+            document.getElementById("achievementContent").classList.remove("hide");
+        }, 100);
+    }
+
+
+    /**
+     * @description Metoda vezme aktuální score z globální proměné  this.scoreBoard a uloží jej do Cookies do prohlížeče (životnost cookie je 5 let)
+     */
+    saveCookieScoreBoard() {
+        var d = new Date();
+        var year = d.getFullYear();
+        var month = d.getMonth();
+        var day = d.getDate();
+
+        var date = new Date(year + 5, month, day);
+        var expires = "; expires=" + date.toGMTString();
+
+        document.cookie = "Title=©GAMEbyFROLÍK©;" + expires;
+
+        for (let j = 0; j &lt; this.scoreBoard.length; j++) {
+            let value = "";
+            for (let i = 0; i &lt; this.scoreBoard[j].length; i++) {
+                if (this.scoreBoard[j][i] != "") {
+                    value += this.scoreBoard[j][i] + "/";
+                }
+            }
+            document.cookie = j + "=" + value + expires;
+        }
+    }
+
+
+    /**
+     * @description Metoda načte hodnoty score do globální proměné  this.scoreBoard z cookies prohlížeče, pokud jsou prázdné pouze inicializuje pole
+     */
+    loadCookieScoreBoard() {
+        let cookie = decodeURIComponent(document.cookie);
+        if (cookie.includes("©GAMEbyFROLÍK©")) {
+            let data = cookie.split(";");
+            for (let j = 0; j &lt; data.length; j++) {
+                if (!isNaN(parseInt(data[j].split("=")[0]))) {
+                    this.scoreBoard[parseInt(data[j].split("=")[0])] = data[j].split("=")[1].split("/") == "" ? [] : data[j].split("=")[1].split("/");
+                }
+            }
+        }
+        else {
+            for (let j = 0; j &lt; GAME_MODE.length; j++) {
+                this.scoreBoard[j] = [];
+            }
+            setTimeout(() => { ACHIEVEMENT("Děkuji, že jste si přišli zahrát, hra má několik herních režimů, které nemusí odpovídat skutečnostem. Součástí je i herní režim EDU, který slouží jako edukační pro všechny kteří se chtějí vzdělat ohledně COVID-19.&lt;br> Web nemá za cíl nikoho poškodit, ani zesměšnit či pohoršit. &lt;br>Přeji příjemnou hru.&lt;br> &lt;br>Zavřením toho okna souhlasíte s používání cookies", "img/copyright.png") }, 100);
+        }
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Covid Game - Dokumentace</a></h2><h3>Třídy</h3><ul><li><a href="Action.html">Action</a></li><li><a href="Game.html">Game</a></li><li><a href="Item.html">Item</a></li><li><a href="Map.html">Map</a></li><li><a href="Player.html">Player</a></li><li><a href="Point.html">Point</a></li><li><a href="UI.html">UI</a></li></ul><h3>Globální</h3><ul><li><a href="global.html#CZ_STRING">CZ_STRING</a></li><li><a href="global.html#DIFICULTY">DIFICULTY</a></li><li><a href="global.html#DIRECTION">DIRECTION</a></li><li><a href="global.html#DISTANCE">DISTANCE</a></li><li><a href="global.html#GAME_MODE">GAME_MODE</a></li><li><a href="global.html#ITEMTYPE">ITEMTYPE</a></li><li><a href="global.html#LOADING">LOADING</a></li><li><a href="global.html#MAP_SIZE">MAP_SIZE</a></li><li><a href="global.html#MAP_TABLE">MAP_TABLE</a></li><li><a href="global.html#MULTIPLAYER">MULTIPLAYER</a></li><li><a href="global.html#POSITON">POSITON</a></li><li><a href="global.html#RANDOM_NUMBER">RANDOM_NUMBER</a></li><li><a href="global.html#RETURN">RETURN</a></li><li><a href="global.html#SCORE">SCORE</a></li><li><a href="global.html#SCORE_DATA">SCORE_DATA</a></li><li><a href="global.html#SHOW_TOOLTIP">SHOW_TOOLTIP</a></li><li><a href="global.html#TYPE">TYPE</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sat May 30 2020 14:39:45 GMT+0200 (GMT+02:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,5 +1,35 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Game.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Game.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @description Třída se stará o chod celé hry počítání score grafické vykreslování hry, sestavení scénářů a cílů dle vybrané obtížnosti a herního režimu, Dále hra zakládá instanci mapy.
+ * @author Dominik Frolík
+ * @see www.dominikfrolik.cz
  */
 class Game {
 
@@ -130,8 +160,8 @@ class Game {
 
                 if (this.catchItems == undefined) {
                     this.catchItems = [];
-                    for (let i = 0; i < ITEMTYPE.length; i++) {
-                        for (let j = 0; j < 2; j++) {
+                    for (let i = 0; i &lt; ITEMTYPE.length; i++) {
+                        for (let j = 0; j &lt; 2; j++) {
                             this.catchItems[ITEMTYPE.onIndex(i) + j] = [];
 
                         }
@@ -229,7 +259,7 @@ class Game {
      */
     start() {
 
-        if (SCORE_DATA.SCORE < SCORE_DATA_DEFAULT.SCORE) {
+        if (SCORE_DATA.SCORE &lt; SCORE_DATA_DEFAULT.SCORE) {
             SCORE(SCORE_DATA.SCORE = SCORE_DATA_DEFAULT.SCORE);
         }
         this.map.clear();
@@ -248,8 +278,8 @@ class Game {
             case GAME_MODE.EDUCATION://------------------------------------------------------------------------------
                 this.setShop(true);
                 this.catchItemsIndex = [];
-                for (let i = 0; i < ITEMTYPE.length; i++) {
-                    for (let j = 0; j < 2; j++) {
+                for (let i = 0; i &lt; ITEMTYPE.length; i++) {
+                    for (let j = 0; j &lt; 2; j++) {
                         let index = this.catchItems[ITEMTYPE.onIndex(i) + j].length;
                         this.catchItemsIndex[ITEMTYPE.onIndex(i) + j] = index == 0 ? null : RANDOM_NUMBER(0, index - 1);
                     }
@@ -349,7 +379,7 @@ class Game {
                                 INFECTED(SCORE_DATA.INFECTED.length);
                                 break;
                             case ITEMTYPE.GROUP:
-                                for (let i = 0; i < ITEMTYPE.GROUP_SIZE; i++) {
+                                for (let i = 0; i &lt; ITEMTYPE.GROUP_SIZE; i++) {
                                     SCORE_DATA.INFECTED.push({ liveSpan: cell.liveSpan, value: cell.distance });
                                 }
                                 SCORE(SCORE_DATA.SCORE += (cell.distance + 1) * ITEMTYPE.GROUP_SIZE);
@@ -376,7 +406,7 @@ class Game {
                     this.checkActions();
 
 
-                    if (SCORE_DATA.SCORE <= 0) {
+                    if (SCORE_DATA.SCORE &lt;= 0) {
                         ACHIEVEMENT("Ups hra skončila, došli ti body.", "img/cross.png");
                         NEWS("Gratuluji, celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
                         this.gameOver();
@@ -400,19 +430,19 @@ class Game {
                         SCORE(SCORE_DATA.SCORE += cell.distance + 1);
                         CURE(SCORE_DATA.CURE += RANDOM_NUMBER(1, 5));
                     }
-                    if (SCORE_DATA.SCORE <= 0) {
+                    if (SCORE_DATA.SCORE &lt;= 0) {
                         ACHIEVEMENT("Bohužel došli ti body, ale zkus to znovu, určitě budeš lepší. Celkové skore je: " + SCORE_DATA.TOTAL_SCORE, "img/cross.png");
                         NEWS("Celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
                         this.gameOver();
                         return;
                     }
-                    if (SCORE_DATA.CURE >= 100 && !this.win) {
+                    if (SCORE_DATA.CURE >= 100 &amp;&amp; !this.win) {
                         ACHIEVEMENT("VÝHRA, dosáhl jsi 100% léčby a všechny si vyléčil. Celkové skore je: " + SCORE_DATA.TOTAL_SCORE + " jestli cheš můžeš pokračovat.", "img/cross.png");
                         NEWS("Celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
                         this.win = true;
                         this.map.mainButton.innerHTML = "UKONČIT"
                     }
-                    if (this.win && !notWait) {
+                    if (this.win &amp;&amp; !notWait) {
                         ACHIEVEMENT("Wow Vyhrál si s celkovým skore: " + SCORE_DATA.TOTAL_SCORE, "img/cross.png");
                         NEWS("Celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
                         this.win = false;
@@ -431,11 +461,11 @@ class Game {
                     let countBottles = document.getElementsByClassName("bottle").length;
                     let allBottles = this.map.allValidPosition.length;
 
-                    if (countBottles <= (allBottles / 2) && this.bottleHalf) {
+                    if (countBottles &lt;= (allBottles / 2) &amp;&amp; this.bottleHalf) {
                         ACHIEVEMENT("Už zbývá jen půlka. Jen tak dál", "img/award.png");
                         this.bottleHalf = false;
                     }
-                    if (countBottles <= (3) && this.bottleThree) {
+                    if (countBottles &lt;= (3) &amp;&amp; this.bottleThree) {
                         ACHIEVEMENT("Jsi jen kousek od výtězstvý, držím ti palce", "img/award.png");
                         this.bottleThree = false;
                     }
@@ -445,7 +475,7 @@ class Game {
                         this.gameOver();
                         return;
                     }
-                    if (SCORE_DATA.SCORE <= 0) {
+                    if (SCORE_DATA.SCORE &lt;= 0) {
                         ACHIEVEMENT("Bohužel došli ti body, ale zkus to znovu, určitě budeš lepší. Celkové skore je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE), "img/cross.png");
                         NEWS("Celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
                         this.gameOver();
@@ -481,7 +511,7 @@ class Game {
                                 INFECTED(SCORE_DATA.INFECTED.length);
                                 break;
                             case ITEMTYPE.GROUP:
-                                for (let i = 0; i < ITEMTYPE.GROUP_SIZE; i++) {
+                                for (let i = 0; i &lt; ITEMTYPE.GROUP_SIZE; i++) {
                                     SCORE_DATA.INFECTED.push({ liveSpan: cell.liveSpan, value: cell.distance });
                                 }
                                 SCORE(SCORE_DATA.SCORE += ((cell.distance + 1) * parseInt(this.round / 10)) * ITEMTYPE.GROUP_SIZE);
@@ -506,7 +536,7 @@ class Game {
                     this.checkActions();
                     this.checkGoals();
 
-                    if (SCORE_DATA.SCORE <= 0) {
+                    if (SCORE_DATA.SCORE &lt;= 0) {
                         ACHIEVEMENT("Ups hra skončila, došli ti body.", "img/cross.png");
                         NEWS("Gratuluji, celkové skóre je: " + Intl.NumberFormat().format(SCORE_DATA.TOTAL_SCORE));
                         this.gameOver();
@@ -549,8 +579,8 @@ class Game {
         this.map.createItems(this.actions);
 
         let forDelete = [];
-        for (let i = 0; i < this.actions.length; i++) {
-            if ((SCORE_DATA.onIndex(this.actions[i].typeOfScore) >= Math.abs(this.actions[i].value) && this.actions[i].value >= 0) || (SCORE_DATA.onIndex(this.actions[i].typeOfScore) <= Math.abs(this.actions[i].value) && this.actions[i].value < 0)) {
+        for (let i = 0; i &lt; this.actions.length; i++) {
+            if ((SCORE_DATA.onIndex(this.actions[i].typeOfScore) >= Math.abs(this.actions[i].value) &amp;&amp; this.actions[i].value >= 0) || (SCORE_DATA.onIndex(this.actions[i].typeOfScore) &lt;= Math.abs(this.actions[i].value) &amp;&amp; this.actions[i].value &lt; 0)) {
                 if (this.actions[i].news != null) {
                     NEWS(this.actions[i].news);
                 }
@@ -569,17 +599,17 @@ class Game {
         setTimeout(() => {
 
             let length = SCORE_DATA.INFECTED.length;
-            for (let i = 0; i < SCORE_DATA.INFECTED.length; i++) {
+            for (let i = 0; i &lt; SCORE_DATA.INFECTED.length; i++) {
                 if (i > length) {
                     break;
                 }
-                if (RANDOM_NUMBER(0, 100) < SCORE_DATA.INFECTED[i].value * (DIFICULTY.GAME_MODE == GAME_MODE.EDUCATION ? 1.5 : 1)) {
+                if (RANDOM_NUMBER(0, 100) &lt; SCORE_DATA.INFECTED[i].value * (DIFICULTY.GAME_MODE == GAME_MODE.EDUCATION ? 1.5 : 1)) {
                     SCORE_DATA.INFECTED.push({ liveSpan: PEOPLE_INFECTED_DAY, value: SCORE_DATA.INFECTED[i].value });
                     SCORE(SCORE_DATA.SCORE += SCORE_DATA.INFECTED[i].value * (DIFICULTY.GAME_MODE == GAME_MODE.EDUCATION ? 1 : parseInt(this.round / 10)));
                 }
-                if (--SCORE_DATA.INFECTED[i].liveSpan < 0) {
+                if (--SCORE_DATA.INFECTED[i].liveSpan &lt; 0) {
 
-                    if (RANDOM_NUMBER(0, 100) < SCORE_DATA.MORTALITY) {
+                    if (RANDOM_NUMBER(0, 100) &lt; SCORE_DATA.MORTALITY) {
                         DEAD(++SCORE_DATA.DEAD);
                         SCORE(SCORE_DATA.SCORE += (parseInt(SCORE_DATA.INFECTED[i].value / 2)) * (DIFICULTY.GAME_MODE == GAME_MODE.EDUCATION ? 1 : parseInt(this.round / 10)));
                     }
@@ -603,8 +633,8 @@ class Game {
      */
     checkGoals() {
         let showOne = false;
-        for (let i = 0; i < this.goals.length && !showOne; i++) {
-            if (SCORE_DATA.onIndex(this.goals[i].typeOfScore) >= this.goals[i].value && !this.goals[i].show) {
+        for (let i = 0; i &lt; this.goals.length &amp;&amp; !showOne; i++) {
+            if (SCORE_DATA.onIndex(this.goals[i].typeOfScore) >= this.goals[i].value &amp;&amp; !this.goals[i].show) {
                 showOne = true;
                 ACHIEVEMENT(this.goals[i].text, this.goals[i].img);
                 this.goals[i].show = true;
@@ -749,3 +779,26 @@ class Game {
 }
 
 
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Covid Game - Dokumentace</a></h2><h3>Třídy</h3><ul><li><a href="Action.html">Action</a></li><li><a href="Game.html">Game</a></li><li><a href="Item.html">Item</a></li><li><a href="Map.html">Map</a></li><li><a href="Player.html">Player</a></li><li><a href="Point.html">Point</a></li><li><a href="UI.html">UI</a></li></ul><h3>Globální</h3><ul><li><a href="global.html#CZ_STRING">CZ_STRING</a></li><li><a href="global.html#DIFICULTY">DIFICULTY</a></li><li><a href="global.html#DIRECTION">DIRECTION</a></li><li><a href="global.html#DISTANCE">DISTANCE</a></li><li><a href="global.html#GAME_MODE">GAME_MODE</a></li><li><a href="global.html#ITEMTYPE">ITEMTYPE</a></li><li><a href="global.html#LOADING">LOADING</a></li><li><a href="global.html#MAP_SIZE">MAP_SIZE</a></li><li><a href="global.html#MAP_TABLE">MAP_TABLE</a></li><li><a href="global.html#MULTIPLAYER">MULTIPLAYER</a></li><li><a href="global.html#POSITON">POSITON</a></li><li><a href="global.html#RANDOM_NUMBER">RANDOM_NUMBER</a></li><li><a href="global.html#RETURN">RETURN</a></li><li><a href="global.html#SCORE">SCORE</a></li><li><a href="global.html#SCORE_DATA">SCORE_DATA</a></li><li><a href="global.html#SHOW_TOOLTIP">SHOW_TOOLTIP</a></li><li><a href="global.html#TYPE">TYPE</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sat May 30 2020 14:39:45 GMT+0200 (GMT+02:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

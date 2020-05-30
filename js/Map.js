@@ -1,5 +1,7 @@
 /**
  * @description vytváří fyzicky i graficky mapu dle velikosti a obtížnosti definovanou uživatelem, zkontrolovanou validací, aby měla dostatek herních polí a byla k dyspozici, 
+ * @author Dominik Frolík
+ * @see www.dominikfrolik.cz
  */
 class Map {
 

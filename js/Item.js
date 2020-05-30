@@ -1,5 +1,7 @@
 /**
  * @description Container pro itemy obsahující jejich obtížnost pozici v mapě vzdálenost hráče k itemu a validního souseda pro Multiplayer
+ * @author Dominik Frolík
+ * @see www.dominikfrolik.cz
  */
 class Item {
 
@@ -11,7 +13,7 @@ class Item {
      * @param {Enum} type 
      * @param {Point} validNeighbour 
      */
-    constructor(position, dificulty, distance, type, validNeighbour){
+    constructor(position, dificulty, distance, type, validNeighbour) {
 
         this.position = position;// Point - pozice v mapě na které semá daný item vykreslit 
         this.dificulty = dificulty; // Obtížnost itemu

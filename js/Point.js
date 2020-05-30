@@ -1,6 +1,8 @@
 
 /**
  * @description Containet rřída pro uchovávání pozice v souradnicách X a Y + pozici sousední
+ * @author Dominik Frolík
+ * @see www.dominikfrolik.cz
  */
 class Point {
 

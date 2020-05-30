@@ -1,5 +1,7 @@
 /**
  * @description Třída se stará o nastavení hry před samotným spuštěním, grafikcé vykreslování pravidel, nastavení, tabulky score, Zakládá hru novou instancí třídy Game. Pracuje se tabulkou score ukládá a načítá do cookies prohlížeče
+ * @author Dominik Frolík
+ * @see www.dominikfrolik.cz
  */
 class UI {
     /**

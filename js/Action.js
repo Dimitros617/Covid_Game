@@ -1,5 +1,7 @@
 /**
  * @description Třída slouží jako kontainer pro uložení akcí, podle který se řídí celá hra. Podle aktuálního score či kola se ve hře začnou generovat daný počet itemů daného typu obtížnosti, a zprávy pro uživatele
+ * @author Dominik Frolík
+ * @see www.dominikfrolik.cz
  */
 class Action {
 

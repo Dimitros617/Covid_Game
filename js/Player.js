@@ -1,3 +1,8 @@
+/**
+ * @description Metoda se stará o grafické i funkční ovládání a vykreslování hráče 
+ * @author Dominik Frolík
+ * @see www.dominikfrolik.cz
+ */
 class Player {
 
     map; // Intace třídy Map
