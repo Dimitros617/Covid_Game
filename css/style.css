@@ -20,7 +20,7 @@ body {
   display: block;
 }
 
-h1 {  
+h1 {
   font-family: 'Comfortaa';
   color: #ffffff;
   padding-bottom: 12px;
@@ -94,7 +94,6 @@ p {
   text-align: center;
 }
 
-
 option {
   color: black;
   padding: 5px 0px;
@@ -113,31 +112,26 @@ option {
 
 /*-------------------------- animation --------------------------*/
 
-
 .blob {
-	border-radius: 50%;
-
-
-	box-shadow: 0 0 0 0 rgba(0, 0, 0, 1);
-	transform: scale(1);
-	animation: pulse 4s infinite;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 1);
+  transform: scale(1);
+  animation: pulse 4s infinite;
 }
 
 @keyframes pulse {
-	0% {
-		transform: scale(1);
-		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
-	}
-
-	70% {
-		transform: scale(1.1);
-		box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
-	}
-
-	100% {
-		transform: scale(1);
-		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-	}
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+  }
+  70% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
 }
 
 div#divScore {
@@ -169,14 +163,14 @@ div#info {
   transition-duration: 1s;
 }
 
-div#info.expand{
-    width: 80%;
-    height: 90%;
-    position: absolute;
-    display: block;
-    z-index: 10;
-    margin-top: -15%;
-    margin-left: 10%;
+div#info.expand {
+  width: 80%;
+  height: 90%;
+  position: absolute;
+  display: block;
+  z-index: 10;
+  margin-top: -15%;
+  margin-left: 10%;
 }
 
 div#resizer {
@@ -216,21 +210,22 @@ div#content.expand {
   margin-top: 20px;
 }
 
-
 ::-webkit-scrollbar {
   width: 7px;
 }
 
 /* Track */
+
 ::-webkit-scrollbar-track {
   background: #afafaf;
-    height: 50%;
-    padding-right: -37px;
-    margin-top: 5%;
-    margin-bottom: 5%;
+  height: 50%;
+  padding-right: -37px;
+  margin-top: 5%;
+  margin-bottom: 5%;
 }
- 
+
 /* Handle */
+
 ::-webkit-scrollbar-thumb {
   background: #424242;
   height: 50%;
@@ -238,10 +233,10 @@ div#content.expand {
 }
 
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #555; 
-}
 
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 
 div#game {
   float: right;
@@ -279,9 +274,8 @@ div#live {
   cursor: pointer;
 }
 
- div#live:hover {
-transform: scale(0.8) !important;
-cursor: pointer;
+div#live:hover {
+  cursor: pointer;
 }
 
 div#ruleText {
@@ -340,10 +334,7 @@ select option {
   padding: 20px 0px;
 }
 
-
-
 div#divOne {
- 
   padding-top: 10px;
   background-color: #00000030;
   margin-bottom: 10px;
@@ -370,8 +361,6 @@ label#score {
   text-shadow: 3px 5px 31px black;
   letter-spacing: 3px;
 }
-
-
 
 label#scoreLabel, label#mortalityLabel, label#cureLabel {
   font-size: 19px;
@@ -437,16 +426,14 @@ label.label {
 }
 
 div#map {
-
-    height: 95%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 1.5%;
-    width: 70%;
-
+  height: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1.5%;
+  width: 70%;
 }
 
-#centerCell{
+#centerCell {
   background: rgb(172, 172, 172) !important;
 }
 
@@ -458,7 +445,7 @@ table#mapTable {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 1px 5px 20px 0 rgba(0, 0, 0, 0.54), inset 0 0 79px -45px #000000;
 }
 
- td {
+td {
   /*background-color: transparent !important; /*DEBUG*/
   background-position: center center;
   background-repeat: no-repeat;
@@ -466,11 +453,10 @@ table#mapTable {
   border: 1px solid #dcdcdc6b;
   margin: 0;
   padding: 0;
-  transition-delay: 0.6s; 
+  transition-delay: 0.6s;
+}
 
-} 
-
-td.cel, td.valid, td.validLast{
+td.cel, td.valid, td.validLast {
   /*transition-delay: 0.8s;*/
   transition-duration: 0.6s;
 }
@@ -483,7 +469,6 @@ div#player {
   background-size: cover;
   z-index: 1;
   transition-duration: 1s;
-
 }
 
 div#player:hover {
@@ -497,28 +482,24 @@ div#player:active, div#player:focus {
   cursor: pointer;
 }
 
-
-.blackAndWhite{
+.blackAndWhite {
   filter: grayscale(100%);
   opacity: 0.9;
 }
-
 
 .mainButton {
   text-align: center;
   width: 200%;
   height: 200%;
   transform: scale(1.1);
-  background: rgb(180,0,0);
+  background: rgb(180, 0, 0);
   border: none;
   font-family: 'Comfortaa';
   color: white;
   font-weight: 700;
   letter-spacing: 3px;
   box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.5), 1px 9px 20px 0 rgba(0, 0, 0, 0.54);
-  transition:  0.3s;
-
-  
+  transition: 0.3s;
 }
 
 .mainButton:after, .mainButton:hover {
@@ -526,19 +507,15 @@ div#player:active, div#player:focus {
   box-shadow: inset 0 0 0px 6px #ffffff38;
   transform: scale(1.2);
   cursor: pointer;
-  transition:  0.3s;
-
+  transition: 0.3s;
 }
-
 
 .mainButton:active, .mainButton:focus {
   background: rgb(255, 47, 47);
   transform: scale(0.9);
   cursor: pointer;
-  transition:  0.3s;
+  transition: 0.3s;
 }
-
-
 
 /* ----------------- Itemy ---------------------------- */
 
@@ -547,17 +524,16 @@ div.item, div.human, div.group, div.cure, div.mortality, div.bottle, td.bottleDr
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
-  transition:  0.3s;
+  transition: 0.3s;
   cursor: pointer;
-  /*transition-delay: 0.7s; */
+  transition-delay: 2s;
 }
-
 
 div.item:hover, div.human:hover, div.group:hover, div.cure:hover, div.mortality:hover, div.bottle:hover {
   transform: scale(2);
   cursor: pointer;
+  transition-delay: 2s;
 }
-
 
 /* ----------------- Validní pozice na mapě ---------------------------- */
 
@@ -572,11 +548,10 @@ td.path.cell, td.cell.path {
   cursor: pointer;
 }
 
-
-td.cell, td.valid.cell, td.validLast.cell, td.valid.validLast.cell{
+td.cell, td.valid.cell, td.validLast.cell, td.valid.validLast.cell {
   background-size: cover;
   background-image: url(../img/cell.png) !important;
-  transition:  0.3s;
+  transition: 0.3s;
   transform: scale(1.1);
   cursor: pointer;
 }
@@ -586,13 +561,11 @@ td.cell:hover, td.valid.cell:hover {
   cursor: pointer;
 }
 
-td.cell:active, td.valid.cell:active, td.cell:focus, td.valid.cell:focus  {
+td.cell:active, td.valid.cell:active, td.cell:focus, td.valid.cell:focus {
   opacity: 0.2;
   transform: scale(0.7);
   cursor: pointer;
-}  
-
-
+}
 
 td.valid, td.valid.validLast {
   background-image: url(../img/cellPossible.png)!important;
@@ -601,7 +574,6 @@ td.valid, td.valid.validLast {
 td.validLast {
   background-image: url(../img/cellPossibleLast.png)!important;
 }
-
 
 div#loading {
   width: 100%;
@@ -613,7 +585,6 @@ div#loading {
   opacity: 0;
   transition-duration: 0.5s;
   transition-delay: 0.5s;
-  
 }
 
 div#imgPreview, div#imgPreviewLong {
@@ -628,7 +599,6 @@ div#imgPreview, div#imgPreviewLong {
 div#imgPreviewLong {
   height: 100px;
 }
-
 
 div#loadingBox {
   width: 40%;
@@ -664,6 +634,7 @@ div#loadingText {
   visibility: visible;
   transition-delay: 1.3s;
 }
+
 [data-title]:after {
   content: attr(data-title);
   font-family: 'Comfortaa';
@@ -685,11 +656,10 @@ div#loadingText {
   letter-spacing: 2px;
   transform: scale(0.5);
 }
+
 [data-title] {
   position: relative;
 }
-
-
 
 [cell-title]:hover:after {
   opacity: 1;
@@ -697,6 +667,7 @@ div#loadingText {
   visibility: visible;
   transition-delay: 1.3s;
 }
+
 [cell-title]:after {
   content: attr(cell-title);
   font-family: 'Comfortaa';
@@ -720,12 +691,10 @@ div#loadingText {
   letter-spacing: 2px;
   transform: scale(0.5);
 }
+
 [cell-title] {
   position: relative;
 }
-
-
-
 
 div#graphicHorizontal {
   margin: 5px 0;
@@ -775,7 +744,6 @@ div#graphicHorizontal label.element {
   margin-left: 20px;
 }
 
-
 input[type="file"] {
   width: 90% !important;
   height: 65px !important;
@@ -792,9 +760,6 @@ input[type="file"] {
   margin-right: auto;
   margin-bottom: 20px
 }
-
-
-
 
 div#graphicVertical {
   margin: 10px 10px;
@@ -849,7 +814,6 @@ div#graphicVertical label.element {
   display: block;
 }
 
-
 div#achievement {
   position: relative;
   width: 40%;
@@ -859,7 +823,6 @@ div#achievement {
   display: block;
   z-index: 999;
 }
-
 
 div#achievementContent {
   background: white;
@@ -885,7 +848,6 @@ div#achievementContent:hover {
 div#achievementContent:active {
   transform: scale(0.97);
   cursor: pointer;
-
 }
 
 div#achievementImg {
@@ -950,11 +912,9 @@ div#playerImg:hover {
 }
 
 #selectButton:hover {
-
   background: #212121;
   color: #dad8d8;
   cursor: pointer;
-
 }
 
 label#addMortality, label#addCure {
@@ -965,16 +925,13 @@ label#addMortality, label#addCure {
   margin-right: 10px;
   transform: scale(29.5);
   transition-duration: 0.5s;
-
 }
 
 label#addMortality:hover, label#addCure:hover {
   color: rgb(255, 255, 255);
   cursor: pointer;
   font-size: 20px;
-
 }
-
 
 div#cross {
   position: absolute;

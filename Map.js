@@ -1,21 +1,27 @@
-
+/**
+ * @description vytváří fyzicky i graficky mapu dle velikosti a obtížnosti definovanou uživatelem, zkontrolovanou validací, aby měla dostatek herních polí a byla k dyspozici, 
+ */
 class Map {
 
-    map;
-    player;
-    item;
+    map; //table object s mapou
+    player;// Object Player
+    item; // Pole objektů itemů aktuálně vykreslených v mapě
 
-    validPosition;
-    allValidPosition;
+    validPosition; // Pole pointů, všech validních pozic, z aktuální pozice daného hráče
+    allValidPosition; // Pole pointů Všechny validní pozice na které se jde dostat v mapě
 
-    size;
-    pxSizeCell;
+    size; // INT Velikost mapy pole v tabulce 
+    pxSizeCell; // Velikost buňky v px podle obrazovky uživatele
 
-    err;
-    cellColor;
+    err; // Bool hodnota err = true, v případě že mapa neprošla validací
+    cellColor; // Barva bu'nky
 
-    mainButton;
+    mainButton; // Pointer na main button 
 
+    /**
+     * @description Založení instance mapy
+     * @param {Int} size //Kolik rárků a sloupců má mapa obsahovat
+     */
     constructor(size) {
 
         this.size = size;
@@ -28,24 +34,38 @@ class Map {
         this.cellColor = "#efefef";
         this.itemWasOnPosition = false;
 
+        //Vytvoření nové intance hráče
         this.player = new Player(this, "player1");
         MAP_TABLE.style.height = "";
+        //Vytvoření a vykreslení mapy
         this.createMap();
-       MAP_TABLE.style.height = "-webkit-fill-available";
+        MAP_TABLE.style.height = "-webkit-fill-available";
 
     }
 
+    /**
+     * @description Vytvoření celé mapy, všetně grafického rozhraní, a následná validace a vykreslení do HTML instance mapy se uloží do glob. prom. this.map
+     */
     createMap() {
 
+        //nastavení chyby generování mapy na false (Žádná chyba)
         this.err = false;
+        //Vytvoření objektu table
         this.map = document.createElement("table");
+        //Nastavení atributu id mapy
         this.map.setAttribute("id", "mapTable");
+
+        //Pro velikost mapy vytvoříme tolik řádků
         for (var x = 0; x < this.size; x++) {
+            //Vytvoření objektu řádky
             let row = document.createElement("tr");
+            //Pro velikost mapy, vytvoříme počet buňěk do řádku 
             for (var y = 0; y < this.size; y++) {
 
+                //Vytvoříme buňku
                 let cell = document.createElement("td");
 
+                //Nastavení evemtu při kliknutí na buňku
                 cell.onclick = function (e) {
                     //pokud stav hry není null (tedy game Over)
                     if (game.started != null) {
@@ -70,78 +90,113 @@ class Map {
 
                 //Funkce volána při double kliknu na jakoukoliv pozici na mapě, vykreslí cestu, nebo ji smaže od pozice hráče k danému místu na mapě, pokud je na něm libovolný item
                 cell.ondblclick = function (e) {
-                        let point = new Point(parseInt(e.target.id.split(":")[0]), parseInt(e.target.id.split(":")[1]));
-                        let itemsPoints = [];
-                        for (let x of game.map.item)
-                            itemsPoints.push(x.position);
-                        let indexOfItem = window.game.map.indexOfPoint(itemsPoints, point);
-                        
-                        if (game.map.isItemOnPoint(point)) {
-                            if (game.map.item[indexOfItem].drawPath) {
-                                game.map.item[indexOfItem].drawPath = false;
-                                game.map.clear();
+                    //vytvoření instance třídy Point obsahující X a Y právě kliknuté buňky 
+                    let point = new Point(parseInt(e.target.id.split(":")[0]), parseInt(e.target.id.split(":")[1]));
+                    //Inicializace pole pro všechny itemy aktuálně vykreslené v mapě
+                    let itemsPoints = [];
+                    //Pro všechny itemy v mapě
+                    for (let x of game.map.item) {
+                        //Naplnění pole stávajícími itemamy.
+                        itemsPoints.push(x.position);
+                    }
+
+                    //Index do pole itemů na kterém se nachází kluknutý item pokud existuje
+                    let indexOfItem = window.game.map.indexOfPoint(itemsPoints, point);
+
+                    //Zjistění zda se na kliknuté pozici nachází item
+                    if (game.map.isItemOnPoint(point)) {
+                        //Zjistím zda již k itemu je vykreslená cesta pokud ano ...
+                        if (game.map.item[indexOfItem].drawPath) {
+                            //Vynuluji vykreslení cesty
+                            game.map.item[indexOfItem].drawPath = false;
+                            //Graficky cestu vymažu
+                            game.map.clear();
+                        }
+                        //pokud ne...
+                        else {
+                            //Pokud je dostatek bodů na zaplacení zobrazení cesty.
+                            if (SCORE_DATA.SCORE - DIFICULTY.PRICE_FOR_PATH > 0) {
+                                //Pokud se nejedná o item v Multiplayeru
+                                if (game.map.item[indexOfItem].validNeighbour == undefined) {
+                                    //Nastavím itemu že jsem mu vekreslil cestu
+                                    game.map.item[indexOfItem].drawPath = true;
+                                    //Vytvoření nového pointu z pozice hráče, aby nedošlo k předání poiteru na instanci Pointu, který by se jinak změnil
+                                    let position = new Point(window.game.map.player.position.x, window.game.map.player.position.y);
+                                    //Vykreslím cestu k itemu
+                                    window.game.map.shortestWay(position, point, RETURN.DRAW);
+                                    //Odečtu body (Zaplatím)
+                                    SCORE(SCORE_DATA.SCORE -= DIFICULTY.PRICE_FOR_PATH);
+                                }
+                                //Pokud se jedná o item schopný dosáhnout pouze v Multiplayeruˇvykreslí se cesta k jeho dosažitelnému sousedovy
+                                else {
+                                    //Výpis varování o nedosažitelnosti pro algoritmus
+                                    ACHIEVEMENT("Tento bod je na mě moc těžký, ale ukážu ti cestu, alespoň jednoho hráče.", "img/question.png");
+                                    //Nastavení vykreslení cesty
+                                    game.map.item[indexOfItem].drawPath = true;
+                                    //Vytvoření nového pointu z pozice hráče, aby nedošlo k předání poiteru na instanci Pointu, který by se jinak změnil
+                                    let position = new Point(window.game.map.player.position.x, window.game.map.player.position.y);
+                                    //grafické vykreslení cesty
+                                    window.game.map.shortestWay(position, game.map.item[indexOfItem].validNeighbour, RETURN.DRAW);
+                                    //Odečtení bodů
+                                    SCORE(SCORE_DATA.SCORE -= DIFICULTY.PRICE_FOR_PATH);
+                                }
                             }
+                            //Pokud hráš nemá na zaplacení cesty
                             else {
-                                if(SCORE_DATA.SCORE - DIFICULTY.PRICE_FOR_PATH > 0){
-                                    if(game.map.item[indexOfItem].validNeighbour == undefined){
-                                        game.map.item[indexOfItem].drawPath = true;
-                                        //Vytvoření nového pointu z pozice hráče, aby nedošlo k předání poiteru na instanci Pointu, který by se jinak změnil
-                                        let position = new Point(window.game.map.player.position.x, window.game.map.player.position.y);
-                                        window.game.map.shortestWay(position, point, RETURN.DRAW);
-                                        SCORE(SCORE_DATA.SCORE -= DIFICULTY.PRICE_FOR_PATH);
-                                    }
-                                    else{
-                                        ACHIEVEMENT("Tento bod je na mě moc těžký, ale ukážu ti cestu, alespoň jednoho hráče.","img/question.png");
-                                        game.map.item[indexOfItem].drawPath = true;
-                                        //Vytvoření nového pointu z pozice hráče, aby nedošlo k předání poiteru na instanci Pointu, který by se jinak změnil
-                                        let position = new Point(window.game.map.player.position.x, window.game.map.player.position.y);
-                                        window.game.map.shortestWay(position, game.map.item[indexOfItem].validNeighbour, RETURN.DRAW);
-                                        SCORE(SCORE_DATA.SCORE -= DIFICULTY.PRICE_FOR_PATH);
-                                    }
-                                }
-                                else{
-                                    ACHIEVEMENT("Na to bohužel nemáš dostatek bodů, ukázka cesty stojí "+ (DIFICULTY.PRICE_FOR_PATH) +" bodů.","img/exclamation.png");
-                                }
+                                ACHIEVEMENT("Na to bohužel nemáš dostatek bodů, ukázka cesty stojí " + (DIFICULTY.PRICE_FOR_PATH) + " bodů.", "img/exclamation.png");
                             }
                         }
-                    
+                    }
+
 
                 }
 
+                //vytvoření divu, kterím se naplní buňka
                 var cont = document.createElement("div");
+                //nastavení atribudu ID obsahující pozici v mapě X:Y
                 cont.setAttribute("id", y + ":" + x);
+                //Nastavení konstantních rozměrů buňky
                 cont.style.width = this.pxSizeCell;
                 cont.style.height = this.pxSizeCell;
+                //Vložení do buňky
                 cell.appendChild(cont);
+                //Vložení Buňky do řádky 
                 row.appendChild(cell);
             }
+            //Vložení řádky do tabulky
             this.map.appendChild(row);
         }
 
+
+        //Vygenerování seedu pro nastavení zdí
         let seed = this.generateSeed();
 
         //--  napozicování main Buttonu
-
         let button = document.createElement("button");
         button.setAttribute("class", "mainButton");
-        //let buttonText = document.createElement("div");
-        //buttonText.setAttribute("class", "buttonText");
         button.innerHTML = "START";
 
-        //button.appendChild(buttonText);
+        //Při kliknutí na main button ve středu 
         button.onclick = function (x) {
+            //Pokud je hra není nastartována nebo není v režimu reset
             if (window.game.started == false && window.game.started != null) {
+                //Startnu hru
                 game.start();
+                //Změním text tlařítka 
                 x.target.innerHTML = "POČKAT";
+                //Změním velikost textu tlačítka
                 x.target.style.fontSize = "x-small";
-                //x.target.children[0].style.width = (x.target.children[0].getBoundingClientRect().width / 2) * -1
             }
-            else if(window.game.started == true && window.game.started != null){
+            //Pokud hra běží a není v reset modu 
+            else if (window.game.started == true && window.game.started != null) {
+                //Zavolám další kolo hry
                 game.nextRound(false);
+                //změním focus na hráče, zabranuje grafickému budu pro zaseknutí animace pořád zmáčklého tlačítka při použití klávesy místo kliknutí myši
                 game.map.player.me.focus();
+                //Nastavím spoždění pro animci bluru
                 setTimeout(() => { game.map.player.me.blur() }, 250);
             }
-            else{
+            else {
                 game.reStart();
             }
             x.target.blur();
@@ -192,8 +247,10 @@ class Map {
             }
         }
 
+        //Vygenerována mapa se zvaliduje zda má dostatek validních pozic pro hraní
         this.validMap();
 
+        //Pokud je mapa vygenerovaná dobře vykreslí se do HTML pokud ne rekurzivně se generuje mapa nová
         if (!this.err && MAP_TABLE.children.length == 1) {
             MAP_TABLE.appendChild(this.map);
             //buttonText.style.marginLeft = (buttonText.getBoundingClientRect().width / 2) * -1;
@@ -206,6 +263,9 @@ class Map {
 
     }
 
+    /**
+     * @description Mapa se rozdělí do 4 kvadrantů tedy na 4 části poté se zjistí zda je v každém kvadrantu alespoň 5 validních pozic na které se dá dostat, pokud ne nastaví se globalní proměná err na true jinak je false
+     */
     validMap() {
         let possibleIndex = this.validIndex(null, 50, 40, TYPE.ALL);
         if (possibleIndex == null) {
@@ -233,33 +293,35 @@ class Map {
             this.allValidPosition = possibleIndex;
     }
 
+    /**
+     * @description  Metroda nastaví zdi do mapy dle vygenerovaného seedu
+     * @param {Element} cell //Td object
+     * @param {Int} direction //Směr 0 Top -> až 3 ve směru hodinových ručiček
+     */
     setWall(cell, direction) {
 
         let y = cell.parentNode.rowIndex;
         let x = cell.cellIndex;
 
-        //cell.style.background = "grey";
+        //V případě chyby se nastaví globální chyba při generování mapy
         try {
+            //Podle směru se nastaví ohraničení Buňky na dané straně a sousední buňce se zdí se nastaví také Obraničení 
             switch (direction % 4) {
                 case 0:
                     cell.style.borderTop = "2px solid black";
                     this.map.rows[y - 1].cells[x].style.borderBottom = "2px solid black";
-                    //this.map.rows[y - 1].cells[x].style.background = "orange";
                     break;
                 case 1:
                     cell.style.borderRight = "2px solid black";
                     this.map.rows[y].cells[x + 1].style.borderLeft = "2px solid black";
-                    //this.map.rows[y].cells[x + 1].style.background = "orange";
                     break;
                 case 2:
                     cell.style.borderBottom = "2px solid black";
                     this.map.rows[y + 1].cells[x].style.borderTop = "2px solid black";
-                    //this.map.rows[y + 1].cells[x].style.background = "orange";
                     break;
                 case 3:
                     cell.style.borderLeft = "2px solid black";
                     this.map.rows[y].cells[x - 1].style.borderRight = "2px solid black";
-                    //this.map.rows[y].cells[x - 1].style.background = "orange";
                     break;
 
                 default:
@@ -267,11 +329,14 @@ class Map {
                     break;
             }
         } catch (error) {
-            //alert("Došlo k chybě při generování mapy.");
             this.err = true;
         }
     }
 
+    /**
+     * @description Metoda vygeneruje seed pro velikost dané mapy, podle kterého se poté do mapy vygenerují zdi a překážky v mapě
+     * @returns {Array}  pole obashující 4 pole obsahující pozice (Pointy) na kterých se mají vygenerovat zdi 
+     */
     generateSeed() {
 
         let seed = [];
@@ -293,10 +358,12 @@ class Map {
     }
 
     /**
-     * 
-     * @param {*} point 
-     * @param {*} direction 
+     * @description Metoda zjistí podle přijatého pointu a směru kam se může jít a vrací poslední point v daném směru
+     * @param {Point} point 
+     * @param {Int} direction 
      * @param {Boolean} player if true chci zahrnout i hráče jako zarážku
+     * 
+     * @returns {Point} vrací point v daném směru který je poslední pokud je v daném směru rovnou zeď a posun není vrací null 
      */
     nextInDirection(point, direction, player) {
 
@@ -316,11 +383,11 @@ class Map {
                 cell = c;
 
             }
-            if(free && DIFICULTY.GAME_MODE == GAME_MODE.ALL_IN){
-                if(this.map.rows[point.y + addY].cells[point.x + addX].classList.contains("bottle")){
+            if (free && DIFICULTY.GAME_MODE == GAME_MODE.ALL_IN) {
+                if (this.map.rows[point.y + addY].cells[point.x + addX].classList.contains("bottle")) {
                     lastBottle = this.map.rows[point.y + addY].cells[point.x + addX];
                 }
-                else{
+                else {
                     lastBottle = false;
                 }
             }
@@ -330,29 +397,29 @@ class Map {
             switch (direction % 4) {
                 case 0:
                     free = cell.style.borderTop == "" ? true : false;
-                    if(player == true)
-                    free = window.game.secondPlayer != undefined ? window.game.secondPlayer.position.x == point.x + addX && window.game.secondPlayer.position.y == point.y + (addY -1) ? false : free : free;
+                    if (player == true)
+                        free = window.game.secondPlayer != undefined ? window.game.secondPlayer.position.x == point.x + addX && window.game.secondPlayer.position.y == point.y + (addY - 1) ? false : free : free;
                     free = point.y + addY - 1 == -1 ? free ? false : true : free;
                     addY--;
                     break;
                 case 1:
                     free = cell.style.borderRight == "" ? true : false;
-                    if(player == true)
-                    free = window.game.secondPlayer != undefined ? window.game.secondPlayer.position.x == point.x + (addX+1) && window.game.secondPlayer.position.y == point.y + addY ? false : free : free;
+                    if (player == true)
+                        free = window.game.secondPlayer != undefined ? window.game.secondPlayer.position.x == point.x + (addX + 1) && window.game.secondPlayer.position.y == point.y + addY ? false : free : free;
                     free = point.x + addX + 1 == this.size ? free ? false : true : free;
                     addX++;
                     break;
                 case 2:
                     free = cell.style.borderBottom == "" ? true : false;
-                    if(player == true)
-                    free = window.game.secondPlayer != undefined ? window.game.secondPlayer.position.x == point.x + addX && window.game.secondPlayer.position.y == point.y + (addY+1) ? false : free : free;
+                    if (player == true)
+                        free = window.game.secondPlayer != undefined ? window.game.secondPlayer.position.x == point.x + addX && window.game.secondPlayer.position.y == point.y + (addY + 1) ? false : free : free;
                     free = point.y + addY + 1 == this.size ? free ? false : true : free;
                     addY++;
                     break;
                 case 3:
                     free = cell.style.borderLeft == "" ? true : false;
-                    if(player == true)
-                    free = window.game.secondPlayer != undefined ? window.game.secondPlayer.position.x == point.x + (addX-1) && window.game.secondPlayer.position.y == point.y + addY ? false : free : free;
+                    if (player == true)
+                        free = window.game.secondPlayer != undefined ? window.game.secondPlayer.position.x == point.x + (addX - 1) && window.game.secondPlayer.position.y == point.y + addY ? false : free : free;
                     free = point.x + addX - 1 == -1 ? free ? false : true : free;
                     addX--;
                     break;
@@ -362,12 +429,12 @@ class Map {
                     break;
             }
 
-            if(!free && DIFICULTY.GAME_MODE == GAME_MODE.ALL_IN){
-                if(lastBottle != false){
+            if (!free && DIFICULTY.GAME_MODE == GAME_MODE.ALL_IN) {
+                if (lastBottle != false) {
                     lastBottle.classList.add("bottle");
                 }
             }
-            
+
             //this.player.moveTo(new Point(point.x + addX, point.y + addY));
         } while (free);
 
@@ -377,9 +444,14 @@ class Map {
 
     }
 
+
+    /**
+     * @description Metoda slouží ke grafickému vykreslení validních pozic z dané pozice (point) a následné se tyto pozice uloží do globálního pole validPosition
+     * @param {Point} point 
+     */
     setAvailableDirection(point) {
 
-        for (let i = 0; i < this.validPosition.length; i++){
+        for (let i = 0; i < this.validPosition.length; i++) {
             this.map.rows[this.validPosition[i].y].cells[this.validPosition[i].x].classList.remove("cell");
             this.map.rows[this.validPosition[i].y].cells[this.validPosition[i].x].removeAttribute("cell-title");
         }
@@ -391,8 +463,8 @@ class Map {
                 continue;
             let cell = this.map.rows[newPoint.y].cells[newPoint.x];
             cell.classList.add("cell");
-            cell.setAttribute("cell-title", "Cena: " + (DIFICULTY.GAME_MODE == GAME_MODE.STORY ? (parseInt(window.game.round/10)+1) : 1) + " " + CZ_STRING((DIFICULTY.GAME_MODE == GAME_MODE.STORY ? (parseInt(window.game.round/10)+1) : 1),"bod"))
-            if(cell.classList.contains("bottle")){
+            cell.setAttribute("cell-title", "Cena: " + (DIFICULTY.GAME_MODE == GAME_MODE.STORY ? (parseInt(window.game.round / 10) + 1) : 1) + " " + CZ_STRING((DIFICULTY.GAME_MODE == GAME_MODE.STORY ? (parseInt(window.game.round / 10) + 1) : 1), "bod"))
+            if (cell.classList.contains("bottle")) {
                 cell.classList.remove("bottle");
                 SCORE(++SCORE_DATA.SCORE);
             }
@@ -409,17 +481,17 @@ class Map {
      * @param {int} count = Kolik validních indexů, minimálně požaduji
      * @param {TYPE} type = Enum TYPE zda požaduji všechny validní indexy, poslední v dané vzálenosti, nebo Náhodný
      * 
-     * @param return = Vrací null v případě že nelze dojít ze všech rohů, do všech ostatních, nebo nebyl nalezen validní index v požadované vzdálenosti, či jich nebylo dostatek.
+     * @returns = Vrací null v případě že nelze dojít ze všech rohů, do všech ostatních, nebo nebyl nalezen validní index v požadované vzdálenosti, či jich nebylo dostatek.
      *                  V opačném případě vrátí na TYPE.ALL - Všechny validní indexy v dané vzdálenosti s minniáním počtem od bodu který specifikujeme.blob
      *                                             TYPE.LAST - njevzdálenejší point od bodu point s danou vzdáleností.
      *                                             TYPE.RAND - Náhodný bod v dané vzdálenosti od pointu.
      */
     validIndex(point, distance, count, type) {
 
-        if(this.allValidPosition.lenght != 0){
-            if(this.indexOfPoint(this.allValidPosition, point) == null){
+        if (this.allValidPosition.lenght != 0) {
+            if (this.indexOfPoint(this.allValidPosition, point) == null) {
                 console.log("Fale save activated");
-                point = this.allValidPosition[RANDOM_NUMBER(0,this.allValidPosition.lenght-1)];
+                point = this.allValidPosition[RANDOM_NUMBER(0, this.allValidPosition.lenght - 1)];
             }
         }
 
@@ -569,25 +641,22 @@ class Map {
             case TYPE.ALL:
                 return result;
             case TYPE.LAST:
-                /*                 let lastXLength = 0
-                                let lastYLength = 0;
-                                let lastPoint = point;
-                                for (let p of result) {
-                                    if (Math.abs(p.x - lastPoint.x) > lastXLength && Math.abs(p.y - lastPoint.y) > lastYLength); {
-                                        lastXLength = Math.abs(p.x - lastPoint.x);
-                                        lastYLength = Math.abs(p.y - lastPoint.y);
-                                        lastPoint = p;
-                                    }
-                                } */
                 return result;
             case TYPE.RAND:
                 let point = result.pop();
-                return RANDOM_NUMBER(0,1) == 0 && point.validNeighbour != undefined ? point.validNeighbour : point;
+                return RANDOM_NUMBER(0, 1) == 0 && point.validNeighbour != undefined ? point.validNeighbour : point;
             default:
                 return null;
         }
     }
 
+    /**
+     * @description Metoda slouží jako roscestník pro nalezení nejkratší cesty point to point podle parametru ret se volá pouze BFS algoritmus, nebo Backtracking 
+     * 
+     * @param {Point} startPoint pozice odkud chceme cestu hledat
+     * @param {Point} endPoint pozice kam se chceme dostat
+     * @param {Enum} ret Enumem definované zda chceme vrátit pouce Číslo vzdálenost k bodul, nebo vrací celou cestu 
+     */
     shortestWay(startPoint, endPoint, ret) {
 
         let solution = [];
@@ -621,6 +690,11 @@ class Map {
 
     }
 
+    /**
+     * @description Algoritmus (BFS) Prohledávání do šířky pro nalezení nejkratší vzdálenosti ovšem pouze int hodnota.
+     * @param {Point} startPoint 
+     * @param {Point} endPoint 
+     */
     shortestWayCount(startPoint, endPoint) {
 
         let arrTemp = [startPoint];
@@ -651,6 +725,15 @@ class Map {
         return null;
     }
 
+
+    /**
+     * @description Metoda najde nejkratší cestu z bodu startPoint do bodu endPoint a tu vykreslí, Algortimus BackTracking - rekurzivní
+     * @param {Point} startPoint 
+     * @param {Point} endPoint 
+     * @param {Array} solution Pole obsahujícíc cestu (pointy) od startPointu k endPointu
+     * @param {Int} index slouží k počítání počtu zanoření rekurze, je nazačátku nastaven na 0 a pokud je zanoření větší než je limit danou rekurzní větev ukončuji
+     * @param {Int} limit Limit zanoření do hloubky, hodnota v jaké vzdálenosti se cíl nachází slouží k optimalizaci Backtrackingu (Hodnota je získána pomocí předchozího volání BFS algoritmu)
+     */
     shortestWayPath(startPoint, endPoint, solution, index, limit) {
         if (index > limit) {
             return;
@@ -693,6 +776,10 @@ class Map {
         solution.pop();
     }
 
+    /**
+     * @description Graficky vykreslí cestu do mapy 
+     * @param {Array} path pole pointů znázornujích cestu 
+     */
     drawPath(path) {
 
         for (let i = 0; i < path.length - 1; i++) {
@@ -703,7 +790,7 @@ class Map {
     }
 
     /**
-     * Metoda označí všehny místa na mapě mezi dvěma definovanými body definovanou classou či ji z dané cesty odstraní
+     * @description Metoda označí všehny místa na mapě mezi dvěma definovanými body definovanou classou či ji z dané cesty odstraní
      * @param {Point} sp = point odkud chceme vykreslovat
      * @param {Point} ep = point kam chceme vykrelovat
      * @param {String} className = s jakým class namem budeme pracovat
@@ -737,6 +824,9 @@ class Map {
         }
     }
 
+    /**
+     * @description Grafické vymazání mapy od všech pointů a itemů
+     */
     clear() {
         for (let y = 0; y < this.size; y++)
             for (let x = 0; x < this.size; x++) {
@@ -747,6 +837,10 @@ class Map {
         this.setAvailableDirection(this.player.position);
     }
 
+    /**
+     * @description Meoda vytvoří nebo doplní itemy podle akcí které byly předány od hry a aktuální situace hry. Validní itemy uloží do globálního pole this.lastItemCount
+     * @param {Array} actions pole akcí (Action) 
+     */
     createItems(actions) {
 
         // Do pole se uloží jen akce které jsou aktuální podle počtu nakažených nebo podle čísla kola
@@ -755,11 +849,11 @@ class Map {
         let actualItems = [];
 
         //do pole validAction se uloží aktuální akce
-        for (let i = 0; i < actions.length; i++){
-            if (SCORE_DATA.onIndex(actions[i].typeOfScore) >= Math.abs(actions[i].value) && actions[i].value >= 0){
+        for (let i = 0; i < actions.length; i++) {
+            if (SCORE_DATA.onIndex(actions[i].typeOfScore) >= Math.abs(actions[i].value) && actions[i].value >= 0) {
                 validAction.push(actions[i]);
             }
-            if (SCORE_DATA.onIndex(actions[i].typeOfScore) <= Math.abs(actions[i].value) && actions[i].value < 0){
+            if (SCORE_DATA.onIndex(actions[i].typeOfScore) <= Math.abs(actions[i].value) && actions[i].value < 0) {
                 validAction.push(actions[i]);
             }
         }
@@ -804,7 +898,7 @@ class Map {
                     //Vygeneruju náhodné validní body v random vzdálenosti od hráče, a zkontroluji zda se na něm náhodou již nějáký item nenachází, pokud ano generuji znovu.
                     do {
                         if (safetyCycle++ > 2000) {
-                            ACHIEVEMENT("Ups... Prošel jsem 2000 náhodných možností, a nepovedlo se mi najít místo pro další Item.","img/exclamation.png");
+                            ACHIEVEMENT("Ups... Prošel jsem 2000 náhodných možností, a nepovedlo se mi najít místo pro další Item.", "img/exclamation.png");
                             break;
                         }
 
@@ -823,15 +917,15 @@ class Map {
                         for (let l = 0; l < point.length; l++) {
                             same = false;
 
-                            for (let i = 0; i < this.item.length && point != null && !same; i++){
+                            for (let i = 0; i < this.item.length && point != null && !same; i++) {
 
-                                if(DIFICULTY.MULTIPLAYER == MULTIPLAYER.TRUE && RANDOM_NUMBER(0,1) == 0 && point[l].validNeighbour != undefined){
+                                if (DIFICULTY.MULTIPLAYER == MULTIPLAYER.TRUE && RANDOM_NUMBER(0, 1) == 0 && point[l].validNeighbour != undefined) {
                                     multiplayer = true;
                                     if (this.item[i].position.x == point[l].validNeighbour.x && this.item[i].position.y == point[l].validNeighbour.y) {
                                         same = true;
                                     }
                                 }
-                                else{
+                                else {
                                     multiplayer = false;
                                     if (this.item[i].position.x == point[l].x && this.item[i].position.y == point[l].y) {
                                         same = true;
@@ -840,14 +934,14 @@ class Map {
                             }
 
                             if (!same) {
-                                    point = point[l];
-                                    break;
+                                point = point[l];
+                                break;
                             }
                         }
                     } while (point == null || same);
 
                     //Uložím item do pole aktuálních itemů a existujících
-                    this.item.push(new Item(multiplayer ? point.validNeighbour : point , dificulty, rand, type, multiplayer ? point : undefined));
+                    this.item.push(new Item(multiplayer ? point.validNeighbour : point, dificulty, rand, type, multiplayer ? point : undefined));
                     existingItems[type + dificulty]++;
                 }
             }
@@ -867,6 +961,10 @@ class Map {
         this.drawItems();
     }
 
+
+    /**
+     * @description Vykreslení všech itemů z globálního pole this.lastItemCount do mapy
+     */
     drawItems() {
 
         //Pokud je pole s itemama prázdné končím s vykrelsováním
@@ -884,20 +982,20 @@ class Map {
             // pokud chceme definovat toolTip a zároveň tam již žádný není
             if (toolTip || (DIFICULTY.SHOW_TOOLTIP != SHOW_TOOLTIP.NEVER && this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].getAttribute("data-title") == null)) {
                 let lenght = 0;
-                if(this.item[i].validNeighbour != undefined){
+                if (this.item[i].validNeighbour != undefined) {
                     lenght = this.shortestWay(this.player.position, this.item[i].validNeighbour, RETURN.COUNT);
-                    lenght += this.shortestWay(window.game.secondPlayer.position, this.item[i].validNeighbour, RETURN.COUNT) ;
+                    lenght += this.shortestWay(window.game.secondPlayer.position, this.item[i].validNeighbour, RETURN.COUNT);
                     lenght += " Nejsem si jistý, možná najdeš i kratší."
                 }
-                else{
+                else {
                     lenght = this.shortestWay(this.player.position, this.item[i].position, RETURN.COUNT);
                 }
                 //Nastavím cenu za nákup cesty
-                DIFICULTY.PRICE_FOR_PATH = lenght+1;
+                DIFICULTY.PRICE_FOR_PATH = lenght + 1;
                 //Danému poli v mapě, na kterém se nachází item se nastaví title obsahující vzdálenost itemu odhráče
-                this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].setAttribute("data-title", "Nejkratší cesta: " + lenght + " " + CZ_STRING(lenght,"tah") + ", nebo si ji kup za: " + DIFICULTY.PRICE_FOR_PATH + " " + CZ_STRING(lenght,"bod"))
+                this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].setAttribute("data-title", "Nejkratší cesta: " + lenght + " " + CZ_STRING(lenght, "tah") + ", nebo si ji kup za: " + DIFICULTY.PRICE_FOR_PATH + " " + CZ_STRING(lenght, "bod"))
             }
-            else if(!toolTip && DIFICULTY.SHOW_TOOLTIP == SHOW_TOOLTIP.NEVER){
+            else if (!toolTip && DIFICULTY.SHOW_TOOLTIP == SHOW_TOOLTIP.NEVER) {
                 this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].removeAttribute("data-title");
             }
 
@@ -917,7 +1015,7 @@ class Map {
                 else if (this.item[i].type == ITEMTYPE.MORTALITY)
                     path = "url('img/mortality.png')";
                 else if (this.item[i].type == ITEMTYPE.BOTTLE)
-                    path = "url('img/bottle"+RANDOM_NUMBER(0,15)+".png')";
+                    path = "url('img/bottle" + RANDOM_NUMBER(0, 15) + ".png')";
 
                 //Danou adresu obrázku přidělíme místu v mapě (Css-ka se opět postarají o grafické vykreslení)
                 this.map.rows[this.item[i].position.y].cells[this.item[i].position.x].children[0].style.backgroundImage = path;
@@ -927,7 +1025,8 @@ class Map {
     }
 
     /**
-     * Metoda má za cíl označit všechna validní dosažitelná pole v mapě, dle constanty DIFICULTY, označí daná dosažitelná pole
+     * @description Metoda má za cíl označit všechna validní dosažitelná pole v mapě, dle constanty DIFICULTY, označí daná dosažitelná pole
+     * @param {String} name = označuje class name který budou pozice označeny 
      */
     drawAllValid(name) {
 
@@ -937,11 +1036,11 @@ class Map {
         for (let i = 0; i < all.length; i++) {
             //Přidám jim class valid (Pomocí css již kláda graficky daná pole označí)
             this.map.rows[all[i].y].cells[all[i].x].classList.add(name);
-            this.map.rows[all[i].y].cells[all[i].x].style.backgroundImage = "url('img/"+name +RANDOM_NUMBER(0,15)+".png')";
+            this.map.rows[all[i].y].cells[all[i].x].style.backgroundImage = "url('img/" + name + RANDOM_NUMBER(0, 15) + ".png')";
             //Pokud je definováno zapnutí Multiplayeru, označí se i pole dosažitelná pouze v multiplayeru
             if (DIFICULTY.MULTIPLAYER == MULTIPLAYER.TRUE && all[i].validNeighbour != null)
                 this.map.rows[all[i].validNeighbour.y].cells[all[i].validNeighbour.x].classList.add(name + "Last");
-                this.map.rows[all[i].validNeighbour.y].cells[all[i].validNeighbour.x].style.backgroundImage = "url('img/"+name +RANDOM_NUMBER(0,15)+".png')";
+            this.map.rows[all[i].validNeighbour.y].cells[all[i].validNeighbour.x].style.backgroundImage = "url('img/" + name + RANDOM_NUMBER(0, 15) + ".png')";
         }
 
         //Znovu grafiky označím pointy dosažitelné z aktuální pozice hráče
@@ -949,9 +1048,8 @@ class Map {
     }
 
     /**
-     * 
-     * @param {RETURN} ret = Vrátí item, nebo class list na kterém stojí player, nebo true a folse jestli stojí na Itemu nebo ne
-     * @param {Boolean} remove = True = pokud chceme odstranit item z pole itemů
+     * @description  Zkontroluje pozici hráče a vrací Buďto objekt Itemu nebo class list daného pole v mapě
+     * @returns ClassList nebo Item
      */
     checkPlayerPosition() {
 
@@ -977,12 +1075,12 @@ class Map {
                     //Pro všechny itemy 
                     for (let j = 0; j < this.item.length; j++) {
                         //Přeskoč item, na kterém se právě stojí
-                        if(this.item[j] == this.item[i]){
+                        if (this.item[j] == this.item[i]) {
                             continue;
                         }
                         //přepočítám vzdálenost jak je item daleko od hráče, (pro přičtení bodů)
                         let lenght = this.shortestWay(this.player.position, this.item[j].position, RETURN.COUNT);
-                        this.item[j].distance = lenght == null? this.item[j].distance : lenght;
+                        this.item[j].distance = lenght == null ? this.item[j].distance : lenght;
                     }
 
                     //Vymažu z daného pole grafiku itemu
@@ -1002,7 +1100,7 @@ class Map {
                 }
 
             }
-            else{
+            else {
                 this.itemWasOnPosition = false;
             }
 
@@ -1011,10 +1109,9 @@ class Map {
     }
 
     /**
-     * 
+     * @description Metoda slouží pro zjisštění zda se na pozici nachází item
      * @param {Point} point = Point na kterém chceme zjistit zda se nenachází nějáký item
-     * 
-     * @param return = vrací true,  v případě, že se na pozici nachází item v opačném případě false
+     * @returns = vrací true,  v případě, že se na pozici nachází item v opačném případě false
      */
     isItemOnPoint(point) {
         if (this.item.length == 0)
@@ -1028,11 +1125,11 @@ class Map {
     }
 
     /**
-     * 
-     * @param {Array of Point} arr 
+     * @description Metoda slouží k zjisštění indexu pointu z daného pole
+     * @param {Array} arr = pole Pointů 
      * @param {Point} point 
      * 
-     * @param return = vrací index z pole, na kterém se nachází daný point, pokud se point v poli nenachází, vrací null
+     * @returns = vrací index z pole, na kterém se nachází daný point, pokud se point v poli nenachází, vrací null
      */
     indexOfPoint(arr, point) {
 
@@ -1044,10 +1141,9 @@ class Map {
 
 
     /**
-     * 
+     * @description Metoda zamíchá a vratí pole
      * @param {Array} q = Pole, které chceme zamíchat
-     * 
-     * @param return = vrátí dané pole, náhodně zamíchané
+     * @returns = vrátí dané pole, náhodně zamíchané
      */
     shuffleArray(q) {
         if (q)

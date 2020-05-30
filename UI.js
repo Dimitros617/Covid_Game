@@ -1,5 +1,10 @@
+/**
+ * @description Třída se stará o nastavení hry před samotným spuštěním, grafikcé vykreslování pravidel, nastavení, tabulky score, Zakládá hru novou instancí třídy Game. Pracuje se tabulkou score ukládá a načítá do cookies prohlížeče
+ */
 class UI {
-
+    /**
+     * @description vytvoření stránky pravidel, nastavení a score které se načítá z cookies
+     */
     constructor() {
 
         this.expand = false;
@@ -14,6 +19,11 @@ class UI {
         this.infoChange(DIV_INFO.children[0]);
     }
 
+
+    /**
+     * @description metoda se volá při změně selectoboxu v HTML pro uživatele změna mazi pravidly, nastavením a score boardem
+     * @param {Element} e = html element selectu 
+     */
     infoChange(e) {
 
         if (e.value == 0) {
@@ -41,7 +51,7 @@ class UI {
 
 
 
-
+        //Zajištění aby po změně selectu bylo zachováno zda je okno zvěšeno či nikoli
         if (this.expand) {
             DIV_INFO.classList.add("expand");
             DIV_INFO.children[2].classList.add("expand");
@@ -55,6 +65,10 @@ class UI {
 
     }
 
+    /**
+     * @description Metoda slouží k vytvoření eleentu pro zvětšení části s nastavením pravidly, nebo score boardem
+     * @returns vradí div clickable elementu
+     */
     getResizer() {
 
         let div = document.createElement("div");
@@ -84,6 +98,9 @@ class UI {
 
     }
 
+    /**
+     * @description metoda vymaže obsah elementu pro zobrazování části s nastavením pravidly, nebo score boardem
+     */
     clear() {
         if (document.getElementById("content") != null) {
             document.getElementById("content").remove();
@@ -91,6 +108,10 @@ class UI {
     }
 
 
+    /**
+     * @description Metoda vytvoří stránku obsahující pravidla všetně grafického rozložení
+     * @returns div obdahující stránku pravidel
+     */
     getRules() {
 
         let div = document.createElement("div");
@@ -191,6 +212,11 @@ class UI {
         return div;
     }
 
+
+    /**
+     * @description Metoda vytvoří stránku obsahující nastavení všetně grafického rozložení
+     * @returns div obdahující stránku nastavení
+     */
     getSeting() {
 
         let div = document.createElement("div");
@@ -212,6 +238,11 @@ class UI {
         return div;
     }
 
+
+    /**
+     * @description Metoda vytvoří stránku obsahující pravidla všetně grafického rozložení
+     * @returns div obdahující stránku pravidel
+     */
     getScoreBoard() {
 
         let div = document.createElement("div");
@@ -274,7 +305,7 @@ class UI {
      *                           
      *                           button "mezera" href odkaz podporováno i s lomítky
      * 
-     * @param return vrátí div obsahující label a příslučný element s nastavenými hodnotami
+     * @returns {Div} vrátí div obsahující label a příslučný element s nastavenými hodnotami
      */
     getGraphic(position, textLabel, inputType, count, atribute) {
 
@@ -371,6 +402,10 @@ class UI {
 
     }
 
+
+    /**
+     * @description Metoda vymaže element table map z HTML dokumentu
+     */
     clearMap() {
 
         for (let i = MAP_TABLE.children.length; i > 0; i--) {
@@ -379,6 +414,10 @@ class UI {
     }
 
 
+    /**
+     * @description Metoda se volá při změně jednotivých prvků v nastavení, dle změny prvky se nastaví hra samotná
+     * @param {Element} e 
+     */
     changeElement(e) {
 
         if (e.target.parentNode.children[0].innerHTML.toLowerCase().includes("velikost mapy")) {
@@ -477,12 +516,21 @@ class UI {
         }
     }
 
+
+    /**
+     * Metoda vymaže graficky mapu a založí novou instaci hry 
+     */
     generateNewMap() {
         window.UI.clearMap();
         window.game = new Game();
     }
 
 
+    /**
+     * @description Metoda vytvoří vyskakovací okno achievementu a graficky ho zobrazí v HTMl
+     * @param {String} text = Tect který má být v notifikaci zobrazen
+     * @param {String} imgPath = Path obrázku který se má zobrazit
+     */
     showAchievement(text, imgPath) {
 
         if (document.getElementById("achievement") != null) {
@@ -539,6 +587,7 @@ class UI {
     }
 
     /**
+     * @description Metoda slouží k zobrazení vyskakovacího okna pro věběr grafiky hráče a logika výběru
      * @param {Array} Arguments = stringové hodnoty path img, ze kterých chceme dát uživately navybranou.
      */
     showPlayerSelect() {
@@ -621,6 +670,9 @@ class UI {
     }
 
 
+    /**
+     * @description Metoda vezme aktuální score z globální proměné  this.scoreBoard a uloží jej do Cookies do prohlížeče (životnost cookie je 5 let)
+     */
     saveCookieScoreBoard() {
         var d = new Date();
         var year = d.getFullYear();
@@ -643,6 +695,10 @@ class UI {
         }
     }
 
+
+    /**
+     * @description Metoda načte hodnoty score do globální proměné  this.scoreBoard z cookies prohlížeče, pokud jsou prázdné pouze inicializuje pole
+     */
     loadCookieScoreBoard() {
         let cookie = decodeURIComponent(document.cookie);
         if (cookie.includes("©GAMEbyFROLÍK©")) {

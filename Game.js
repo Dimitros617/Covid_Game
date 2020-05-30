@@ -1,8 +1,11 @@
+/**
+ * @description Třída se stará o chod celé hry počítání score grafické vykreslování hry, sestavení scénářů a cílů dle vybrané obtížnosti a herního režimu, Dále hra zakládá instanci mapy.
+ */
 class Game {
 
-    map;
+    map; //objekt instance třídy Map
 
-    actions = []; // 
+    actions = []; // pole akcí aktuálních pro dan herní režim 
 
     round; // Int číslo kola
     started; //Boolean true if game started
@@ -57,6 +60,9 @@ class Game {
         });
     }
 
+    /**
+     * @description Nastaví scénář pro daný herní režim
+     */
     createScenary() {
 
         switch (DIFICULTY.GAME_MODE) {
@@ -113,6 +119,9 @@ class Game {
         }
     }
 
+    /**
+     * @description Nastaví se globální cíle pro daný herní režim
+     */
     createGoals() {
 
 
@@ -214,9 +223,13 @@ class Game {
 
     }
 
+
+    /**
+     * @description Metoda se volá při zmáčknutí main button uprostřed mapy nastaví a inicializuje score a spustí hru, nastaví cíle a scénáře vybrané v nastavení
+     */
     start() {
 
-        if(SCORE_DATA.SCORE < SCORE_DATA_DEFAULT.SCORE){
+        if (SCORE_DATA.SCORE < SCORE_DATA_DEFAULT.SCORE) {
             SCORE(SCORE_DATA.SCORE = SCORE_DATA_DEFAULT.SCORE);
         }
         this.map.clear();
@@ -278,6 +291,10 @@ class Game {
 
     }
 
+
+    /**
+     * @description Metoda slouží pro znovu inicializaci hry vynulování score 
+     */
     reStart() {
         SCORE(SCORE_DATA.SCORE = SCORE_DATA_DEFAULT.SCORE);
         MORTALITY(SCORE_DATA.MORTALITY = SCORE_DATA_DEFAULT.MORTALITY);
@@ -289,6 +306,10 @@ class Game {
         window.UI.generateNewMap();
     }
 
+
+    /**
+     * @description Ukončení hry zamezení dalšího pohybu , vypsání výsledného score nastavení tlačítka v mapě. Znovu zpřístupní nastavení pro uživatele
+     */
     gameOver() {
         SCORE(0);
         window.UI.scoreBoard[DIFICULTY.GAME_MODE].push(SCORE_DATA.TOTAL_SCORE);
@@ -300,6 +321,9 @@ class Game {
     }
 
 
+    /**
+     * @description Next round podle daného režimu viz. pravidla 
+     * */
     nextRound(notWait) {
 
         var cell = this.map.checkPlayerPosition();
@@ -403,7 +427,6 @@ class Game {
                     this.checkGoals();
                     break;
                 case GAME_MODE.ALL_IN://------------------------------------------------------------------------------
-                    //TODO když už nejsou ždáné lahvčky winn projed mapu cyklem a  když zadna nebude obsahovat backggroud img contain bottle je to winn
 
                     let countBottles = document.getElementsByClassName("bottle").length;
                     let allBottles = this.map.allValidPosition.length;
@@ -518,6 +541,9 @@ class Game {
     }
 
 
+    /**
+     * @description Dle aktuálního stavu se nechají vygenerovat itemy v mapě a vykreslí se , podle akcí se zobrazí zpráva uživately
+     */
     checkActions() {
 
         this.map.createItems(this.actions);
@@ -531,13 +557,12 @@ class Game {
                 forDelete.push(i);
             }
         }
-
-        for (let i = 0; i < forDelete.length; i++) {
-            //this.actions.splice(forDelete[i] - i, 1);
-        }
     }
 
 
+    /**
+     * @description Zkontrolují se nakažení a vypočítá se šíření 
+     * */
     checkInfected() {
 
         LOADING(true, "Počítám šíření, a nakazuji nové lidi...");
@@ -572,6 +597,10 @@ class Game {
 
     }
 
+
+    /**
+     * @description Zkontrolují se podle aktuálního stavu hry cíle zda nebylo nějákého dosaženo
+     */
     checkGoals() {
         let showOne = false;
         for (let i = 0; i < this.goals.length && !showOne; i++) {
@@ -583,20 +612,37 @@ class Game {
         }
     }
 
+
+    /**
+     * @description Zkontrolují se podle aktuálního stavu hry cíle zda nebylo nějákého dosaženo pro edukační mod, který nemá cíle finální ale průběžné a a náhodné
+     */
     checkEduGoals(item) {
         //tipeOfScore = tipeOfItem pro edu goaly
         let story = this.catchItems[item.type + item.dificulty][(this.catchItemsIndex[item.type + item.dificulty] += 1) % this.catchItems[item.type + item.dificulty].length]
         return story;
     }
 
+
+    /**
+     * @description vytvoření nové instance akce a vložení do globálního pole  this.actions
+     * 
+    */
     newRule(typeOfScore, value, news, itemCount, chance, type, repeat) {
         this.actions.push(new Action(typeOfScore, value, news, itemCount, chance, type, repeat));
     }
 
+    /**
+     * @description vytvoření nové instance Goal a vložení do globálního pole  this.actions
+     * 
+    */
     newGoal(typeOfScore, value, text, img) {
         this.goals.push({ typeOfScore: typeOfScore, value: value, text: text, img: img, show: false });
     }
 
+
+    /**
+     * @description Přidání event listenerů pro možnost ovládaní klávesnicí šipkami, mezerníkem a klávesou ESC
+     */
     setArrows() {
 
         document.onkeydown = function (e) {
@@ -645,6 +691,10 @@ class Game {
         }
     }
 
+    /**
+     * @description Nastaví event listenery pro nákup score 
+     * @param {Boolean} bool pro true se obchod zpřístupní a nastaví, pro false se obchod zastaví
+     */
     setShop(bool) {
 
         if (bool) {
@@ -683,8 +733,9 @@ class Game {
     }
 
     /**
-     * 
+     * @description vymění pozice instancí hráčů globálních proměných player a secondPlayer
      * @param {String} name = name of HTMl element 
+     * 
      */
     flipPlayers(name) {
 

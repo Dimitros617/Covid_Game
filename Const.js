@@ -1,7 +1,7 @@
-const TITLE = "GAME | COVID-19";
+const TITLE = "GAME | COVID-19"; // Popisek table v prohlížeči
 const PEOPLE_INFECTED_DAY = 4; // Počet dní před tím než zemřou
 
-const SCORE_DATA_DEFAULT = {
+const SCORE_DATA_DEFAULT = { // Defaultní hodnoty score zle měnit
 
     SCORE: 15,
     INFECTED: new Array(),
@@ -12,6 +12,10 @@ const SCORE_DATA_DEFAULT = {
 
 };
 
+
+/**
+ *  @description Getry pro html elementy score a mapy 
+ * */
 const SCORE = x => document.getElementById("score").innerHTML = x > 1000000 ? (x / 1000000).toFixed(2) + "M" : x > 1000 ? (x / 1000).toFixed(2) + "K" : x;
 const MORTALITY = x => document.getElementById("mortality").innerHTML = x > 100 ? 100 + "%" : x + "%";
 const CURE = x => document.getElementById("cure").innerHTML = x > 100 ? 100 + "%" : x + "%";
@@ -34,6 +38,10 @@ const LOADING = (x, y) => {
 }
 
 
+
+/**
+ * @description Getry pro html elementy score a mapy 
+ * */ 
 const MAP_TABLE = document.getElementById("map");
 const DIV_INFO = document.getElementById("info");
 const ADD_MORTALITY = document.getElementById("addMortality");
@@ -41,6 +49,9 @@ const ADD_CURE = document.getElementById("addCure");
 const SCORE_TABLE = document.getElementById("scoreTable");
 
 
+/** 
+ * @description Aktuální score právě probíhající hry 
+ * */
 const SCORE_DATA = {
 
     SCORE: SCORE_DATA_DEFAULT.SCORE,
@@ -71,6 +82,10 @@ const SCORE_DATA = {
     }
 };
 
+
+/**
+ * @description Enum pro nastavení obtížnosti generování maximální vzdálenosti ve které se mají spawnovat nové itemy od hráče, pokud nějáký item sebere
+ * */
 const DISTANCE = {
 
     SHORT: 7,
@@ -79,7 +94,10 @@ const DISTANCE = {
 
 };
 
-
+/** 
+ * @description Enum pto velikst generované mapy 
+ * 
+ * */
 const MAP_SIZE = {
 
     EASY: 12,
@@ -114,6 +132,10 @@ const MAP_SIZE = {
     }
 };
 
+
+/**
+ * @description Enum pro ukazování tipů vzdálenosti hráče od itemu
+ */
 const SHOW_TOOLTIP = {
 
     EVERY_STEP: 0,
@@ -135,6 +157,10 @@ const SHOW_TOOLTIP = {
     },
 };
 
+
+/**
+ * @description Enum pro Multiplayer
+ */
 const MULTIPLAYER = {
 
     FALSE: 0,
@@ -142,6 +168,10 @@ const MULTIPLAYER = {
 
 };
 
+
+/**
+ * @description Enum pro herní režim 
+ */
 const GAME_MODE = {
 
     EDUCATION: 0,
@@ -184,6 +214,10 @@ const GAME_MODE = {
 
 };
 
+
+/**
+ * @description Aktuální obtížnost hry, je nastavována uživatelem
+ */
 const DIFICULTY = {
 
     MAP_SIZE: MAP_SIZE.MEDIUM,
@@ -195,6 +229,9 @@ const DIFICULTY = {
 
 };
 
+/**
+ * @description Enum pro return metod používající se ve hře i v mapě
+ */
 const RETURN = {
 
     BOOLEAN: 0,
@@ -205,6 +242,10 @@ const RETURN = {
 
 };
 
+
+/**
+ * @description Enum pro typ score a vracení hodnot při generování náhodných pozic v mapě
+ */
 const TYPE = {
 
     ALL: 0,
@@ -220,6 +261,10 @@ const TYPE = {
 
 };
 
+
+/**
+ * @description Enum pro směry
+ */
 const DIRECTION = {
     TOP: 0,
     RIGHT: 1,
@@ -227,6 +272,10 @@ const DIRECTION = {
     LEFT: 3,
 };
 
+
+/**
+ * @description Enum pro typy itemů jejich hodnoty velikosti a hodnot
+ */
 const ITEMTYPE = {
 
     HUMAN: "human",
@@ -259,12 +308,30 @@ const ITEMTYPE = {
 
 };
 
+
+/**
+ * @description Enum pro grafické vykreslování elementů v nastavení 
+ */
 const POSITON = {
     VERTICAL: 0,
     HORIZONTAL: 1,
 }
 
+/**
+ * @description Funkce pro generování náhodných čísel 
+ * @param {Int} minimum = minimální hodnota včetně, intervalu ze kterého se vybere náhodné číslo
+ * @param {Int} maximum = maximální hodnota
+ * 
+ * @returns {Int} Náhodné číslo z intervalu
+ */
 const RANDOM_NUMBER = (minimum, maximum) => Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
 
+/**
+ * @description Funkce pro skloňování český názvů slov Vstupempř. Bod a číslo  výstupem je string Bodů či Body
+ * @param {Int} int 
+ * @param {String} string 
+ * 
+ * @returns {String} Naformátovaný (vyskloňovaný) string dle číslelné hodnoty
+ */
 const CZ_STRING = (int, string) => int == 1 ? string : int > 1 && int < 5 ? string + "y" : string + "ů";
 

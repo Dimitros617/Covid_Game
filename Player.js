@@ -1,10 +1,15 @@
 class Player {
 
-    map;
-    position;
+    map; // Intace třídy Map
+    position; // Instance třídy Point obsahující aktuální pozici hráče v mapě
 
-    me;
+    me; // Pointer na HTML element hráče
 
+    /**
+     * @description donstuktor nastaví pozici hráče na X0: Y0 vytvoří div a graficky ho nastaví do HTML
+     * @param {Map} map = Instance mapy na kterou se má hráč vykreslovat
+     * @param {String} name = name atribut elementu player 
+     */
     constructor(map, name) {
 
         this.map = map;
@@ -19,6 +24,10 @@ class Player {
         this.initMe();
     }
 
+
+    /**
+     * @description inicializace click eventu pro element hráče v HTML
+     */
     initMe(){
         this.me.onclick = function(e){
 
@@ -37,6 +46,10 @@ class Player {
     }
 
 
+    /**
+     * @description grafická změna pozice hráče v mapě, a následné vykreslení validních pozic z dané pozice
+     * @param {Point} point = pozice na kterou se má hráč posunout
+     */
     moveTo(point) {
 
         this.position = point;
@@ -47,6 +60,10 @@ class Player {
         this.map.setAvailableDirection(this.position);
     }
 
+
+    /**
+     * @description mapa slouží k přesunu hráče na náhodnou validní pozici, která neobsahuje žádný item.
+     */
     resetPosition() {
         let randValidPoint = this.map.allValidPosition[RANDOM_NUMBER(0, this.map.allValidPosition.length - 1)];
         if (this.map.item.length != 0) {
